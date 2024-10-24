@@ -386,6 +386,7 @@ AVAILABLE_PROMPTS = [
         "setting_name": "expression-prompt",
         "editable": True,
         "show_in_settings": True,
+        "default": True
     },
     {
         "key": "personality_prompt",
@@ -394,6 +395,7 @@ AVAILABLE_PROMPTS = [
         "setting_name": "personality-prompt",
         "editable": True,
         "show_in_settings": True,
+        "default": True
     },
     {
         "key": "custom_prompt",

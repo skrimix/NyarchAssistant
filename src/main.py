@@ -147,7 +147,7 @@ class MyApp(Adw.Application):
     def extension_action(self, *a):
         extension = Extension(self)
         def close(win):
-            settings = Gio.Settings.new('io.github.qwersyk.Newelle')
+            settings = Gio.Settings.new('moe.nyarchlinux.assistant')
             settings.set_int("chat", self.win.chat_id)
             settings.set_string("path", os.path.normpath(self.win.main_path))
             self.win.update_settings()
