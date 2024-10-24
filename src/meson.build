@@ -42,6 +42,7 @@ nyarchassistant_sources = [
   'extra.py',
   'presentation.py',
   'handler.py',
+  'extensions.py'
   'avatar.py',
   'translator.py',
   'dataset.py',

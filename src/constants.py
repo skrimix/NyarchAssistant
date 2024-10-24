@@ -234,7 +234,7 @@ AVAILABLE_SMART_PROMPTS = {
 
 PROMPTS = {
     "generate_name_prompt": """Write a short title for the dialog, summarizing the theme in 5 words. No additional text.""",
-    "console_prompt": """You can run commands on the user Linux computer.
+    "console": """You can run commands on the user Linux computer.
 Linux distribution: {DISTRO}
 Execute linux commands using \n```console\ncommand\n```
 To display a directory: \n```folder\npath/to/folder\n```
@@ -255,7 +255,7 @@ You can also use **bold**, *italic*, ~strikethrough~, `monospace`, [linkname](ht
     "graphic": """System: You can display the graph using this structure: ```chart\n name - value\n ... \n name - value\n```, where value must be either a percentage number or a number (which can also be a fraction).
 
 """,
-    "graphic_console": """File: /home/user/Downloads/money.txt
+    "graphic": """File: /home/user/Downloads/money.txt
 User: Create a graph for the report in the money.txt file
 Assistant: ```console\ncat /home/user/Downloads/money.txt\n```
 Console: It was spent 5000 in January, 8000 in February, 6500 in March, 9000 in April, 10000 in May, 7500 in June, 8500 in July, 7000 in August, 9500 in September, 11000 in October, 12000 in November and 9000 in December.
@@ -335,12 +335,13 @@ EXTRA_PROMPTS = [
 """
 AVAILABLE_PROMPTS = [
     {
-        "key": "console_prompt",
+        "key": "console",
+        "setting_name": "console",
         "title": _("Console access"),
         "description": _("Can the program run terminal commands on the computer"),
-        "setting_name": "console",
         "editable": True,
         "show_in_settings": True,
+        "default": True
     },
     {
         "key": "current_directory",
@@ -348,15 +349,17 @@ AVAILABLE_PROMPTS = [
         "description": _("What is the current directory"),
         "setting_name": "console",
         "editable": False,
-        "show_in_settings": False,   
+        "show_in_settings": False,
+        "default": True
     },
     {
         "key": "basic_functionality",
         "title": _("Basic functionality"),
         "description": _("Showing tables and code (*can work without it)"),
-        "setting_name": "basic-functionality",
+        "setting_name": "basic_functionality",
         "editable": True,
         "show_in_settings": True,
+        "default": True
     },
     {
         "key": "graphic",
@@ -365,14 +368,16 @@ AVAILABLE_PROMPTS = [
         "setting_name": "graphic",
         "editable": True,
         "show_in_settings": True,
+        "default": False
     },
     {
         "key": "show_image",
         "title": _("Show image"),
         "description": _("Show image in chat"),
-        "setting_name": "show-image",
+        "setting_name": "show_image",
         "editable": True,
         "show_in_settings": True,
+        "default": True,
     },
     {
         "key": "expression_prompt",
@@ -394,8 +399,10 @@ AVAILABLE_PROMPTS = [
         "key": "custom_prompt",
         "title": _("Custom Prompt"),
         "description": _("Add your own custom prompt"),
-        "setting_name": "custom-extra-prompt",
+        "setting_name": "custom_prompt",
+        "text": "",
         "editable": True,
         "show_in_settings": True,
+        "default": False
     }, 
 ]

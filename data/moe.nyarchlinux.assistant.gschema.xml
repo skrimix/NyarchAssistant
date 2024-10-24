@@ -4,13 +4,7 @@
         <key name="offers" type="i">
             <default>0</default>
         </key>
-        <key name="console" type="b">
-            <default>true</default>
-        </key>
-        <key name="graphic" type="b">
-            <default>false</default>
-        </key>
-        <key name="personality-prompt" type="b">
+        <key name="virtualization" type="b">
             <default>true</default>
         </key>
         <key name="virtualization" type="b">
@@ -31,6 +25,9 @@
 	      <key name="auto-run" type="b">
             <default>false</default>
         </key>
+        <key name="prompts-settings" type="s">
+            <default>"{}"</default>
+          </key>
 	      <key name="basic-functionality" type="b">
             <default>true</default>
         </key>
@@ -88,6 +85,9 @@
 
         <key name="external-terminal" type="s">
           <default>"gnome-terminal -- bash -c {0}"</default>
+        </key>
+        <key name="extensions-settings" type="s">
+          <default>"{}"</default>
         </key>
         <key name="translator" type="s">
           <default>"LibreTranslate"</default>
