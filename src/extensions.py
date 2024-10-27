@@ -178,7 +178,7 @@ class ExtensionLoader:
         for file in os.listdir(self.extension_dir):
             if file.endswith(".py"):
                 try: 
-                    spec = importlib.util.spec_from_file_location("newelle.name", os.path.join(self.extension_dir, file))
+                    spec = importlib.util.spec_from_file_location("nyarchassistant.name", os.path.join(self.extension_dir, file))
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
 
