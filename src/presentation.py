@@ -121,7 +121,7 @@ class PresentationWindow(Adw.Window):
             },
             {
                 "title": _("Extensions"),
-                "description": _("You can extend nyarchassistant's functionalities using extensions!"),
+                "description": _("You can extend Nyarch Assistant's functionalities using extensions! They are easy to make and to install!"),
                 "picture": "/moe/nyarchlinux/assistant/images/extension.svg",
                 "actions": [
                     {

@@ -199,9 +199,9 @@ Then you can run ollama by executing this command:
 ```console
 ollama serve
 ```
-After that you can download models from https://ollama.com/library:
+After that you can download models from https://ollama.com/library, for example:
 ```console
-ollama pull llama3.2
+ollama pull llama3.1
 ```
 """
 }
