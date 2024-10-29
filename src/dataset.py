@@ -55,9 +55,9 @@ Driver Package Selection:
 Installation Command:
 Example command for installation: 
 ```console
-paru -S nvidia-470xx-dkms nvidia-470xx-utils lib32-nvidia-470xx-utils
+yay -S nvidia-470xx-dkms nvidia-470xx-utils lib32-nvidia-470xx-utils
 ```
-Suggest installing nvidia-settings with paru -S nvidia-settings.
+Suggest installing nvidia-settings with yay -S nvidia-settings.
 
 Step 3: Enable early loading of Nvidia modules:
 Edit the GRUB configuration file:
@@ -66,11 +66,12 @@ sudo nano /etc/default/grub
 ```
 Tell the user to:
 - Find the line with GRUB_CMDLINE_LINUX_DEFAULT
-- Append the words inside the quotes with nvidia-drm.modeset=1
-- Example: GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nvidia-drm.modeset=1"
+- Append the words inside the quotes with nvidia-drm.modeset=1 nvidia-drm.fbdev=1 
+- Example: GRUB_CMDLINE_LINUX_DEFAULT="quiet splash nvidia-drm.modeset=1 nvidia-drm.fbdev=1"
 - Save the file with CTRL+S and close nano with CTRL+X 
 - Update the GRUB configuration: sudo grub-mkconfig -o /boot/grub/grub.cfg
 
+Step 4: Enable nvidia modules
 ```console
 sudo nano /etc/mkinitcpio.conf
 ````
@@ -103,6 +104,7 @@ For GRUB users:
 sudo grub-mkconfig -o /boot/grub/grub.cfg.
 
 Step 6:
+If you have a laptop with hybrid GPU, you might want to install [envycontrol](https://github.com/bayasdev/envycontrol)
 After completing the setup, instruct them to reboot their system and enjoy the NVIDIA drivers.""",
     "docker": """If the user asks to install docker, give these instructions:
 Step 1: Install docker
@@ -135,7 +137,7 @@ If the user graphics are nvidia:
     Otherwise install libva-mesa-driver and mesa-vdpau
 To install the necessary driver, use 
 ```console
-paru -S driver
+yay -S driver
 ```""",
     "console": "",
     "voicevox": """If the user asks how to install VoiceVox TTS engine, provide these instructions.
