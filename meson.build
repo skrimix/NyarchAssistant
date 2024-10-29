@@ -1,5 +1,5 @@
 project('nyarchassistant',
-          version: '0.3.6',
+          version: '0.4.2',
     meson_version: '>= 0.62.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )
