@@ -353,6 +353,7 @@ class GeminiHandler(LLMHandler):
                 result.append({
                     "role": "user" if message["User"] == "User" else "model",
                     "parts": message["Message"] if img is None else [img, text]
+                })
             elif message["User"] == "Console":
                 result.append({
                     "role": "user",
