@@ -1,4 +1,4 @@
-from .llm import GPT4AllHandler, GroqHandler, NyarchApiHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler
+from .llm import BingHandler, GPT4AllHandler, GroqHandler, NyarchApiHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler
 from .tts import VoiceVoxHanlder, gTTSHandler, EspeakHandler, CustomTTSHandler, VitsHandler, EdgeTTSHandler
 from .stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperHandler, WitAIHandler, VoskHandler, CustomSRHandler
 
@@ -67,6 +67,13 @@ AVAILABLE_LLMS = {
         "description": _("Openrouter.ai API, supports lots of models"),
         "class": OpenRouterHandler,
         "website": "https://openrouter.ai/",
+        "secondary": True
+    },
+    "bing": {
+        "key": "bing",
+        "title": _("Microsoft Copilot"),
+        "description": _("Microsoft Copilot API"),
+        "class": BingHandler,
         "secondary": True
     },
     "custom_command": {
