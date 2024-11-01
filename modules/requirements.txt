@@ -1,0 +1,17 @@
+requests
+requests-toolbelt
+g4f
+curl_cffi
+gpt4all
+g4f
+gtts
+expandvars
+pyaudio
+speechrecognition
+openai
+voicevox-client
+livepng
+wordllama
+edge-tts
+scikit-learn
+pygame
