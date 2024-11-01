@@ -399,20 +399,20 @@ class GeminiHandler(LLMHandler):
                 "default": True
             }
         ]
-
-    def __convert_history(self, history: list):
+   
+    def __convert_history(self, history: list) -> list:
         result = []
         for message in history:
-            if message["User"] == "Console":
+            if message["User"] in ["Assistant", "User"]:
+                img, text = self.get_gemini_image(message["Message"]) 
+                result.append({
+                    "role": "user" if message["User"] == "User" else "model",
+                    "parts": message["Message"] if img is None else [img, text]
+                })
+            elif message["User"] == "Console":
                 result.append({
                     "role": "user",
                     "parts": "Console: " + message["Message"]
-                })
-            else: 
-                img, text = self.get_gemini_image(message["Message"]) 
-                result.append({
-                    "role": message["User"].lower() if message["User"] == "User" else "model",
-                    "parts": message["Message"] if img is None else [img, text]
                 })
         return result
 
@@ -694,7 +694,8 @@ class OllamaHandler(LLMHandler):
 
 class OpenAIHandler(LLMHandler):
     key = "openai"
- 
+    error_message = "Error: "
+
     @staticmethod
     def get_extra_requirements() -> list:
         return ["openai"]
@@ -800,7 +801,7 @@ class OpenAIHandler(LLMHandler):
         if prompts is None:
             prompts = self.prompts
         return convert_history_openai(history, prompts, self.supports_vision())
-
+    
     def get_advanced_params(self):
         advanced_params = self.get_setting("advanced_params")
         if not advanced_params:
@@ -837,7 +838,7 @@ class OpenAIHandler(LLMHandler):
             )
             return response.choices[0].message.content
         except Exception as e:
-            return str(e)
+            return self.error_message + " " + str(e)
     
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
         from openai import OpenAI
@@ -873,7 +874,24 @@ class OpenAIHandler(LLMHandler):
                         prev_message = full_message
             return full_message.strip()
         except Exception as e:
-            return str(e)
+            return self.error_message + " " + str(e)
+
+ 
+class NyarchApiHandler(OpenAIHandler):
+    key = "nyarch"
+    error_message = """Error calling Nyarch API. Please note that Nyarch API is **just for demo purposes.**\n\nTo know how to use a more reliable LLM [read our guide to llms](https://github.com/qwersyk/nyarchassistant/wiki/User-guide-to-the-available-LLMs). \n\nError: """
+
+    def __init__(self, settings, path):
+        super().__init__(settings, path)
+        self.set_setting("endpoint", "https://llm.nyarchlinux.moe")
+        self.set_setting("advanced_params", False)
+        self.set_setting("api", "nya")
+
+    def get_extra_settings(self) -> list:
+        plus = []
+        plus += [super().get_extra_settings()[3]]
+        return plus
+
 
 class MistralHandler(OpenAIHandler):
     key = "mistral"
