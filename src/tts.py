@@ -2,10 +2,10 @@ from abc import abstractmethod
 from typing import Any, Callable
 from gtts import gTTS, lang
 from subprocess import check_output
+import os, json, pyaudio
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from pygame import mixer
 import threading, time, requests
-import os, json, pyaudio
 from .extra import can_escape_sandbox, get_spawn_command, force_sync, human_readable_size
 from pydub import AudioSegment
 import asyncio, random, string

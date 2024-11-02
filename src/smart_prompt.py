@@ -4,9 +4,12 @@ from wordllama import WordLlama
 from typing import Any
 from abc import abstractmethod
 import json, copy, os, pickle, shutil
-
-from .extra import find_module, install_module
+from .extra import find_module, install_module, is_flatpak
 from .handler import Handler
+if is_flatpak():
+    BASE_PATH = "/app/data"
+else:
+    BASE_PATH = "/usr/share/nyarchassistant/data"
 
 class SmartPromptHandler(Handler):
     key = ""
@@ -112,9 +115,9 @@ class LogicalRegressionHandler(SmartPromptHandler):
     def check_files(self):
         default_model = f"NyaMedium_{self.version}_{256}.pkl"
         if not os.path.isfile(os.path.join(self.models_dir, default_model)):
-            shutil.copy(os.path.join("/app/data/smart-prompts", default_model), os.path.join(self.models_dir, default_model))
+            shutil.copy(os.path.join(BASE_PATH + "/smart-prompts", default_model), os.path.join(self.models_dir, default_model))
         if not os.path.isfile(os.path.expanduser("~/.cache/wordllama/tokenizers/l2_supercat_tokenizer_config.json")):
-            shutil.copy(os.path.join("/app/data/smart-prompts", "l2_supercat_tokenizer_config.json"), os.path.expanduser("~/.cache/wordllama/tokenizers/l2_supercat_tokenizer_config.json"))
+            shutil.copy(os.path.join(BASE_PATH + "/smart-prompts", "l2_supercat_tokenizer_config.json"), os.path.expanduser("~/.cache/wordllama/tokenizers/l2_supercat_tokenizer_config.json"))
 
     @staticmethod
     def get_extra_requirements() -> list:

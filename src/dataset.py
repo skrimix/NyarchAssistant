@@ -1,5 +1,7 @@
 import csv
 
+from .extra import is_flatpak
+
 
 def reconstruct_dataset_from_csv(filename):
   """Reconstructs a dataset dictionary from a CSV file.
@@ -203,8 +205,12 @@ After that you can download models from https://ollama.com/library, for example:
 ```console
 ollama pull llama3.1
 ```
-"""
+("""
 }
 
-DATASET = reconstruct_dataset_from_csv("/app/data/smart-prompts/dataset.csv")
+if is_flatpak():
+    dataset_path = "/app/data/smart-prompts/dataset.csv"
+else:
+    dataset_path = "/usr/share/nyarchassistant/dataset.csv"
+DATASET = reconstruct_dataset_from_csv(dataset_path)
 

@@ -11,7 +11,7 @@ from .gtkobj import File, CopyBox, BarChartBox, MultilineEntry
 from .constants import AVAILABLE_LLMS, AVAILABLE_SMART_PROMPTS, AVAILABLE_TRANSLATORS, EXTRA_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_PROMPTS
 from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
 from .stt import AudioRecorder
-from .extra import ReplaceHelper, get_spawn_command, markwon_to_pango, override_prompts, replace_variables
+from .extra import ReplaceHelper, get_spawn_command, is_flatpak, markwon_to_pango, override_prompts, replace_variables
 import threading
 import posixpath
 import shlex,json, base64
@@ -20,6 +20,10 @@ from pydub import AudioSegment
 
 from .extensions import ExtensionLoader
 
+if is_flatpak():
+    BASE_PATH = "/app/data"
+else:
+    BASE_PATH = "/usr/share/nyarchassistant/data"
 class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         self.first_load = True
