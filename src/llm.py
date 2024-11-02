@@ -892,6 +892,14 @@ class NyarchApiHandler(OpenAIHandler):
         plus += [super().get_extra_settings()[3]]
         return plus
 
+    def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
+        if prompt.startswith("```image") or  any(message.get("Message", "").startswith("```image") for message in history):
+            self.set_setting("endpoint", "https://llm.nyarchlinux.moe/vision")
+            print("Using nyarch vision...")
+        else:
+            self.set_setting("endpoint", "https://llm.nyarchlinux.moe/")
+        return super().generate_text_stream(prompt, history, system_prompt, on_update, extra_args)
+
 
 class MistralHandler(OpenAIHandler):
     key = "mistral"
