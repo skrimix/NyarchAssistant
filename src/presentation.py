@@ -108,7 +108,7 @@ class PresentationWindow(Adw.Window):
                     {
                         "label": _("Guide to LLM"),
                         "classes": ["suggested-action"],
-                        "callback": lambda x: subprocess.Popen(["xdg-open", "https://github.com/qwersyk/nyarchassistant/wiki/User-guide-to-the-available-LLMs"]),
+                        "callback": lambda x: subprocess.Popen(["xdg-open", "https://github.com/qwersyk/Newelle/wiki/User-guide-to-the-available-LLMs"]),
                     }
                 ] 
             },
