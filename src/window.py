@@ -357,7 +357,7 @@ class MainWindow(Gtk.ApplicationWindow):
             os.makedirs(os.path.expanduser("~/.cache/wordllama/tokenizers"), exist_ok=True)
         except Exception as e:
             print(e)
-        subprocess.run(['cp', '-a', '/app/data/live2d/web/build', os.path.join(self.directory, "avatars/live2d/web")])
+        subprocess.run(['cp', '-a', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.directory, "avatars/live2d/web")])
 
     def show_presentation_window(self):
         self.presentation_dialog = PresentationWindow("presentation", self.settings, self.directory, self)
