@@ -30,7 +30,7 @@
 
 # Extensions
 
-nyarchassistant supports extensions to enhance its functionality. You can either use [existing extensions](https://github.com/topics/nyarchassistant-extension) or create your own to add new features to the application.
+Nyarch Assistant supports extensions to enhance its functionality. You can either use [existing extensions](https://github.com/topics/newelle-extension) or create your own to add new features to the application.
 
 ![screenshot](https://raw.githubusercontent.com/qwersyk/newelle/master/screenshots/2w.png#gh-light-mode-only)
 ![screenshot](https://raw.githubusercontent.com/qwersyk/newelle/master/screenshots/2b.png#gh-dark-mode-only)
