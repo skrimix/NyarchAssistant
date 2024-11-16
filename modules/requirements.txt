@@ -1,10 +1,9 @@
 requests
 pillow
+g4f==0.3.3.4
 requests-toolbelt
-g4f
 curl_cffi
 gpt4all
-g4f
 gtts
 expandvars
 pyaudio

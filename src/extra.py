@@ -113,6 +113,7 @@ def get_spawn_command() -> list:
         return ["flatpak-spawn", "--host"]
     else:
         return []
+
 def get_image_base64(image_str: str):
     """
     Get image string as base64 string, starting with data:/image/jpeg;base64,
@@ -191,6 +192,9 @@ def convert_history_openai(history: list, prompts: list, vision_support : bool =
                     "content": message["Message"]
                 })
     return result
+
+def open_website(website):
+    subprocess.Popen(get_spawn_command() + ["xdg-open", website])
 
 def encode_image_base64(image_path):
     with open(image_path, "rb") as image_file:
@@ -293,8 +297,8 @@ def find_module(full_module_name):
 def install_module(module, path):
     if find_module("pip") is None:
         print("Downloading pip...")
-        subprocess.check_output(["bash", "-c", "wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py"])
-    r = subprocess.run([sys.executable, "-m", "pip", "install", "--target", path, module], capture_output=False)
+        subprocess.check_output(["bash", "-c", "cd " + os.path.dirname(path) + " && wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py"])
+    r = subprocess.run([sys.executable, "-m", "pip", "install","--target", path, "--upgrade", module], capture_output=False) 
     return r
 
 def is_flatpak() -> bool:
@@ -322,7 +326,14 @@ def can_escape_sandbox() -> bool:
     except subprocess.CalledProcessError as _:
         return False
     return True
-
+def get_streaming_extra_setting():
+            return {
+                "key": "streaming",
+                "title": _("Message Streaming"),
+                "description": _("Gradually stream message output"),
+                "type": "toggle",
+                "default": True
+            }
 def override_prompts(override_setting, PROMPTS):
     prompt_list = {}
     for prompt in PROMPTS:

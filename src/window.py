@@ -44,7 +44,10 @@ class MainWindow(Gtk.ApplicationWindow):
             os.makedirs(self.extension_path)
         if not os.path.exists(self.extensions_cache):
             os.makedirs(self.extensions_cache)
-        sys.path.append(self.pip_directory)
+        if os.path.isdir(self.pip_directory):
+            sys.path.append(self.pip_directory)
+        else:
+            threading.Thread(target=self.init_pip_path, args=(sys.path,)).start()
 
         if not os.path.exists(self.path):
             os.makedirs(self.path)
@@ -359,6 +362,10 @@ class MainWindow(Gtk.ApplicationWindow):
             print(e)
         subprocess.run(['cp', '-a', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.directory, "avatars/live2d/web")])
 
+    def init_pip_path(self, path):
+        install_module("pip-install-test", self.pip_directory)
+        path.append(self.pip_directory)
+    
     def show_presentation_window(self):
         self.presentation_dialog = PresentationWindow("presentation", self.settings, self.directory, self)
         self.presentation_dialog.show()
@@ -1364,6 +1371,10 @@ class MainWindow(Gtk.ApplicationWindow):
         
         for prompt in self.bot_prompts:
             prompts.append(replace_variables(prompt))
+        if not self.model.is_installed():
+            print("Installing the model...")
+            self.model.install()
+            self.update_settings() 
        
         # Get smart prompts
         if self.smart_prompt_enabled:
