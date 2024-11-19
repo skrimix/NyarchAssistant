@@ -148,7 +148,7 @@ class PresentationWindow(Adw.Window):
                     {
                         "label": "Learn more",
                         "classes": ["suggested-action"],
-                        "callback": lambda x: subprocess.Popen(["xdg-open", "https://github.com/qwersyk/nyarchassistant?tab=readme-ov-file#permission"]),
+                        "callback": lambda x: subprocess.Popen(["xdg-open", "https://github.com/nyarchlinux/nyarchassistant?tab=readme-ov-file#permission"]),
                     }
                 ]
             })

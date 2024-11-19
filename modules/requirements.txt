@@ -1,6 +1,5 @@
 requests
 pillow
-g4f==0.3.3.4
 requests-toolbelt
 curl_cffi
 gpt4all

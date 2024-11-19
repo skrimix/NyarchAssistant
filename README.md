@@ -48,7 +48,7 @@ Nyarch Assistant supports extensions to enhance its functionality. You can eithe
 ![beta](https://raw.githubusercontent.com/qwersyk/Assets/main/beta.svg#gh-light-mode-only)
 ![beta](https://raw.githubusercontent.com/qwersyk/Assets/main/beta-dark.svg#gh-dark-mode-only)
 
-1. Download the latest release from the [Github Actions](https://github.com/qwersyk/nyarchassistant/actions)
+1. Download the latest release from the [Github Actions](https://github.com/nyarchlinux/nyarchassistant/actions)
 2. Extract the downloaded package.
 3. Install a flatpak package.
 
