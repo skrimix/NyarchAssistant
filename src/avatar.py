@@ -1,8 +1,6 @@
 from abc import abstractmethod
-from os.path import abspath, isdir, isfile
-from typing import Any
-from gi.repository import Gtk, WebKit, GLib, GdkPixbuf
-from livepng.model import Semaphore
+from typing import Any, overload
+from gi.repository import Gtk, WebKit, GLib, GdkPixbuf, Gdk
 
 from .translator import TranslatorHandler
 
@@ -11,7 +9,6 @@ from .tts import TTSHandler
 import os, subprocess, threading, json
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from livepng import LivePNG
-from livepng.validator import ModelValidator
 from livepng.constants import FilepathOutput
 from pydub import AudioSegment
 from time import sleep
@@ -367,11 +364,42 @@ class LivePNGHandler(AvatarHandler):
         return result
 
     def create_gtk_widget(self) -> Gtk.Widget:
-        self.image = Gtk.Picture()
-        self.image.set_vexpand(True)
-        self.image.set_hexpand(True)
+        overlay = Gtk.Overlay()
+        overlay.set_hexpand(True)
+        overlay.set_vexpand(True)
+        self.drawing_area = Gtk.DrawingArea()
+        self.drawing_area.set_hexpand(True)
+        self.drawing_area.set_vexpand(True)
+        def on_draw(widget, cr, width, height):
+            if self.pixbuf is None:
+                return
+            # Get the original dimensions of the image
+            original_width = self.pixbuf.get_width()
+            original_height = self.pixbuf.get_height()
+
+            # Calculate the scaling factors while maintaining the aspect ratio
+            if original_width / original_height > width / height:
+                # Image is wider than the container
+                scale_factor = width / original_width
+            else:
+                # Image is taller than the container
+                scale_factor = height / original_height
+
+            # Calculate the new dimensions
+            new_width = int(original_width * scale_factor)
+            new_height = int(original_height * scale_factor)
+
+            # Scale the image to fit the drawing area
+            scaled_pixbuf = self.pixbuf.scale_simple(new_width, new_height, GdkPixbuf.InterpType.BILINEAR)
+            
+            x = (width - new_width) / 2
+            y = (height - new_height) / 2
+            # Draw the scaled image
+            Gdk.cairo_set_source_pixbuf(cr, scaled_pixbuf, x, y)
+            cr.paint()
+        self.drawing_area.set_draw_func(on_draw)
         self.__load_model()
-        return self.image
+        return self.drawing_area
 
     def set_expression(self, expression: str):
         self.model.set_current_expression(expression)
@@ -405,9 +433,11 @@ class LivePNGHandler(AvatarHandler):
 
     def __on_update(self, frame:str):
         if frame in self.cachedpixbuf:
-            GLib.idle_add(self.image.set_pixbuf, self.cachedpixbuf[frame])
+            pix = self.cachedpixbuf[frame]
         else:
-            GLib.idle_add(self.image.set_pixbuf, self.__load_image(frame))
+            pix = self.__load_image(frame)
+        self.pixbuf = pix
+        self.drawing_area.queue_draw()
 
     def preacache_images(self):
         self.cachedpixbuf = {}

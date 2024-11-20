@@ -84,6 +84,7 @@ class TTSHandler(Handler):
         self.stop()
         self._play_lock.acquire()
         self.on_start()
+        print(path)
         mixer.music.load(path)
         mixer.music.play()
         while mixer.music.get_busy():
