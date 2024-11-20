@@ -1039,9 +1039,7 @@ class NyarchApiHandler(OpenAIHandler):
         self.set_setting("api", "nya")
 
     def get_extra_settings(self) -> list:
-        plus = []
-        plus += [super().get_extra_settings()[3]]
-        return plus
+        return self.build_extra_settings("Nyarch",False, True, False, False, False, None, None, False, False)
 
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
         if prompt.startswith("```image") or  any(message.get("Message", "").startswith("```image") for message in history):
