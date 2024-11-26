@@ -59,13 +59,15 @@ class Settings(Adw.PreferencesWindow):
         help = Gtk.Button(css_classes=["flat"], icon_name="info-outline-symbolic")
         help.connect("clicked", lambda button : Popen(get_spawn_command() + ["xdg-open", "https://github.com/qwersyk/Newelle/wiki/User-guide-to-the-available-LLMs"]))
         self.LLM.set_header_suffix(help)
+        
         # Add LLMs
         self.general_page.add(self.LLM)
-        self.llmbuttons = [];
+        self.llmbuttons = []
         group = Gtk.CheckButton()
         selected = self.settings.get_string("language-model")
         others_row = Adw.ExpanderRow(title=_('Other LLMs'), subtitle=_("Other available LLM providers"))
-        for model_key in AVAILABLE_LLMS:
+        for model_key in AVAILABLE_LLMS: 
+           # Time enlapse calculation
            row = self.build_row(AVAILABLE_LLMS, model_key, selected, group)
            if "secondary" in AVAILABLE_LLMS[model_key] and AVAILABLE_LLMS[model_key]["secondary"]:
                others_row.add_row(row)
@@ -87,7 +89,6 @@ class Settings(Adw.PreferencesWindow):
         for tts_key in AVAILABLE_TTS:
            row = self.build_row(AVAILABLE_TTS, tts_key, selected, group) 
            tts_program.add_row(row)
-        
         # Build the Translators settings
         group = Gtk.CheckButton()
         selected = self.settings.get_string("translator")

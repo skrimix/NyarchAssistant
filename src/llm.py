@@ -165,6 +165,7 @@ class G4FHandler(LLMHandler):
         return ["g4f"]
     
     def is_installed(self) -> bool:
+        return False
         if find_module("g4f") is not None:
            from g4f.version import utils       
            if utils.current_version != self.version:
@@ -761,6 +762,9 @@ class OpenAIHandler(LLMHandler):
     def get_extra_requirements() -> list:
         return ["openai"]
 
+    def is_installed(self):
+        return True
+
     def supports_vision(self) -> bool:
         return True
 
@@ -1038,6 +1042,9 @@ class NyarchApiHandler(OpenAIHandler):
         self.set_setting("advanced_params", False)
         self.set_setting("api", "nya")
 
+    def get_models(self):
+        pass
+    
     def get_extra_settings(self) -> list:
         return self.build_extra_settings("Nyarch",False, True, False, False, False, None, None, False, False)
 

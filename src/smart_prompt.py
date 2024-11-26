@@ -93,7 +93,7 @@ class LogicalRegressionHandler(SmartPromptHandler):
             {
                 "key": "dimension",
                 "title": _("Model Dimension"),
-                "description": _("Use bigger models for bigger accuracy, models bigger than 256 will donwnload on first message sent, < 100MB"),
+                "description": _("Use bigger models for bigger accuracy less than 100MB"),
                 "type": "combo",
                 "default": 256,
                 "values": (("NyaMedium_0.3_256","256"), ("NyaMedium_0.3_512","512"), ("NyaMedium_0.3_1024", "1024"),)
@@ -140,6 +140,7 @@ class LogicalRegressionHandler(SmartPromptHandler):
                 self.model = pickle.load(f)
 
     def is_installed(self) -> bool:
+        return True 
         if not find_module("sklearn"):
             return False
         if not os.path.isfile(self.model_path):
