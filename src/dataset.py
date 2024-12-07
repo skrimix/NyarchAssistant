@@ -197,6 +197,11 @@ To install ollama, you can run:
 ```console
 sudo pacman -S ollama
 ```
+If you have a Nvidia GPU, remember to install ollama-cuda for better performances:
+```console 
+sudo pacman -S ollama-cuda
+```
+
 Then you can run ollama by executing this command:
 ```console
 ollama serve
@@ -205,7 +210,12 @@ After that you can download models from https://ollama.com/library, for example:
 ```console
 ollama pull llama3.1
 ```
-("""
+
+You can also install custom models from HuggingFace:
+```console
+ollama pull hf.co/{username}/{repository}
+```
+"""
 }
 
 if is_flatpak():

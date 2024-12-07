@@ -110,7 +110,8 @@ class TTSHandler(Handler):
         voice = self.get_setting("voice")
         if not voice:
             if not self.voices:
-                return None return self.voices[0][1]
+                return None
+            return self.voices[0][1]
         else:
             return voice
 
