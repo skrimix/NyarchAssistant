@@ -158,7 +158,7 @@ class LLMHandler(Handler):
 class G4FHandler(LLMHandler):
     """Common methods for g4f models"""
     key = "g4f"
-    version = "0.3.3.4" 
+    version = "0.3.5.8" 
     
     @staticmethod
     def get_extra_requirements() -> list:
@@ -218,6 +218,7 @@ class G4FHandler(LLMHandler):
             return response.choices[0].message.content
         except Exception as e:
             return f"Error: {e}"
+    
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
         model = self.get_setting("model")
         img = None
@@ -1070,7 +1071,7 @@ class MistralHandler(OpenAIHandler):
 
 class GroqHandler(OpenAIHandler):
     key = "groq"
-    default_models = (("llama-3.1-70B-versatile", "llama-3.1-70B-versatile" ), ) 
+    default_models = (("llama-3.3-70B-versatile", "llama-3.3-70B-versatile" ), ) 
     def supports_vision(self) -> bool:
         return "vision" in self.get_setting("model")
 

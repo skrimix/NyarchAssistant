@@ -1,5 +1,6 @@
+
 from .llm import BingHandler, GPT4AllHandler, GroqHandler, NyarchApiHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler
-from .tts import VoiceVoxHanlder, gTTSHandler, EspeakHandler, CustomTTSHandler, VitsHandler, EdgeTTSHandler
+from .tts import VoiceVoxHanlder,ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler, VitsHandler, EdgeTTSHandler
 from .stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperHandler, WitAIHandler, VoskHandler, CustomSRHandler
 
 from .avatar import Live2DHandler, LivePNGHandler
@@ -153,6 +154,12 @@ AVAILABLE_TTS = {
         "title": _("Google TTS"),
         "description": _("Google's text to speech"),
         "class": gTTSHandler,
+    },
+    "elevenlabs": {
+        "key": "elevenlabs",
+        "title": _("ElevenLabs TTS"),
+        "description": _("Natural sounding TTS"),
+        "class": ElevenLabs,
     },
     "voicevox": {
         "key": "voicevox",
