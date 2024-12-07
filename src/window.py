@@ -1431,18 +1431,18 @@ class MainWindow(Gtk.ApplicationWindow):
                     if self.translation_enabled and self.translation_handler in AVAILABLE_TRANSLATORS:
                         translator = AVAILABLE_TRANSLATORS[self.translation_handler]["class"](self.settings, self.directory)          
                     if self.avatar_enabled and self.avatar_handler is not None:
-                        self.avatar_handler.speak_with_tts(message, self.tts, translator)
+                        tts_thread = threading.Thread(target=self.avatar_handler.speak_with_tts, args=(message, self.tts, translator))
                     else:
                         if translator is not None:
                             message = translator.translate(message)
                         tts_thread = threading.Thread(target=self.tts.play_audio, args=(message, ))
-                        tts_thread.start()
-                        def restart_recording():
-                            if tts_thread is not None:
-                                tts_thread.join()
-                            GLib.idle_add(self.start_recording, self.recording_button)
-                        if self.automatic_stt:
-                            threading.Thread(target=restart_recording).start()
+                    tts_thread.start()
+                    def restart_recording():
+                        if tts_thread is not None:
+                            tts_thread.join()
+                        GLib.idle_add(self.start_recording, self.recording_button)
+                    if self.automatic_stt:
+                        threading.Thread(target=restart_recording).start()
 
 
     def create_streaming_message_label(self):
