@@ -11,19 +11,19 @@
 	<summary>Your AI-Powered System Assistant</summary>
 	<screenshots>
 		<screenshot type="default">
-			<image>https://raw.githubusercontent.com/qwersyk/nyarchassistant/master/data/screenshots/screenshot1.png</image>
+			<image>https://raw.githubusercontent.com/nyarchlinux/nyarchassistant/master/data/screenshots/screenshot1.png</image>
 			<caption>Chat page 1</caption>
 		</screenshot>
 		<screenshot>
-			<image>https://raw.githubusercontent.com/qwersyk/nyarchassistant/master/data/screenshots/screenshot2.png</image>
+			<image>https://raw.githubusercontent.com/nyarchlinux/nyarchassistant/master/data/screenshots/screenshot2.png</image>
 			<caption>Chat page 2</caption>
 		</screenshot>
  		<screenshot>
-			<image>https://raw.githubusercontent.com/qwersyk/nyarchassistant/master/data/screenshots/screenshot3.png</image>
+			<image>https://raw.githubusercontent.com/nyarchlinux/nyarchassistant/master/data/screenshots/screenshot3.png</image>
 			<caption>Chat page 3</caption>
 		</screenshot>
   		<screenshot>
-			<image>https://raw.githubusercontent.com/qwersyk/nyarchassistant/master/data/screenshots/screenshot4.png</image>
+			<image>https://raw.githubusercontent.com/nyarchlinux/nyarchassistant/master/data/screenshots/screenshot4.png</image>
 			<caption>Chat page 4</caption>
 		</screenshot>
 	</screenshots>
@@ -31,8 +31,8 @@
     <color type="primary" scheme_preference="light">#99c1f1</color>
     <color type="primary" scheme_preference="dark">#003d81</color>
   </branding>
-	<url type="homepage">https://github.com/qwersyk/nyarchassistant</url>
-	<url type="bugtracker">https://github.com/qwersyk/nyarchassistant/issues</url>
+	<url type="homepage">https://github.com/nyarchlinux/nyarchassistant</url>
+	<url type="bugtracker">https://github.com/nyarchlinux/nyarchassistant/issues</url>
 	<content_rating type="oars-1.0" />
 	<releases>
 	    <release version="0.4.1" date="2024-11-16">
@@ -96,6 +96,6 @@
 			</description>
 		</release>
 	</releases>
-	<developer_name>Qwersyk</developer_name>
-	<update_contact>qsk@gmx.at</update_contact>
+	<developer_name>NyarchLinux</developer_name>
+	<update_contact>https://nyarchlinux.moe/#contact</update_contact>
 </component>
