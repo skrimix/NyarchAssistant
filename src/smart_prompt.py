@@ -115,8 +115,10 @@ class LogicalRegressionHandler(SmartPromptHandler):
     def check_files(self):
         default_model = f"NyaMedium_{self.version}_{256}.pkl"
         if not os.path.isfile(os.path.join(self.models_dir, default_model)):
+            os.makedirs(self.models_dir, exist_ok=True)
             shutil.copy(os.path.join(BASE_PATH + "/smart-prompts", default_model), os.path.join(self.models_dir, default_model))
         if not os.path.isfile(os.path.expanduser("~/.cache/wordllama/tokenizers/l2_supercat_tokenizer_config.json")):
+            os.makedirs(os.path.expanduser("~/.cache/wordllama/tokenizers/"), exist_ok=True)
             shutil.copy(os.path.join(BASE_PATH + "/smart-prompts", "l2_supercat_tokenizer_config.json"), os.path.expanduser("~/.cache/wordllama/tokenizers/l2_supercat_tokenizer_config.json"))
 
     @staticmethod
