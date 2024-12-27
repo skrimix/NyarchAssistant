@@ -3,6 +3,11 @@ from typing import Any
 
 from gi.repository import Gtk
 
+from .avatar import AvatarHandler
+from .constants import AVAILABLE_AVATARS, AVAILABLE_SMART_PROMPTS, AVAILABLE_TRANSLATORS
+from .smart_prompt import SmartPromptHandler
+from .translator import TranslatorHandler
+
 from .handler import Handler
 
 from .llm import LLMHandler
@@ -80,6 +85,51 @@ class NewelleExtension(Handler):
             }
         """
         return [] 
+
+    def get_translators_handlers(self) -> list[dict]:
+        """
+        Returns the list of Translators handlers
+
+        Returns:
+            list: list of Translators handlers in this format
+            {
+                "key": "key of the handler",
+                "title": "title of the handler",
+                "description": "description of the handler",
+                "class": TranslatorHandler - The class of the handler,
+            }
+        """
+        return [] 
+
+    def get_avatar_handlers(self) -> list[dict]:
+        """
+        Returns the list of Avatar handlers
+
+        Returns:
+            list: list of Avatar handlers in this format
+            {
+                "key": "key of the handler",
+                "title": "title of the handler",
+                "description": "description of the handler",
+                "class": AvatarHandler - The class of the handler,
+            }
+        """
+        return [] 
+
+    def get_smart_prompts_handlers(self) -> list[dict]:
+        """
+        Returns the list of Smart Prompts handlers
+
+        Returns:
+            list: list of Smart Prompts handlers in this format
+            {
+                "key": "key of the handler",
+                "title": "title of the handler",
+                "description": "description of the handler",
+                "class": SmartPromptsHandler - The class of the handler,
+            }
+        """
+        return []
 
     def get_additional_prompts(self) -> list:
         """
@@ -178,7 +228,7 @@ class ExtensionLoader:
         for file in os.listdir(self.extension_dir):
             if file.endswith(".py"):
                 try: 
-                    spec = importlib.util.spec_from_file_location("newelle.name", os.path.join(self.extension_dir, file))
+                    spec = importlib.util.spec_from_file_location("nyarchassistant.name", os.path.join(self.extension_dir, file))
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
 
@@ -225,7 +275,17 @@ class ExtensionLoader:
                 AVAILABLE_TTS[handler["key"]] = handler
             handlers = extension.get_stt_handlers()
             for handler in handlers:
-                AVAILABLE_STT[handler["key"]] = handler 
+                AVAILABLE_STT[handler["key"]] = handler
+            handler = extension.get_translators_handlers()
+            for h in handler:
+                AVAILABLE_TRANSLATORS[h["key"]] = h
+            handler = extension.get_smart_prompts_handlers()
+            for h in handler:
+                AVAILABLE_SMART_PROMPTS[h["key"]] = h
+            handler = extension.get_avatar_handlers()
+            for h in handler:
+                AVAILABLE_AVATARS[h["key"]] = h
+
 
     def add_prompts(self, PROMPTS, AVAILABLE_PROMPTS):
         """Add the prompts of each extension to the available prompts
@@ -292,6 +352,7 @@ class ExtensionLoader:
         Args:
             file_path: the path of the file to copy 
         """
+        os.makedirs(os.path.join(self.extension_dir, os.path.basename(file_path)), exist_ok=True)
         shutil.copyfile(file_path, os.path.join(self.extension_dir, os.path.basename(file_path)))
 
     def get_extension_by_id(self, id: str) -> NewelleExtension | None:
@@ -362,6 +423,17 @@ class ExtensionLoader:
         for h in extension.get_stt_handlers():
             if not self.check_handler(h, STTHandler):
                 return False
+        for h in extension.get_avatar_handlers():
+            if not self.check_handler(h, AvatarHandler):
+                return False
+        for h in extension.get_smart_prompts_handlers():
+            if not self.check_handler(h, SmartPromptHandler):
+                return False
+        for h in extension.get_translators_handlers():
+            if not self.check_handler(h, TranslatorHandler):
+                return False
+
+
         for p in extension.get_additional_prompts():
             if not self.check_prompt(p):
                 return False
