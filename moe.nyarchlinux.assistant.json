@@ -25,6 +25,7 @@
         "*.la",
         "*.a"
     ],
+
     "modules" : [
     	"modules/git.json",
       "modules/python3-requests.json",

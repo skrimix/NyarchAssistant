@@ -652,6 +652,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.load_avatar()
 
     def on_avatar_button_toggled(self, toggle_button):
+        self.focus_input()
         self.flap_button_avatar.set_active(False)
         if self.avatar_flap.get_name() == "visible":
             self.avatar_flap.set_name("hide")

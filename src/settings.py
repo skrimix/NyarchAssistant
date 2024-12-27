@@ -91,8 +91,6 @@ class Settings(Adw.PreferencesWindow):
         for tts_key in AVAILABLE_TTS:
            row = self.build_row(AVAILABLE_TTS, tts_key, selected, group) 
            tts_program.add_row(row)
-<<<<<<< HEAD
-=======
         # Build the Translators settings
         group = Gtk.CheckButton()
         selected = self.settings.get_string("translator")
@@ -105,7 +103,6 @@ class Settings(Adw.PreferencesWindow):
             translator_program.add_row(row)
         self.Voicegroup.add(translator_program)
         
->>>>>>> master
         # Build the Speech to Text settings
         stt_engine = Adw.ExpanderRow(title=_('Speech To Text Engine'), subtitle=_("Choose which speech recognition engine you want"))
         self.Voicegroup.add(stt_engine)
@@ -471,12 +468,7 @@ class Settings(Adw.PreferencesWindow):
             return
         self.settings.set_string(setting_name, button.get_name())
 
-<<<<<<< HEAD
     def add_extra_settings(self, constants : dict[str, Any], handler : Handler, row : Adw.ExpanderRow, nested_settings : list | None = None):
-=======
-
-    def add_extra_settings(self, constants : dict[str, Any], handler : Handler, row : Adw.ExpanderRow):
->>>>>>> master
         """Buld the extra settings for the specified handler. The extra settings are specified by the method get_extra_settings 
             Extra settings format:
             Required parameters:
