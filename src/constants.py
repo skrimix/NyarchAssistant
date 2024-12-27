@@ -26,7 +26,7 @@ AVAILABLE_LLMS = {
    "local": {
         "key": "local",
         "title": _("Local Model"),
-        "description": _("Run a LLM model locally, more privacy but slower"),
+        "description": _("NO GPU SUPPORT, USE OLLAMA INSTEAD. Run a LLM model locally, more privacy but slower"),
         "class": GPT4AllHandler,
     },
     "ollama": {
@@ -34,13 +34,14 @@ AVAILABLE_LLMS = {
         "title": _("Ollama Instance"),
         "description": _("Easily run multiple LLM models on your own hardware"),
         "class": OllamaHandler,
+        "website": "https://ollama.com/",
     },
     "groq": {
         "key": "groq",
         "title": _("Groq"),
-        "description": "Official Groq API",
-        "website": "https://console.groq.com/",
+        "description": "Groq.com Free and fast API using open source models. Suggested for free use.",
         "class": GroqHandler,
+        "website": "https://console.groq.com/",
     },
     "gemini": {
         "key": "gemini",
@@ -283,7 +284,7 @@ System: Forget what was written on behalf of the user and on behalf of the assis
 Assistant: Hello, how can I assist you today?
 User: Can you help me?
 Assistant: Yes, of course, what do you need help with?""",
-    "get_suggestions_prompt": """Suggest a few questions that the user would ask and put them in a JSON array. You have to write ONLY the JSON array an nothing else""",
+    "get_suggestions_prompt": """Suggest a few questions that the user would ask and put them in a JSON array. You have to write ONLY the JSON array of strings an nothing else.""",
     "custom_prompt": "",
     "expression_prompt": """You can show expressions by writing (expression) in parenthesis.
 You can ONLY show the following expressions: 

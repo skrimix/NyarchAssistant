@@ -11,7 +11,7 @@ from .gtkobj import File, CopyBox, BarChartBox, MultilineEntry, apply_css_to_wid
 from .constants import AVAILABLE_LLMS, AVAILABLE_SMART_PROMPTS, AVAILABLE_TRANSLATORS, EXTRA_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_PROMPTS
 from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
 from .stt import AudioRecorder
-from .extra import ReplaceHelper, get_spawn_command, is_flatpak, markwon_to_pango, override_prompts, replace_variables
+from .extra import ReplaceHelper, get_spawn_command, is_flatpak, markwon_to_pango, override_prompts, replace_variables, remove_markdown
 import threading
 import posixpath
 import shlex,json, base64
@@ -67,6 +67,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.first_load = False
 
         # Build Window
+        self.edit_entries = {}
+
         self.set_titlebar(Gtk.Box())
         self.chat_panel = Gtk.Box(hexpand_set=True, hexpand=True)
         self.chat_panel.set_size_request(450, -1)
@@ -371,12 +373,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.presentation_dialog = PresentationWindow("presentation", self.settings, self.directory, self)
         self.presentation_dialog.show()
 
-    def mute_tts(self, button):
+    def mute_tts(self, button: Gtk.Button):
+        self.focus_input()
         if self.tts_enabled:
             self.tts.stop()
         if self.avatar_handler is not None:
             self.avatar_handler.stop()
-        button.set_visible(False)
 
     def focus_input(self):
         self.input_panel.input_panel.grab_focus()
@@ -636,8 +638,9 @@ class MainWindow(Gtk.ApplicationWindow):
             header_widget.pack_end(self.headerbox)
         elif type(header_widget) is Gtk.Box:
             self.explorer_panel_headerbox.append(self.headerbox)
-   
-    def on_flap_button_toggled(self, toggle_button):
+    
+    def on_flap_button_toggled(self, toggle_button):  
+        self.focus_input()
         self.flap_button_left.set_active(True)
         if self.main_program_block.get_name() == "visible":
             self.main_program_block.set_name("hide")
@@ -649,6 +652,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.load_avatar()
 
     def on_avatar_button_toggled(self, toggle_button):
+        self.focus_input()
         self.flap_button_avatar.set_active(False)
         if self.avatar_flap.get_name() == "visible":
             self.avatar_flap.set_name("hide")
@@ -760,6 +764,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.notification_block.add_toast(Adw.Toast(title=_('You can no longer regenerate the message.'), timeout=2))
     def update_history(self):
         # Update UI
+        self.focus_input()
+        initial_scroll = self.chats_buttons_scroll_block.get_vadjustment().get_value()
         list_box = Gtk.ListBox(css_classes=["separators","background"])
         list_box.set_selection_mode(Gtk.SelectionMode.NONE)
         self.chats_buttons_scroll_block.set_child(list_box)
@@ -802,11 +808,11 @@ class MainWindow(Gtk.ApplicationWindow):
                 button.set_has_frame(True)
             else:
                 button.connect("clicked", self.chose_chat)
-            list_box.append(box)
             box.append(button)
             box.append(create_chat_clone_button)
             box.append(generate_chat_name_button)
             box.append(delete_chat_button)
+            list_box.append(box) 
 
     def remove_chat(self, button):
         if int(button.get_name()) < self.chat_id:
@@ -825,8 +831,8 @@ class MainWindow(Gtk.ApplicationWindow):
             button.set_child(spinner)
             button.set_can_target(False)
             button.set_has_frame(True)
-            # TODO: take the history for the correct chat
-            self.model.set_history([], self)
+             
+            self.model.set_history([], self.get_history(self.chats[int(button.get_name())]["chat"]))
             name = self.model.generate_chat_name(self.prompts["generate_name_prompt"])
             if name != "Chat has been stopped":
                 self.chats[int(button.get_name())]["name"] = name
@@ -1011,6 +1017,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 subprocess.run(['xdg-open', os.path.expanduser(self.main_path + "/" + button.get_name())])
         else:
             self.notification_block.add_toast(Adw.Toast(title=_('File not found'), timeout=2))
+
     def handle_main_block_change(self, *data):
         if (self.main.get_folded()):
             self.chat_panel_header.set_show_end_title_buttons(not self.main_program_block.get_reveal_flap())
@@ -1179,7 +1186,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.check_streams["chat"] = False
         GLib.idle_add(self.scrolled_chat)
 
-    def show_message(self, message_label, restore=False,id_message=-1, is_user=False):
+    def show_message(self, message_label, restore=False,id_message=-1, is_user=False, return_widget=False):
+        editable = True
         if message_label == " " * len(message_label) and not is_user:
             if not restore:
                 self.chat.append({"User": "Assistant", "Message": message_label})
@@ -1213,7 +1221,7 @@ class MainWindow(Gtk.ApplicationWindow):
                                 if widget is not None:
                                     box.append(widget)
                                 else:
-
+                                    editable = False
                                     if id_message==-1:
                                         id_message = len(self.chat)-1
                                     id_message+=1
@@ -1224,6 +1232,7 @@ class MainWindow(Gtk.ApplicationWindow):
                                     )
                                     text_expander.set_expanded(False)
                                     reply_from_the_console = None
+                                    
                                     if self.chat[min(id_message, len(self.chat) - 1)]["User"] == "Console":
                                         reply_from_the_console = self.chat[min(id_message, len(self.chat) - 1)]["Message"]
                                     def getresponse():
@@ -1268,6 +1277,7 @@ class MainWindow(Gtk.ApplicationWindow):
                                 box.append(image)
 
                         elif code_language == "console" and not is_user:
+                            editable = False
                             if id_message==-1:
                                 id_message = len(self.chat)-1
                             id_message+=1
@@ -1346,7 +1356,10 @@ class MainWindow(Gtk.ApplicationWindow):
             if start_table_index != -1:
                 box.append(self.create_table(table_string[start_table_index:len(table_string)]))
             if not has_terminal_command:
-                self.add_message("Assistant" if not is_user else "User", box)
+                if not return_widget:
+                    self.add_message("Assistant" if not is_user else "User", box, id_message, editable)
+                else:
+                    return box
                 if not restore:
                     GLib.idle_add(self.update_button_text)
                     self.status = True
@@ -1362,10 +1375,12 @@ class MainWindow(Gtk.ApplicationWindow):
         GLib.idle_add(self.scrolled_chat)
         self.save_chat()
 
-    def get_history(self) -> list[dict[str, str]]: 
+    def get_history(self, chat = None) -> list[dict[str, str]]: 
+        if chat is None:
+            chat = self.chat
         history = []
         count = self.memory
-        for msg in self.chat[:-1]:
+        for msg in chat[:-1]:
             if count == 0:
                 break
             if msg["User"] == "Console" and msg["Message"] == "None":
@@ -1406,8 +1421,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.streamed_message = ""
             self.curr_label = ""
             GLib.idle_add(self.create_streaming_message_label)
-            self.streaming_label = None
-            message_label = self.model.send_message_stream(self, self.chat[-1]["Message"], self.update_message)
+            self.streaming_lable = None
+            message_label = self.model.send_message_stream(self, self.chat[-1]["Message"], self.update_message, [stream_number_variable])
             try:
                 self.streaming_box.get_parent().set_visible(False)
             except:
@@ -1422,8 +1437,8 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.tts_enabled:
             if self.tts_program in AVAILABLE_TTS:
                 # Remove text in *text*
-                message = re.sub(r"\*(.*?)\*", "", message_label)
-                message = re.sub(r"```.*?```", "", message, flags=re.DOTALL)
+                message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
+                message = remove_markdown(message)
                 # Remove text in *text*
                 if not(not message.strip() or message.isspace() or all(char == '\n' for char in message)):
                     # Translate the message
@@ -1454,8 +1469,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.streaming_label = Gtk.TextView(wrap_mode=Gtk.WrapMode.WORD_CHAR, editable=False, hexpand=True)
         scrolled_window.add_css_class("scroll")
         self.streaming_label.add_css_class("scroll")
-        apply_css_to_widget(scrolled_window, ".scroll { background-color: rgba(0,0,0,0)}")
-        apply_css_to_widget(self.streaming_label, ".scroll { background-color: rgba(0,0,0,0)}")
+        apply_css_to_widget(scrolled_window, ".scroll { background-color: rgba(0,0,0,0);}")
+        apply_css_to_widget(self.streaming_label, ".scroll { background-color: rgba(0,0,0,0);}")
         scrolled_window.set_child(self.streaming_label)
         text_buffer = self.streaming_label.get_buffer()
         tag = text_buffer.create_tag("no-background", background_set=False, paragraph_background_set=False)
@@ -1463,7 +1478,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.streaming_box=self.add_message("Assistant", scrolled_window)
         self.streaming_box.set_overflow(Gtk.Overflow.VISIBLE)
     
-    def update_message(self, message):  
+    def update_message(self, message, stream_number_variable):  
+        if self.stream_number_variable != stream_number_variable:
+            return
         self.streamed_message = message
         if self.streaming_label is not None:
             added_message = message[len(self.curr_label):]
@@ -1479,36 +1496,119 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.streaming_label.set_size_request(min(width, wmax-150), -1)
             GLib.idle_add(idle_edit)
 
-    def edit_message(self, gesture, data, x, y):
+    def edit_message(self, gesture, data, x, y, box: Gtk.Box, apply_edit_stack: Gtk.Stack):
         if not self.status:
             self.notification_block.add_toast(Adw.Toast(title=_("You can't edit a message while the program is running."), timeout=2))
             return False
-        self.input_panel.set_text(self.chat[int(gesture.get_name())]["Message"])
-        self.input_panel.grab_focus()
-        self.chats.append({"name": self.chats[self.chat_id]["name"], "chat": self.chat[0:int(gesture.get_name())]})
-        self.stream_number_variable += 1
-        self.chats[self.chat_id]["chat"] = self.chat
-        self.chat_id = len(self.chats) - 1
-        self.chat = self.chats[self.chat_id]["chat"]
-        self.update_history()
-        self.show_chat()
-        GLib.idle_add(self.update_button_text)
 
-    def add_message(self, user, message=None, id_message=0):
+        old_message = box.get_last_child()
+        entry = MultilineEntry()
+        self.edit_entries[int(gesture.get_name())] = entry
+
+        wmax = old_message.get_size(Gtk.Orientation.HORIZONTAL)
+        hmax = old_message.get_size(Gtk.Orientation.VERTICAL)
+        entry.set_text(self.chat[int(gesture.get_name())]["Message"])
+        entry.set_margin_end(10)
+        entry.set_margin_top(10)
+        entry.set_margin_start(10)
+        entry.set_margin_bottom(10)
+        entry.set_size_request(wmax, hmax)
+        apply_edit_stack.set_visible_child_name("apply")
+        entry.set_on_enter(lambda entry: self.apply_edit_message(gesture, box, apply_edit_stack)) 
+        box.remove(old_message)
+        box.append(entry)
+
+    def apply_edit_message(self, gesture, box: Gtk.Box, apply_edit_stack: Gtk.Stack):
+        entry = self.edit_entries[int(gesture.get_name())]
+        self.focus_input()
+        # Delete message
+        if entry.get_text() == "":
+            self.delete_message(gesture, box)
+            return
+
+        apply_edit_stack.set_visible_child_name("edit")
+        self.chat[int(gesture.get_name())]["Message"] = entry.get_text()
+        self.save_chat()
+        box.remove(entry)
+        box.append(self.show_message(entry.get_text(), restore=True, id_message=int(gesture.get_name()), is_user=self.chat[int(gesture.get_name())]["User"] == "User", return_widget=True))
+   
+    def cancel_edit_message(self, gesture, box: Gtk.Box, apply_edit_stack: Gtk.Stack):
+        entry = self.edit_entries[int(gesture.get_name())]
+        self.focus_input()
+        apply_edit_stack.set_visible_child_name("edit")
+        box.remove(entry)
+        box.append(self.show_message(self.chat[int(gesture.get_name())]["Message"], restore=True, id_message=int(gesture.get_name()), is_user=self.chat[int(gesture.get_name())]["User"] == "User", return_widget=True))
+    
+    def delete_message(self, gesture, box):
+        del self.chat[int(gesture.get_name())]
+        self.chat_list_block.remove(box.get_parent())
+        self.save_chat()
+        self.show_chat()
+
+    def build_edit_box(self, box, id):
+        edit_box = Gtk.Box()
+        apply_box = Gtk.Box()
+        
+        # Apply box
+        apply_edit_stack = Gtk.Stack()
+        apply_button = Gtk.Button(icon_name="check-plain-symbolic", css_classes=["flat", "success"], valign=Gtk.Align.CENTER, name=id)
+        apply_button.connect("clicked", self.apply_edit_message,box,apply_edit_stack)
+        cancel_button = Gtk.Button(icon_name="circle-crossed-symbolic", css_classes=["flat", "destructive-action"], valign=Gtk.Align.CENTER, name=id)
+        cancel_button.connect("clicked", self.cancel_edit_message,box,apply_edit_stack)
+        apply_box.append(apply_button)
+        apply_box.append(cancel_button)
+
+        # Edit box
+        button = Gtk.Button(icon_name="document-edit-symbolic", css_classes=["flat", "success"], valign=Gtk.Align.CENTER, name=id)
+        button.connect("clicked", self.edit_message, None, None, None, box, apply_edit_stack)
+        remove_button = Gtk.Button(icon_name="user-trash-symbolic", css_classes=["flat", "destructive-action"], valign=Gtk.Align.CENTER, name=id)
+        remove_button.connect("clicked", self.delete_message, box)
+        edit_box.append(button)
+        edit_box.append(remove_button)
+        
+        apply_edit_stack.add_named(apply_box, "apply")
+        apply_edit_stack.add_named(edit_box, "edit")
+        apply_edit_stack.set_visible_child_name("edit")
+        return edit_box, apply_edit_stack
+
+    def add_message(self, user, message=None, id_message=0, editable=False):
         box = Gtk.Box(css_classes=["card"], margin_top=10, margin_start=10, margin_bottom=10, margin_end=10,
-                      halign=Gtk.Align.START)
-        if user == "User":
+                      halign=Gtk.Align.START) 
+        if editable:
+            edit_box, apply_edit_stack = self.build_edit_box(box, str(id_message))
             evk = Gtk.GestureClick.new()
-            evk.connect("pressed", self.edit_message)
+            evk.connect("pressed", self.edit_message, box, apply_edit_stack)
             evk.set_name(str(id_message))
             evk.set_button(3)
             box.add_controller(evk)
-            box.append(Gtk.Label(label=user + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
-                                 css_classes=["accent", "heading"]))
+            ev = Gtk.EventControllerMotion.new() 
+
+            stack = Gtk.Stack()
+            ev.connect("enter", lambda x,y,data: stack.set_visible_child_name("edit"))
+            ev.connect("leave", lambda data: stack.set_visible_child_name("label"))
+            box.add_controller(ev)
+
+        if user == "User":
+            label = Gtk.Label(label=user + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
+                                 css_classes=["accent", "heading"]) 
+            if editable: 
+                stack.add_named(label, "label")
+                stack.add_named(apply_edit_stack, "edit")
+                stack.set_visible_child_name("label")
+                box.append(stack)
+            else:
+                box.append(label)
             box.set_css_classes(["card", "user"])
-        if user == "Assistant":
-            box.append(Gtk.Label(label=user + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
-                                 css_classes=["warning", "heading"]))
+        if user == "Assistant": 
+            label = Gtk.Label(label=user + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
+                                 css_classes=["warning", "heading"])
+            if editable: 
+                stack.add_named(label, "label")
+                stack.add_named(apply_edit_stack, "edit")
+                stack.set_visible_child_name("label")
+                box.append(stack)
+            else:
+                box.append(label)
             box.set_css_classes(["card", "assistant"])
         if user == "Done":
             box.append(Gtk.Label(label="Assistant: ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
