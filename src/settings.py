@@ -316,9 +316,6 @@ class Settings(Adw.PreferencesWindow):
             button.set_sensitive(False)
         row.add_prefix(button)
 
-        if "website" in model:
-            wbbutton = self.create_web_button(model["website"])
-            row.add_suffix(wbbutton)
         return row
 
     def cache_handlers(self):
