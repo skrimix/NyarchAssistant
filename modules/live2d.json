@@ -1,0 +1,25 @@
+{
+  "name": "live2d",
+  "buildsystem": "simple",
+  "build-commands": [
+    "rm -rf ${FLATPAK_DEST}/extra/config/avatar/live2d/web || echo ok",
+    "mkdir -p ${FLATPAK_DEST}/extra/config/avatar/live2d/web",
+    "tar -xJf download.tar.xz -C ${FLATPAK_DEST}/extra/config/avatar/live2d/web --no-same-owner",
+    "mkdir -p ${FLATPAK_DEST}/data/live2d",
+    "mv ${FLATPAK_DEST}/extra/config/avatar/live2d/web ${FLATPAK_DEST}/data/live2d"
+  ],
+  "sources" : [
+    {
+      "type": "file",
+      "url": "https://github.com/NyarchLinux/live2d-lipsync-viewer/releases/download/0.2/pack.tar.xz",
+      "sha256": "df931a60542a67a6bd98055a5634ff2b4932a59eed34b696905e68533fb8c54a",
+      "dest-filename": "download.tar.xz"
+    }
+  ],
+    "build-options": {
+    	"build-args": [
+    		"--share=network"
+    	]
+    },
+  "modules": []
+}

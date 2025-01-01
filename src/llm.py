@@ -150,82 +150,6 @@ class LLMHandler(Handler):
         """
         return self.generate_text(request_prompt, self.history)
 
-
-class NewelleAPIHandler(LLMHandler):
-    key = "newelle"
-    url = "https://llm.nyarchlinux.moe"
-    api_key = "newelle"
-    error_message = """Error calling Newelle API. Please note that Newelle API is **just for demo purposes.**\n\nTo know how to use a more reliable LLM [read our guide to llms](https://github.com/qwersyk/newelle/wiki/User-guide-to-the-available-LLMs). \n\nError: """
-
-    def get_extra_settings(self) -> list:
-        return [
-            {
-                "key": "privacy",
-                "title": _("Privacy Policy"),
-                "description": _("Open privacy policy website"),
-                "type": "button",
-                "icon": "internet-symbolic",
-                "callback": lambda button: open_website("https://groq.com/privacy-policy/"),
-                "default": True,
-            },
-            {
-                "key": "streaming",
-                "title": _("Message Streaming"),
-                "description": _("Gradually stream message output"),
-                "type": "toggle",
-                "default": True,
-            },
-        ]
-
-    def supports_vision(self) -> bool:
-        return True
-
-    def generate_text(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = []) -> str:
-        return self.generate_text_stream(prompt, history, system_prompt)
-    def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args : list = []) -> str:
-        import requests
-        
-        if prompt.startswith("```image") or any(message.get("Message", "").startswith("```image") and message["User"] == "User" for message in history):
-            url = self.url + "/vision"
-        else:
-            url = self.url
-        history.append({"User": "User", "Message": prompt})  
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        } 
-        data = {
-            "model": "llama",
-            "messages": convert_history_openai(history, system_prompt, True),
-            "stream": True
-        }
-
-        try:
-            response = requests.post(url + "/chat/completions", headers=headers, json=data, stream=True)
-            if response.status_code != 200:
-                raise Exception("Rate limit reached or servers down")
-            full_message = ""
-            prev_message = ""
-            for line in response.iter_lines():
-                if line:
-                    decoded_line = line.decode('utf-8')
-                    if decoded_line.startswith("data: "): 
-                        if decoded_line == "data: [DONE]":
-                            break
-                        json_data = json.loads(decoded_line[6:])
-                        if "choices" in json_data and len(json_data["choices"]) > 0:
-                            delta = json_data["choices"][0]["delta"]
-                            if "content" in delta:
-                                full_message += delta["content"]
-                                args = (full_message.strip(), ) + tuple(extra_args)
-                                if len(full_message) - len(prev_message) > 1:
-                                    on_update(*args)
-                                    prev_message = full_message
-            return full_message.strip()
-        except Exception as e:
-            return self.error_message + " " + str(e)
-
-
 class G4FHandler(LLMHandler):
     """Common methods for g4f models"""
     key = "g4f"
@@ -236,6 +160,7 @@ class G4FHandler(LLMHandler):
         return ["g4f"]
     
     def is_installed(self) -> bool:
+        return False
         if find_module("g4f") is not None:
            from g4f.version import utils       
            if utils.current_version != self.version:
@@ -540,20 +465,20 @@ class GeminiHandler(LLMHandler):
                 "default": True,
             },
         ]
-
-    def __convert_history(self, history: list):
+   
+    def __convert_history(self, history: list) -> list:
         result = []
         for message in history:
-            if message["User"] == "Console":
+            if message["User"] in ["Assistant", "User"]:
+                img, text = self.get_gemini_image(message["Message"]) 
+                result.append({
+                    "role": "user" if message["User"] == "User" else "model",
+                    "parts": message["Message"] if img is None else [img, text]
+                })
+            elif message["User"] == "Console":
                 result.append({
                     "role": "user",
                     "parts": "Console: " + message["Message"]
-                })
-            else: 
-                img, text = self.get_gemini_image(message["Message"]) 
-                result.append({
-                    "role": message["User"].lower() if message["User"] == "User" else "model",
-                    "parts": message["Message"] if img is None else [img, text]
                 })
         return result
 
@@ -1118,6 +1043,7 @@ class OllamaHandler(LLMHandler):
 
 class OpenAIHandler(LLMHandler):
     key = "openai"
+    error_message = "Error: "
     default_models = (("gpt-3.5-turbo", "gpt-3.5-turbo"), )
     def __init__(self, settings, path):
         super().__init__(settings, path)
@@ -1148,6 +1074,9 @@ class OpenAIHandler(LLMHandler):
     @staticmethod
     def get_extra_requirements() -> list:
         return ["openai"]
+
+    def is_installed(self):
+        return True
 
     def supports_vision(self) -> bool:
         return True
@@ -1331,7 +1260,7 @@ class OpenAIHandler(LLMHandler):
         if prompts is None:
             prompts = self.prompts
         return convert_history_openai(history, prompts, self.supports_vision())
-
+    
     def get_advanced_params(self):
         from openai import NOT_GIVEN
         advanced_params = self.get_setting("advanced_params")
@@ -1369,7 +1298,7 @@ class OpenAIHandler(LLMHandler):
             )
             return response.choices[0].message.content
         except Exception as e:
-            return str(e)
+            return self.error_message + " " + str(e)
     
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
         from openai import OpenAI
@@ -1406,7 +1335,33 @@ class OpenAIHandler(LLMHandler):
                         prev_message = full_message
             return full_message.strip()
         except Exception as e:
-            return str(e)
+            return self.error_message + " " + str(e)
+
+ 
+class NyarchApiHandler(OpenAIHandler):
+    key = "nyarch"
+    error_message = """Error calling Nyarch API. Please note that Nyarch API is **just for demo purposes.**\n\nTo know how to use a more reliable LLM [read our guide to llms](https://github.com/qwersyk/newelle/wiki/User-guide-to-the-available-LLMs). \n\nError: """
+
+    def __init__(self, settings, path):
+        super().__init__(settings, path)
+        self.set_setting("endpoint", "https://llm.nyarchlinux.moe")
+        self.set_setting("advanced_params", False)
+        self.set_setting("api", "nya")
+
+    def get_models(self):
+        pass
+    
+    def get_extra_settings(self) -> list:
+        return self.build_extra_settings("Nyarch",False, True, False, False, False, None, None, False, False)
+
+    def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
+        if prompt.startswith("```image") or  any(message.get("Message", "").startswith("```image") for message in history):
+            self.set_setting("endpoint", "https://llm.nyarchlinux.moe/vision")
+            print("Using nyarch vision...")
+        else:
+            self.set_setting("endpoint", "https://llm.nyarchlinux.moe/")
+        return super().generate_text_stream(prompt, history, system_prompt, on_update, extra_args)
+
 
 class MistralHandler(OpenAIHandler):
     key = "mistral"

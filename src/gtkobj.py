@@ -89,7 +89,7 @@ class File(Gtk.Image):
                 name = "folder-templates"
             elif file_name == "Videos":
                 name = "folder-videos"
-            elif file_name == ".var/app/io.github.qwersyk.Newelle/Newelle":
+            elif file_name == "moe.nyarchlinux.assistant/NyarchAssistant":
                 name = "user-bookmarks"
             else:
                 name = "folder"
@@ -243,8 +243,8 @@ class CopyBox(Gtk.Box):
 
         self.buffer = GtkSource.Buffer()
         self.buffer.set_text(txt, -1)
-        
-        lang.replace(" ", "")
+
+        lang = lang.replace(" ", "")
         manager = GtkSource.LanguageManager.new()
         language = manager.get_language(lang)
         self.buffer.set_language(language)
