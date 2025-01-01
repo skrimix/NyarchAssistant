@@ -44,7 +44,7 @@ nyarchassistant_sources = [
   'presentation.py',
   'handler.py',
   'extensions.py',
-  'screenrecorder.py'
+  'screenrecorder.py',
   'avatar.py',
   'translator.py',
   'dataset.py',

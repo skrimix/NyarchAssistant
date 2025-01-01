@@ -105,6 +105,7 @@
         </key>
         <key name="current-profile" type="s">
           <default>"Assistant"</default>
+        </key>
         <key name="translator" type="s">
           <default>"LibreTranslate"</default>
         </key>
