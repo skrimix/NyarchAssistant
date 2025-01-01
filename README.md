@@ -37,21 +37,50 @@ Nyarch Assistant supports extensions to enhance its functionality. You can eithe
 
 # Installation
 
-![builder](https://raw.githubusercontent.com/qwersyk/Assets/main/builder.svg#gh-light-mode-only)
-![builder](https://raw.githubusercontent.com/qwersyk/Assets/main/builder-dark.svg#gh-dark-mode-only)
+<a href="https://github.com/qwersyk/Newelle/archive/refs/heads/master.zip">
+  <picture>
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/builder.svg" media="(prefers-color-scheme: light)">
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/builder-dark.svg" media="(prefers-color-scheme: dark)">
+    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/builder.svg" alt="builder">
+  </picture>
+</a>
 
 1. Install GNOME Builder on your system.
 2. Clone the nyarchassistant repository from GitHub.
 3. Open the project in GNOME Builder and compile it.
 4. Once compiled, you can run the program from the compiled executable.
 
-![beta](https://raw.githubusercontent.com/qwersyk/Assets/main/beta.svg#gh-light-mode-only)
-![beta](https://raw.githubusercontent.com/qwersyk/Assets/main/beta-dark.svg#gh-dark-mode-only)
+<a href="https://github.com/qwersyk/Newelle/actions">
+  <picture>
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/beta.svg" media="(prefers-color-scheme: light)">
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/beta-dark.svg" media="(prefers-color-scheme: dark)">
+    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/beta.svg" alt="beta">
+  </picture>
+</a>
 
 1. Download the latest release from the [Github Actions](https://github.com/nyarchlinux/nyarchassistant/actions)
 2. Extract the downloaded package.
 3. Install a flatpak package.
 
+<<<<<<< HEAD
+<a href="https://flathub.org/apps/io.github.qwersyk.Newelle">
+  <picture>
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/flathub.svg" media="(prefers-color-scheme: light)">
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/flathub-dark.svg" media="(prefers-color-scheme: dark)">
+    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/flathub.svg" alt="flathub">
+  </picture>
+</a>
+
+1. Ensure you have Flatpak installed on your system.
+2. Install Newelle by executing: `flatpak install flathub io.github.qwersyk.Newelle`
+
+# Permission
+
+> [!IMPORTANT]
+> The Flathub version of Newelle is restricted to the `.var/app/io.github.qwersyk.Newelle` folder and operates within a
+> Flatpak virtualized environment, limiting its capabilities.
+
+=======
 # Permission
 
 To extend functionality, you can either temporarily grant access with:
@@ -60,4 +89,35 @@ or adjust settings permanently using Flatseal:
 - Open Flatseal, find "nyarchassistant," enable "All user files" and "Session Bus," and add `org.freedesktop.Flatpak` to run outside the sandbox.
 
 > [!WARNING]
-> Be cautious when enabling these options. They reduce security by exposing your data and terminal. Avoid sharing personal information, and understand that we can't guarantee the privacy of your chat data or prevent potential risks from proprietary models.
+> Be cautious when enabling these options. They reduce security by exposing your data and terminal. Avoid sharing
+> personal information, and understand that we can't guarantee the privacy of your chat data or prevent potential risks
+> from proprietary models.
+
+# Alternative Versions
+
+<a href="https://github.com/qwersyk/Newelle/tree/aarch64">
+  <picture>
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/aarch64.svg" media="(prefers-color-scheme: light)">
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/aarch64-dark.svg" media="(prefers-color-scheme: dark)">
+    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/aarch64.svg" alt="aarch64">
+  </picture>
+</a>
+
+
+**[Newelle Lite](https://github.com/qwersyk/Newelle/tree/aarch64)** - Your Virtual Assistant for aarch64
+
+<a href="https://github.com/NyarchLinux/NyarchAssistant">
+  <picture>
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/nyarch.svg" media="(prefers-color-scheme: light)">
+    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/nyarch-dark.svg" media="(prefers-color-scheme: dark)">
+    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/nyarch.svg" alt="nyarch">
+  </picture>
+</a>
+
+**[Nyarch Assistant](https://github.com/NyarchLinux/NyarchAssistant)** - Your ultimate Waifu AI Assistant
+
+<picture>
+  <source srcset="https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1w.png" media="(prefers-color-scheme: light)">
+  <source srcset="https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1b.png" media="(prefers-color-scheme: dark)">
+  <img src="https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1w.png" alt="screenshot">
+</picture>

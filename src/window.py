@@ -1,5 +1,4 @@
 import time, re, sys
-from warnings import filters
 import gi, os, subprocess
 import pickle
 from .avatar import AvatarHandler
@@ -14,9 +13,18 @@ from .stt import AudioRecorder
 from .extra import ReplaceHelper, get_spawn_command, is_flatpak, markwon_to_pango, override_prompts, replace_variables, remove_markdown, install_module
 import threading
 import posixpath
-import shlex,json, base64
-import random
-from pydub import AudioSegment
+import json, base64
+
+from .profile import ProfileDialog
+from .llm import LLMHandler
+from .presentation import PresentationWindow
+from .gtkobj import File, CopyBox, BarChartBox, MultilineEntry, ProfileRow, apply_css_to_widget
+from .constants import AVAILABLE_LLMS, AVAILABLE_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT
+from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
+from .stt import AudioRecorder
+from .extra import get_settings_dict, get_spawn_command, install_module, markwon_to_pango, override_prompts, remove_markdown, \
+    replace_variables, restore_settings_from_dict
+from .screenrecorder import ScreenRecorder
 
 from .extensions import ExtensionLoader
 
@@ -31,11 +39,11 @@ class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         self.first_load = True
         super().__init__(*args, **kwargs)
-        self.set_default_size(1400, 800) #(1500, 800) to show everything
-        self.main_program_block = Adw.Flap(flap_position=Gtk.PackType.END,modal=False,swipe_to_close=False,swipe_to_open=False)
+        self.set_default_size(1400, 800)  # (1500, 800) to show everything
+        self.main_program_block = Adw.Flap(flap_position=Gtk.PackType.END, modal=False, swipe_to_close=False,
+                                           swipe_to_open=False)
         self.main_program_block.set_name("hide")
-        self.check_streams={"folder":False,"chat":False}
-
+        self.check_streams = {"folder": False, "chat": False}
 
         self.path = GLib.get_user_data_dir()
         self.directory = GLib.get_user_config_dir()
@@ -59,7 +67,7 @@ class MainWindow(Gtk.ApplicationWindow):
             with open(self.path + self.filename, 'rb') as f:
                 self.chats = pickle.load(f)
         else:
-            self.chats = [{"name": _("Chat ")+"1", "chat": []}]
+            self.chats = [{"name": _("Chat ") + "1", "chat": []}]
 
         # Init Settings
         self.avatar_enabled = None
@@ -85,16 +93,16 @@ class MainWindow(Gtk.ApplicationWindow):
         menu.append(_("About"), "app.about")
         menu_button.set_menu_model(menu)
         self.chat_block = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True, css_classes=["view"])
-        self.chat_header = Adw.HeaderBar(css_classes=["flat","view"])
+        self.chat_header = Adw.HeaderBar(css_classes=["flat", "view"])
         self.chat_header.set_title_widget(Gtk.Label(label=_("Chat"), css_classes=["title"]))
-        
+
         # Header box - Contains the buttons that must go in the left side of the header
-        self.headerbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True) 
-        # Mute TTS Button 
+        self.headerbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True)
+        # Mute TTS Button
         self.mute_tts_button = Gtk.Button(css_classes=["flat"], icon_name="audio-volume-muted-symbolic", visible=False)
         self.mute_tts_button.connect("clicked", self.mute_tts)
         self.headerbox.append(self.mute_tts_button)
-        # Flap button 
+        # Flap button
         self.flap_button_left = Gtk.ToggleButton.new()
         self.flap_button_left.set_icon_name(icon_name='sidebar-show-right-symbolic')
         self.flap_button_left.connect('clicked', self.on_flap_button_toggled)
@@ -116,22 +124,23 @@ class MainWindow(Gtk.ApplicationWindow):
         self.chat_panel.append(Gtk.Separator())
 
         self.main = Adw.Leaflet(fold_threshold_policy=True, can_navigate_back=True, can_navigate_forward=True)
-        self.streams=[]
+        self.streams = []
         self.chats_main_box = Gtk.Box(hexpand_set=True)
         self.chats_main_box.set_size_request(300, -1)
         self.chats_secondary_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True)
-        self.chat_panel_header = Adw.HeaderBar(css_classes=["flat"],  show_end_title_buttons = False)
+        self.chat_panel_header = Adw.HeaderBar(css_classes=["flat"], show_end_title_buttons=False)
         self.chat_panel_header.set_title_widget(Gtk.Label(label=_("History"), css_classes=["title"]))
         self.chats_secondary_box.append(self.chat_panel_header)
         self.chats_secondary_box.append(Gtk.Separator())
         self.chat_panel_header.pack_end(menu_button)
-        self.chats_buttons_block = Gtk.ListBox(css_classes=["separators","background"])
+        self.chats_buttons_block = Gtk.ListBox(css_classes=["separators", "background"])
         self.chats_buttons_block.set_selection_mode(Gtk.SelectionMode.NONE)
         self.chats_buttons_scroll_block = Gtk.ScrolledWindow(vexpand=True)
         self.chats_buttons_scroll_block.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self.chats_buttons_scroll_block.set_child(self.chats_buttons_block)
         self.chats_secondary_box.append(self.chats_buttons_scroll_block)
-        button = Gtk.Button(valign=Gtk.Align.END,css_classes=["suggested-action"], margin_start=7, margin_end=7,  margin_top=7, margin_bottom=7)
+        button = Gtk.Button(valign=Gtk.Align.END, css_classes=["suggested-action"], margin_start=7, margin_end=7,
+                            margin_top=7, margin_bottom=7)
         button.set_child(Gtk.Label(label=_("Create a chat")))
         button.connect("clicked", self.new_chat)
         self.chats_secondary_box.append(button)
@@ -140,7 +149,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.main.append(self.chats_main_box)
         self.main.append(self.chat_panel)
         self.main.set_visible_child(self.chat_panel)
-        self.explorer_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["background","view"])
+        self.explorer_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["background", "view"])
         self.explorer_panel.set_size_request(420, -1)
         self.explorer_panel_header = Adw.HeaderBar(css_classes=["flat"])
         self.explorer_panel.append(self.explorer_panel_header)
@@ -152,10 +161,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.secondary_message_chat_block = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
 
         self.chat_block.append(self.secondary_message_chat_block)
-        self.chat_list_block = Gtk.ListBox(css_classes=["separators","background","view"])
+        self.chat_list_block = Gtk.ListBox(css_classes=["separators", "background", "view"])
         self.chat_list_block.set_selection_mode(Gtk.SelectionMode.NONE)
         self.chat_scroll = Gtk.ScrolledWindow(vexpand=True)
-        self.chat_scroll_window = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,css_classes=["background","view"])
+        self.chat_scroll_window = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["background", "view"])
         self.chat_scroll.set_child(self.chat_scroll_window)
         drop_target = Gtk.DropTarget.new(GObject.TYPE_STRING, Gdk.DragAction.COPY)
         drop_target.connect('drop', self.handle_file_drag)
@@ -168,10 +177,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.secondary_message_chat_block.append(self.notification_block)
 
         self.offers_entry_block = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
-                        spacing=6,valign=Gtk.Align.END,halign=Gtk.Align.FILL, margin_bottom=6)
+                                          spacing=6, valign=Gtk.Align.END, halign=Gtk.Align.FILL, margin_bottom=6)
         self.chat_scroll_window.append(self.offers_entry_block)
         self.chat_controls_entry_block = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,
-                        spacing=6,vexpand=True,valign=Gtk.Align.END,halign=Gtk.Align.CENTER, margin_top=6, margin_bottom=6)
+                                                 spacing=6, vexpand=True, valign=Gtk.Align.END, halign=Gtk.Align.CENTER,
+                                                 margin_top=6, margin_bottom=6)
         self.chat_scroll_window.append(self.chat_controls_entry_block)
 
         self.message_suggestion_buttons_array = []
@@ -300,24 +310,41 @@ class MainWindow(Gtk.ApplicationWindow):
         self.regenerate_message_button.connect("clicked", self.regenerate_message)
         self.regenerate_message_button.set_visible(False)
         self.chat_controls_entry_block.append(self.regenerate_message_button)
-
+        self.profiles_box = None
+        self.refresh_profiles_box()
         # Input message box
-        input_box=Gtk.Box(halign=Gtk.Align.FILL, margin_start=6, margin_end=6,  margin_top=6, margin_bottom=6, spacing=6)
-        input_box.set_valign(Gtk.Align.CENTER) 
-        # Attach icon 
+        input_box = Gtk.Box(halign=Gtk.Align.FILL, margin_start=6, margin_end=6, margin_top=6, margin_bottom=6,
+                            spacing=6)
+        input_box.set_valign(Gtk.Align.CENTER)
+        # Attach icon
         button = Gtk.Button(css_classes=["flat", "circular"], icon_name="attach-symbolic")
         button.connect("clicked", self.attach_file)
-        # Attached image 
+        # Attached image
         self.attached_image = Gtk.Image(visible=False)
         self.attached_image.set_size_request(36, 36)
         self.attached_image_data = None
         self.attach_button = button
         input_box.append(button)
-        input_box.append(self.attached_image) 
-        if not self.model.supports_vision():
+        input_box.append(self.attached_image)
+        if not self.model.supports_vision() and not self.model.supports_video_vision() and len(self.model.get_supported_files()) == 0:
             self.attach_button.set_visible(False)
         else:
             self.attach_button.set_visible(True)
+
+        # Add screen recording button
+        self.screen_record_button = Gtk.Button(
+            icon_name="media-record-symbolic",
+            css_classes=["flat"],
+            halign=Gtk.Align.CENTER
+        )
+        self.screen_record_button.connect("clicked", self.start_screen_recording)
+        input_box.append(self.screen_record_button)
+
+        # if "mp4" in self.model.get_supported_files():
+        if not self.model.supports_video_vision():
+            self.screen_record_button.set_visible(False)
+        self.video_recorder = None
+
         # Text Entry
         self.input_panel = MultilineEntry()
         self.input_panel.set_on_image_pasted(self.image_pasted)
@@ -328,7 +355,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.secondary_message_chat_block.append(Gtk.Separator())
         self.secondary_message_chat_block.append(input_box)
         # Mic button
-        self.mic_button = Gtk.Button(css_classes=["suggested-action"], icon_name="audio-input-microphone-symbolic", width_request=36, height_request=36)
+        self.mic_button = Gtk.Button(css_classes=["suggested-action"], icon_name="audio-input-microphone-symbolic",
+                                     width_request=36, height_request=36)
         self.mic_button.set_vexpand(False)
         self.mic_button.set_valign(Gtk.Align.CENTER)
         self.mic_button.connect("clicked", self.start_recording)
@@ -337,7 +365,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Send button
         box = Gtk.Box()
         box.set_vexpand(False)
-        self.send_button = Gtk.Button(css_classes=["suggested-action"], icon_name="go-next-symbolic", width_request=36, height_request=36)
+        self.send_button = Gtk.Button(css_classes=["suggested-action"], icon_name="go-next-symbolic", width_request=36,
+                                      height_request=36)
         self.send_button.set_vexpand(False)
         self.send_button.set_valign(Gtk.Align.CENTER)
         box.append(self.send_button)
@@ -381,10 +410,16 @@ class MainWindow(Gtk.ApplicationWindow):
             print(e)
         subprocess.run(['cp', '-r', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.directory, "avatars/live2d/web")])
 
+    def refresh_profiles_box(self):
+        if self.profiles_box is not None:
+            self.chat_header.remove(self.profiles_box)
+        self.profiles_box = self.get_profiles_box()
+        self.chat_header.pack_start(self.profiles_box)
+
     def init_pip_path(self, path):
         install_module("pip-install-test", self.pip_directory)
         path.append(self.pip_directory)
-    
+
     def show_presentation_window(self):
         self.presentation_dialog = PresentationWindow("presentation", self.settings, self.directory, self)
         self.presentation_dialog.show()
@@ -398,18 +433,33 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def focus_input(self):
         self.input_panel.input_panel.grab_focus()
-    
-    def start_recording(self, button): 
+
+    def create_profile(self, profile_name, picture=None, settings={}):
+        self.profile_settings[profile_name] = {"picture": picture, "settings": settings}
+        self.settings.set_string("profiles", json.dumps(self.profile_settings))
+
+    def delete_profile(self, profile_name):
+        if profile_name == "Assistant" or profile_name == self.settings.get_string("current-profile"):
+            return
+        del self.profile_settings[profile_name]
+        self.settings.set_string("profiles", json.dumps(self.profile_settings))
+        self.refresh_profiles_box()
+        self.update_settings()
+
+    def start_recording(self, button):
         if self.automatic_stt:
             self.automatic_stt_status = True
-        #button.set_child(Gtk.Spinner(spinning=True))
+        # button.set_child(Gtk.Spinner(spinning=True))
         button.set_icon_name("media-playback-stop-symbolic")
         button.disconnect_by_func(self.start_recording)
         button.remove_css_class("suggested-action")
         button.add_css_class("error")
         button.connect("clicked", self.stop_recording)
-        self.recorder = AudioRecorder(auto_stop=True, stop_function=self.auto_stop_recording, silence_duration=self.stt_silence_detection_duration, silence_threshold_percent=self.stt_silence_detection_threshold)
-        t = threading.Thread(target=self.recorder.start_recording, args=(os.path.join(self.directory, "recording.wav"),))
+        self.recorder = AudioRecorder(auto_stop=True, stop_function=self.auto_stop_recording,
+                                      silence_duration=self.stt_silence_detection_duration,
+                                      silence_threshold_percent=self.stt_silence_detection_threshold)
+        t = threading.Thread(target=self.recorder.start_recording,
+                             args=(os.path.join(self.directory, "recording.wav"),))
         t.start()
 
     def auto_stop_recording(self, button=False):
@@ -430,7 +480,7 @@ class MainWindow(Gtk.ApplicationWindow):
         button.remove_css_class("error")
         button.disconnect_by_func(self.stop_recording)
         button.connect("clicked", self.start_recording)
-    
+
     def stop_recording_async(self, button=False):
         recognizer = self.stt_handler
         result = recognizer.recognize_file(os.path.join(self.directory, "recording.wav"))
@@ -440,17 +490,47 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.notification_block.add_toast(Adw.Toast(title=_('Could not recognize your voice'), timeout=2))
 
-    def attach_file(self, button): 
-        filter = Gtk.FileFilter(name="Images", patterns=["*.png", "*.jpg", "*.jpeg", "*.webp"])
-        dialog = Gtk.FileDialog(title=_("Attach file"), modal=True, default_filter=filter)
+    def start_screen_recording(self, button):
+
+        if self.video_recorder is None:
+            self.video_recorder = ScreenRecorder(self)
+            self.video_recorder.start()
+            self.screen_record_button.set_icon_name("media-playback-stop-symbolic")
+            self.screen_record_button.set_css_classes(["destructive-action", "circular"])
+        else:
+            self.screen_record_button.set_visible(False)
+            self.video_recorder.stop()
+            self.screen_record_button.set_icon_name("media-record-symbolic")
+            self.screen_record_button.set_css_classes(["flat"])
+            self.add_file(file_path=self.video_recorder.output_path+".mp4")
+            self.video_recorder = None
+
+    def attach_file(self, button):
+        filters = Gio.ListStore.new(Gtk.FileFilter)
+
+        image_filter = Gtk.FileFilter(name="Images", patterns=["*.png", "*.jpg", "*.jpeg", "*.webp"])
+        video_filter = Gtk.FileFilter(name="Video", patterns=["*.mp4"])
+        file_filter = Gtk.FileFilter(name="Supported Files", patterns=self.model.get_supported_files())
+
+        if self.model.supports_vision():
+            filters.append(image_filter)
+        if self.model.supports_video_vision():    
+            filters.append(video_filter)
+        if len(self.model.get_supported_files()) > 0:
+            filters.append(file_filter)
+
+        dialog = Gtk.FileDialog(title=_("Attach file"),
+                                modal=True,
+                                default_filter=filters.get_item(0),
+                                filters=filters)
         dialog.open(self, None, self.process_file)
-       
+
     def image_pasted(self, image):
         self.add_file(file_data=image)
-    
-    def process_file(self, dialog, result): 
+
+    def process_file(self, dialog, result):
         try:
-            file=dialog.open_finish(result)
+            file = dialog.open_finish(result)
         except Exception as _:
             return
         if file is None:
@@ -459,18 +539,35 @@ class MainWindow(Gtk.ApplicationWindow):
         self.add_file(file_path=file_path)
 
     def delete_attachment(self, button):
-        self.attached_image_data = None 
+        self.attached_image_data = None
         self.attach_button.set_icon_name("attach-symbolic")
         self.attach_button.set_css_classes(["circular", "flat"])
         self.attach_button.disconnect_by_func(self.delete_attachment)
         self.attach_button.connect("clicked", self.attach_file)
         self.attached_image.set_visible(False)
-    
-    def add_file(self, file_path = None, file_data=None):
+        self.screen_record_button.set_visible(self.model.supports_video_vision())
+        # self.screen_record_button.set_visible("mp4" in self.model.get_supported_files())
+
+    def add_file(self, file_path=None, file_data=None):
         if file_path is not None:
-            self.attached_image.set_from_file(file_path)
-            self.attached_image.set_visible(True)
+            if file_path.lower().endswith(('.mp4', '.avi', '.mov')):
+                cmd = ['ffmpeg', '-i', file_path, '-vframes', '1', '-f', 'image2pipe', '-vcodec', 'png', '-']
+                frame_data = subprocess.run(cmd, capture_output=True).stdout
+
+                if frame_data:
+                    loader = GdkPixbuf.PixbufLoader()
+                    loader.write(frame_data)
+                    loader.close()
+                    self.attached_image.set_from_pixbuf(loader.get_pixbuf())
+                else:
+                    self.attached_image.set_from_icon_name("video-x-generic")
+            elif file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
+                self.attached_image.set_from_file(file_path)
+            else:
+                self.attached_image.set_from_icon_name("text-x-generic")
+
             self.attached_image_data = file_path
+            self.attached_image.set_visible(True)
         elif file_data is not None:
             base64_image = base64.b64encode(file_data).decode("utf-8")
             self.attached_image_data = f"data:image/jpeg;base64,{base64_image}"
@@ -479,23 +576,95 @@ class MainWindow(Gtk.ApplicationWindow):
             loader.close()
             self.attached_image.set_from_pixbuf(loader.get_pixbuf())
             self.attached_image.set_visible(True)
+
         self.attach_button.set_icon_name("user-trash-symbolic")
         self.attach_button.set_css_classes(["destructive-action", "circular"])
-        self.attach_button.connect("clicked", self.delete_attachment) 
-        self.attach_button.disconnect_by_func(self.attach_file) 
+        self.attach_button.connect("clicked", self.delete_attachment)
+        self.attach_button.disconnect_by_func(self.attach_file)
+        self.screen_record_button.set_visible(False)
+
+    def get_profiles_box(self):
+        box = Gtk.Box()
+        scroll = Gtk.ScrolledWindow(propagate_natural_width=True, propagate_natural_height=True, hscrollbar_policy=Gtk.PolicyType.NEVER) 
+        profile_button = Gtk.MenuButton() 
+        if self.profile_settings[self.current_profile]["picture"] is not None:
+            avatar = Adw.Avatar(custom_image=Gdk.Texture.new_from_filename(self.profile_settings[self.current_profile]["picture"]), text=self.current_profile, show_initials=True, size=20)
+            avatar.get_last_child().get_last_child().set_icon_size(Gtk.IconSize.NORMAL)
+        else:
+            avatar = Adw.Avatar(text=self.current_profile, show_initials=True, size=20)
+        profile_button.set_child(avatar)
+        box.append(profile_button)
+
+        profiles = Gtk.ListBox(selection_mode=Gtk.SelectionMode.SINGLE, css_classes=["boxed-list"])
+        for profile in self.profile_settings.keys():
+            account_row = ProfileRow(profile, self.profile_settings[profile]["picture"], self.current_profile == profile, allow_delete=profile != "Assistant" and profile != self.current_profile)
+            profiles.append(account_row)
+            account_row.set_on_forget(self.delete_profile)
+        # Separator
+        separator = Gtk.Separator(sensitive=False, can_focus=False, can_target=False, focus_on_click=False)
+        profiles.append(separator)
+        separator.get_parent().set_sensitive(False)
+        # Add profile row
+        profiles.append(ProfileRow(_("Create new profile"), None, False, add=True, allow_delete=False))
         
+        # Assign widgets
+        popover = Gtk.Popover(css_classes=["menu"])
+        profiles.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        scroll.set_child(profiles) 
+        popover.set_child(scroll)
+        profile_button.set_popover(popover)
+        profiles.select_row(profiles.get_row_at_index(list(self.profile_settings.keys()).index(self.current_profile)))
+        profiles.connect("row-selected", lambda listbox,action, popover=popover : self.select_profile(listbox, action, popover))
+        return box
+
+    def select_profile(self, listbox: Gtk.ListBox, action: ProfileRow, popover : Gtk.Popover):
+        if action is None:
+            return
+        if action.add:
+            dialog = ProfileDialog(self, self.profile_settings)
+            listbox.select_row(listbox.get_row_at_index(list(self.profile_settings.keys()).index(self.current_profile)))
+            popover.hide()
+            dialog.present()
+            return
+        if self.current_profile != action.profile:
+            popover.hide()
+        self.switch_profile(action.profile)
+
+    def switch_profile(self, profile: str):
+        if self.current_profile == profile:
+            return
+        print(f"Switching profile to {profile}")
+
+        old_settings = get_settings_dict(self.settings, ["current-profile", "profiles"])
+        self.profile_settings = json.loads(self.settings.get_string("profiles")) 
+        self.profile_settings[self.current_profile]["settings"] = old_settings 
+
+        new_settings = self.profile_settings[profile]["settings"]
+        restore_settings_from_dict(self.settings, new_settings)
+        self.settings.set_string("profiles", json.dumps(self.profile_settings)) 
+        self.settings.set_string("current-profile", profile)
+        self.update_settings()
+
+        self.refresh_profiles_box()
 
     def update_settings(self):
+        self.profile_settings = json.loads(self.settings.get_string("profiles"))
+        self.current_profile = self.settings.get_string("current-profile")
+        if len(self.profile_settings) == 0 or self.current_profile not in self.profile_settings:
+            self.profile_settings[self.current_profile] = {"settings": {}, "picture": None}
+
         self.automatic_stt_status = False
         settings = self.settings
         self.offers = settings.get_int("offers")
         self.virtualization = settings.get_boolean("virtualization")
         self.memory = settings.get_int("memory")
         self.hidden_files = settings.get_boolean("hidden-files")
+        self.reverse_order = settings.get_boolean("reverse-order")
+        self.auto_generate_name = settings.get_boolean("auto-generate-name")
         self.chat_id = settings.get_int("chat")
         self.main_path = settings.get_string("path")
         self.auto_run = settings.get_boolean("auto-run")
-        self.chat = self.chats[min(self.chat_id,len(self.chats)-1)]["chat"]
+        self.chat = self.chats[min(self.chat_id, len(self.chats) - 1)]["chat"]
         self.language_model = settings.get_string("language-model")
         self.local_model = settings.get_string("local-model")
         self.tts_enabled = settings.get_boolean("tts-on")
@@ -508,7 +677,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.stt_silence_detection_threshold = settings.get_double("stt-silence-detection-threshold")
         self.stt_silence_detection_duration = settings.get_int("stt-silence-detection-duration")
         # Load extensions
-        self.extensionloader = ExtensionLoader(self.extension_path, pip_path=self.pip_directory, extension_cache=self.extensions_cache, settings=self.settings)
+        self.extensionloader = ExtensionLoader(self.extension_path, pip_path=self.pip_directory,
+                                               extension_cache=self.extensions_cache, settings=self.settings)
         self.extensionloader.load_extensions()
         self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT)
         self.extensionloader.add_prompts(PROMPTS, AVAILABLE_PROMPTS)
@@ -525,10 +695,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.prompts_settings = json.loads(self.settings.get_string("prompts-settings"))
 
         if self.language_model in AVAILABLE_LLMS:
-            self.model : LLMHandler = AVAILABLE_LLMS[self.language_model]["class"](self.settings, os.path.join(self.directory, "models"))
+            self.model: LLMHandler = AVAILABLE_LLMS[self.language_model]["class"](self.settings,
+                                                                                  os.path.join(self.directory,
+                                                                                               "models"))
         else:
             mod = list(AVAILABLE_LLMS.values())[0]
-            self.model : LLMHandler = mod["class"](self.settings, os.path.join(self.directory, "models"))
+            self.model: LLMHandler = mod["class"](self.settings, os.path.join(self.directory, "models"))
 
         # Load handlers and models
         self.model.load_model(self.local_model)
@@ -546,7 +718,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.extensions = {}
         if os.path.exists(self.extension_path):
-            folder_names = [name for name in os.listdir(self.extension_path) if os.path.isdir(os.path.join(self.extension_path, name))]
+            folder_names = [name for name in os.listdir(self.extension_path) if
+                            os.path.isdir(os.path.join(self.extension_path, name))]
             for name in folder_names:
                 main_json_path = os.path.join(self.extension_path, name, "main.json")
                 if os.path.exists(main_json_path):
@@ -557,22 +730,27 @@ class MainWindow(Gtk.ApplicationWindow):
                         status = main_json_data.get("status")
                         api = main_json_data.get("api")
                         if api != None:
-                            self.extensions[name] = {"api":api,"status":status,"prompt": prompt}
+                            self.extensions[name] = {"api": api, "status": status, "prompt": prompt}
         if os.path.exists(os.path.expanduser(self.main_path)):
             os.chdir(os.path.expanduser(self.main_path))
         else:
-            self.main_path="~"
+            self.main_path = "~"
         if self.tts_program in AVAILABLE_TTS:
             self.tts = AVAILABLE_TTS[self.tts_program]["class"](self.settings, self.directory)
-            self.tts.connect('start', lambda : GLib.idle_add(self.mute_tts_button.set_visible, True))
-            self.tts.connect('stop', lambda : GLib.idle_add(self.mute_tts_button.set_visible, False))
+            self.tts.connect('start', lambda: GLib.idle_add(self.mute_tts_button.set_visible, True))
+            self.tts.connect('stop', lambda: GLib.idle_add(self.mute_tts_button.set_visible, False))
         if not self.first_load:
-            if not self.model.supports_vision():
+            if not self.model.supports_vision() and not self.model.supports_video_vision() and len(self.model.get_supported_files()) == 0:
                 if self.attached_image_data is not None:
                     self.delete_attachment(self.attach_button)
                 self.attach_button.set_visible(False)
             else:
                 self.attach_button.set_visible(True)
+            if not self.model.supports_video_vision():
+                if self.video_recorder is not None:
+                    self.video_recorder.stop()
+                    self.video_recorder = None
+            self.screen_record_button.set_visible(self.model.supports_video_vision() and not self.attached_image_data)
         if not self.first_load:
             self.load_avatar()
 
@@ -622,15 +800,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.send_button.set_child(None)
         self.send_button.set_icon_name("go-next-symbolic")
 
-    def on_entry_button_clicked(self,*a):
+    def on_entry_button_clicked(self, *a):
         self.on_entry_activate(self.input_panel)
 
-    def handle_second_block_change(self,*a):
+    def handle_second_block_change(self, *a):
         status = self.main_program_block.get_reveal_flap()
-        if self.main_program_block.get_name()=="hide" and status:
+        if self.main_program_block.get_name() == "hide" and status:
             self.main_program_block.set_reveal_flap(False)
             return True
-        elif (self.main_program_block.get_name()=="visible") and (not status):
+        elif (self.main_program_block.get_name() == "visible") and (not status):
             self.main_program_block.set_reveal_flap(True)
             return True
         status = self.main_program_block.get_reveal_flap() or self.avatar_flap.get_reveal_flap()
@@ -647,15 +825,15 @@ class MainWindow(Gtk.ApplicationWindow):
             self.chat_panel_header.set_show_end_title_buttons(self.main.get_folded())
             self.chat_header.set_show_end_title_buttons(True)
             header_widget = self.chat_header
-        # Unparent the headerbox  
+        # Unparent the headerbox
         self.headerbox.unparent()
         # Move the headerbox to the right widget
         if type(header_widget) is Adw.HeaderBar or type(header_widget) is Gtk.HeaderBar:
             header_widget.pack_end(self.headerbox)
         elif type(header_widget) is Gtk.Box:
             self.explorer_panel_headerbox.append(self.headerbox)
-    
-    def on_flap_button_toggled(self, toggle_button):  
+
+    def on_flap_button_toggled(self, toggle_button):
         self.focus_input()
         self.flap_button_left.set_active(True)
         if self.main_program_block.get_name() == "visible":
@@ -681,9 +859,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.load_avatar()
     
     def get_file_button(self, path):
-        if path[0:2]=="./":
-            path=self.main_path+path[1:len(path)]
-        path=os.path.expanduser(os.path.normpath(path))
+        if path[0:2] == "./":
+            path = self.main_path + path[1:len(path)]
+        path = os.path.expanduser(os.path.normpath(path))
         button = Gtk.Button(css_classes=["flat"], margin_top=5, margin_start=5, margin_bottom=5, margin_end=5)
         button.connect("clicked", self.run_file_on_button_click)
         button.set_name(path)
@@ -725,7 +903,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def handle_file_drag(self, DropTarget, data, x, y):
         if not self.status:
-            self.notification_block.add_toast(Adw.Toast(title=_('The file cannot be sent until the program is finished'), timeout=2))
+            self.notification_block.add_toast(
+                Adw.Toast(title=_('The file cannot be sent until the program is finished'), timeout=2))
             return False
         for path in data.split("\n"):
             if os.path.exists(path):
@@ -760,16 +939,16 @@ class MainWindow(Gtk.ApplicationWindow):
         self.main.set_visible_child(self.chat_panel)
 
     def continue_message(self, button):
-        if not self.chat[-1]["User"] in ["Assistant","Console","User"]:
+        if not self.chat[-1]["User"] in ["Assistant", "Console", "User"]:
             self.notification_block.add_toast(Adw.Toast(title=_('You can no longer continue the message.'), timeout=2))
         else:
             threading.Thread(target=self.send_message).start()
             self.send_button_start_spinner()
 
     def regenerate_message(self, *a):
-        if self.chat[-1]["User"] in ["Assistant","Console"]:
+        if self.chat[-1]["User"] in ["Assistant", "Console"]:
             for i in range(len(self.chat) - 1, -1, -1):
-                if self.chat[i]["User"] in ["Assistant","Console"]:
+                if self.chat[i]["User"] in ["Assistant", "Console"]:
                     self.chat.pop(i)
                 else:
                     break
@@ -777,18 +956,22 @@ class MainWindow(Gtk.ApplicationWindow):
             threading.Thread(target=self.send_message).start()
             self.send_button_start_spinner()
         else:
-            self.notification_block.add_toast(Adw.Toast(title=_('You can no longer regenerate the message.'), timeout=2))
+            self.notification_block.add_toast(
+                Adw.Toast(title=_('You can no longer regenerate the message.'), timeout=2))
+
     def update_history(self):
         # Update UI
         self.focus_input()
         initial_scroll = self.chats_buttons_scroll_block.get_vadjustment().get_value()
-        list_box = Gtk.ListBox(css_classes=["separators","background"])
+        list_box = Gtk.ListBox(css_classes=["separators", "background"])
         list_box.set_selection_mode(Gtk.SelectionMode.NONE)
         self.chats_buttons_scroll_block.set_child(list_box)
-        for i in range(len(self.chats)):
-            box = Gtk.Box(spacing=6, margin_top=3, margin_bottom=3,  margin_start=3, margin_end=3)
+        chat_range = range(len(self.chats)).__reversed__() if self.reverse_order else range(len(self.chats))
+        for i in chat_range:
+            box = Gtk.Box(spacing=6, margin_top=3, margin_bottom=3, margin_start=3, margin_end=3)
             generate_chat_name_button = Gtk.Button(css_classes=["flat", "accent"],
-                                                   valign=Gtk.Align.CENTER, icon_name="document-edit-symbolic", width_request=36) # wanted to use: tag-outline-symbolic
+                                                   valign=Gtk.Align.CENTER, icon_name="document-edit-symbolic",
+                                                   width_request=36)  # wanted to use: tag-outline-symbolic
             generate_chat_name_button.connect("clicked", self.generate_chat_name)
             generate_chat_name_button.set_name(str(i))
 
@@ -800,7 +983,7 @@ class MainWindow(Gtk.ApplicationWindow):
             create_chat_clone_button.set_child(icon)
             create_chat_clone_button.set_name(str(i))
 
-            delete_chat_button = Gtk.Button(css_classes=["error","flat"],
+            delete_chat_button = Gtk.Button(css_classes=["error", "flat"],
                                             valign=Gtk.Align.CENTER)
             delete_chat_button.connect("clicked", self.remove_chat)
             icon = Gtk.Image.new_from_gicon(Gio.ThemedIcon(name="user-trash-symbolic"))
@@ -810,9 +993,11 @@ class MainWindow(Gtk.ApplicationWindow):
             button = Gtk.Button(css_classes=["flat"], hexpand=True)
             name = self.chats[i]["name"]
             if len(name) > 30:
-                #name = name[0:27] + "…"
+                # name = name[0:27] + "…"
                 button.set_tooltip_text(name)
-            button.set_child(Gtk.Label(label=name, wrap=False, wrap_mode=Pango.WrapMode.WORD_CHAR, xalign=0, ellipsize=3, width_chars=22))
+            button.set_child(
+                Gtk.Label(label=name, wrap=False, wrap_mode=Pango.WrapMode.WORD_CHAR, xalign=0, ellipsize=3,
+                          width_chars=22))
             button.set_name(str(i))
 
             if i == self.chat_id:
@@ -828,7 +1013,7 @@ class MainWindow(Gtk.ApplicationWindow):
             box.append(create_chat_clone_button)
             box.append(generate_chat_name_button)
             box.append(delete_chat_button)
-            list_box.append(box) 
+            list_box.append(box)
 
     def remove_chat(self, button):
         if int(button.get_name()) < self.chat_id:
@@ -847,9 +1032,10 @@ class MainWindow(Gtk.ApplicationWindow):
             button.set_child(spinner)
             button.set_can_target(False)
             button.set_has_frame(True)
-             
+
             self.model.set_history([], self.get_history(self.chats[int(button.get_name())]["chat"]))
             name = self.model.generate_chat_name(self.prompts["generate_name_prompt"])
+            name = remove_markdown(name)
             if name != "Chat has been stopped":
                 self.chats[int(button.get_name())]["name"] = name
             self.update_history()
@@ -857,11 +1043,12 @@ class MainWindow(Gtk.ApplicationWindow):
             threading.Thread(target=self.generate_chat_name, args=[button, True]).start()
 
     def new_chat(self, button, *a):
-        self.chats.append({"name": _("Chat ")+str(len(self.chats) + 1), "chat": []})
+        self.chats.append({"name": _("Chat ") + str(len(self.chats) + 1), "chat": []})
         self.update_history()
 
     def copy_chat(self, button, *a):
-        self.chats.append({"name":self.chats[int(button.get_name())]["name"],"chat":self.chats[int(button.get_name())]["chat"][:]})
+        self.chats.append(
+            {"name": self.chats[int(button.get_name())]["name"], "chat": self.chats[int(button.get_name())]["chat"][:]})
         self.update_history()
 
     def chose_chat(self, button, *a):
@@ -912,22 +1099,22 @@ class MainWindow(Gtk.ApplicationWindow):
         GLib.idle_add(self.update_button_text)
         if self.chat[-1]["User"] != "Assistant" or "```console" in self.chat[-1]["Message"]:
             for i in range(len(self.chat) - 1, -1, -1):
-                if self.chat[i]["User"] in ["Assistant","Console"]:
+                if self.chat[i]["User"] in ["Assistant", "Console"]:
                     self.chat.pop(i)
                 else:
                     break
-        self.notification_block.add_toast(Adw.Toast(title=_('The message was canceled and deleted from history'), timeout=2))
+        self.notification_block.add_toast(
+            Adw.Toast(title=_('The message was canceled and deleted from history'), timeout=2))
         self.show_chat()
         self.remove_send_button_spinner()
 
     def send_message_to_bot(self, message):
         return self.model.send_message(self, message)
 
-
     def send_bot_response(self, button):
         self.send_button_start_spinner()
         text = button.get_child().get_label()
-        self.chat.append({"User": "User", "Message": " "+text})
+        self.chat.append({"User": "User", "Message": " " + text})
         self.show_message(text, id_message=len(self.chat) - 1, is_user=True)
         threading.Thread(target=self.send_message).start()
 
@@ -935,10 +1122,14 @@ class MainWindow(Gtk.ApplicationWindow):
         if not self.check_streams["folder"]:
             self.check_streams["folder"] = True
             if os.path.exists(os.path.expanduser(self.main_path)):
-                self.explorer_panel_header.set_title_widget(Gtk.Label(label=os.path.normpath(self.main_path)+(3-len(os.path.normpath(self.main_path)))*" ", css_classes=["title"],ellipsize=Pango.EllipsizeMode.MIDDLE,max_width_chars=15,halign=Gtk.Align.CENTER,hexpand=True))
+                self.explorer_panel_header.set_title_widget(Gtk.Label(
+                    label=os.path.normpath(self.main_path) + (3 - len(os.path.normpath(self.main_path))) * " ",
+                    css_classes=["title"], ellipsize=Pango.EllipsizeMode.MIDDLE, max_width_chars=15,
+                    halign=Gtk.Align.CENTER, hexpand=True))
                 if len(os.listdir(os.path.expanduser(self.main_path))) == 0 or (sum(
                         1 for filename in os.listdir(os.path.expanduser(self.main_path)) if
-                        not filename.startswith('.')) == 0 and not self.hidden_files) and os.path.normpath(self.main_path) != "~":
+                        not filename.startswith('.')) == 0 and not self.hidden_files) and os.path.normpath(
+                    self.main_path) != "~":
                     self.explorer_panel.remove(self.folder_blocks_panel)
                     self.folder_blocks_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, opacity=0.25)
                     self.explorer_panel.append(self.folder_blocks_panel)
@@ -947,7 +1138,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     icon.set_valign(Gtk.Align.END)
                     icon.set_vexpand(True)
                     self.folder_blocks_panel.append(icon)
-                    self.folder_blocks_panel.append(Gtk.Label(label=_("Folder is Empty"), wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR, vexpand=True,valign=Gtk.Align.START,css_classes=["empty-folder", "heading"]))
+                    self.folder_blocks_panel.append(
+                        Gtk.Label(label=_("Folder is Empty"), wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
+                                  vexpand=True, valign=Gtk.Align.START, css_classes=["empty-folder", "heading"]))
                 else:
                     self.explorer_panel.remove(self.folder_blocks_panel)
                     self.folder_blocks_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -990,7 +1183,8 @@ class MainWindow(Gtk.ApplicationWindow):
                         icon.set_css_classes(["large"])
                         icon.set_valign(Gtk.Align.END)
                         icon.set_vexpand(True)
-                        file_label = Gtk.Label(label=file_info+" "*(5-len(file_info)), wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
+                        file_label = Gtk.Label(label=file_info + " " * (5 - len(file_info)), wrap=True,
+                                               wrap_mode=Pango.WrapMode.WORD_CHAR,
                                                vexpand=True, max_width_chars=11, valign=Gtk.Align.START,
                                                ellipsize=Pango.EllipsizeMode.MIDDLE)
                         file_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
@@ -1007,8 +1201,9 @@ class MainWindow(Gtk.ApplicationWindow):
             else:
                 self.main_path = "~"
                 self.update_folder()
-            self.check_streams["folder"]=False
-    def get_target_directory(self,working_directory, directory):
+            self.check_streams["folder"] = False
+
+    def get_target_directory(self, working_directory, directory):
         try:
             directory = directory.strip()
             if directory.startswith("'") and directory.endswith("'"):
@@ -1022,7 +1217,8 @@ class MainWindow(Gtk.ApplicationWindow):
             target_directory = posixpath.join(working_directory, directory)
             return (True, os.path.normpath(target_directory))
         except (IndexError, OSError) as e:
-            return (False,working_directory)
+            return (False, working_directory)
+
     def open_folder(self, button, *a):
         if os.path.exists(os.path.join(os.path.expanduser(self.main_path), button.get_name())):
             if os.path.isdir(os.path.join(os.path.expanduser(self.main_path), button.get_name())):
@@ -1049,20 +1245,20 @@ class MainWindow(Gtk.ApplicationWindow):
             console_permissions = " ".join(get_spawn_command())
         commands = ('\n'.join(command)).split(" && ")
         txt = ""
-        path=self.main_path
+        path = self.main_path
         for t in commands:
-            if txt!="":
-                txt+=" && "
+            if txt != "":
+                txt += " && "
             if "cd " in t:
-                txt+=t
-                p = (t.split("cd "))[min(len(t.split("cd ")),1)]
+                txt += t
+                p = (t.split("cd "))[min(len(t.split("cd ")), 1)]
                 v = self.get_target_directory(path, p)
                 if not v[0]:
                     Adw.Toast(title=_('Wrong folder path'), timeout=2)
                 else:
                     path = v[1]
             else:
-                txt+=console_permissions+" "+t
+                txt += console_permissions + " " + t
         process = subprocess.Popen(txt, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, shell=True)
         outputs = []
@@ -1083,11 +1279,11 @@ class MainWindow(Gtk.ApplicationWindow):
         output_thread.start()
         for i in range(5):
             time.sleep(i)
-            if outputs!=[]:
+            if outputs != []:
                 break
         else:
             self.streams.append(process)
-            outputs = [(True, _("Thread has not been completed, thread number: ")+str(len(self.streams)))]
+            outputs = [(True, _("Thread has not been completed, thread number: ") + str(len(self.streams)))]
         if os.path.exists(os.path.expanduser(path)):
             os.chdir(os.path.expanduser(path))
             self.main_path = path
@@ -1098,7 +1294,6 @@ class MainWindow(Gtk.ApplicationWindow):
             new_value = outputs[0][1][0:1000] + "..."
             outputs = ((outputs[0][0], new_value),)
         return outputs[0]
-
 
     def get_chat(self, chat):
         chats = ""
@@ -1118,9 +1313,9 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.status:
             if self.chat != []:
                 self.button_clear.set_visible(True)
-                if self.chat[-1]["User"] in ["Assistant","Console"]:
+                if self.chat[-1]["User"] in ["Assistant", "Console"]:
                     self.regenerate_message_button.set_visible(True)
-                elif self.chat[-1]["User"] in ["Assistant","Console","User"]:
+                elif self.chat[-1]["User"] in ["Assistant", "Console", "User"]:
                     self.button_continue.set_visible(True)
             # Generate suggestions in another thread and then add them to the UI
             threading.Thread(target=self.generate_suggestions).start()
@@ -1143,15 +1338,15 @@ class MainWindow(Gtk.ApplicationWindow):
         i = 0
         # Convert to tuple to remove duplicates
         for suggestion in tuple(suggestions):
-            if i+1 > self.offers:
+            if i + 1 > self.offers:
                 break
             else:
-                message = suggestion.replace("\n","")
+                message = suggestion.replace("\n", "")
                 btn = self.message_suggestion_buttons_array[i]
                 btn.get_child().set_label(message)
                 btn.set_visible(True)
                 GLib.idle_add(self.scrolled_chat)
-            i+=1
+            i += 1
         self.chat_stop_button.set_visible(False)
         GLib.idle_add(self.scrolled_chat)
 
@@ -1164,10 +1359,15 @@ class MainWindow(Gtk.ApplicationWindow):
         entry.set_text('')
         if not text == " " * len(text):
             if self.attached_image_data is not None:
-                text = "```image\n" + self.attached_image_data + "\n```\n" + text
+                if self.attached_image_data.endswith((".png", ".jpg", ".jpeg", ".webp")):
+                    text = "```image\n" + self.attached_image_data + "\n```\n" + text
+                elif self.attached_image_data.endswith((".mp4", ".mkv", ".webm", ".avi")):
+                    text = "```video\n" + self.attached_image_data + "\n```\n" + text
+                else:
+                    text = "```file\n" + self.attached_image_data + "\n```\n" + text
                 self.delete_attachment(self.attach_button)
-            self.chat.append({"User": "User", "Message": text}) 
-            self.show_message(text, True,id_message=len(self.chat)-1, is_user=True)
+            self.chat.append({"User": "User", "Message": text})
+            self.show_message(text, True, id_message=len(self.chat) - 1, is_user=True)
         self.scrolled_chat()
         threading.Thread(target=self.send_message).start()
         self.send_button_start_spinner()
@@ -1177,7 +1377,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.check_streams["chat"] = True
             try:
                 self.chat_scroll_window.remove(self.chat_list_block)
-                self.chat_list_block = Gtk.ListBox(css_classes=["separators","background","view"])
+                self.chat_list_block = Gtk.ListBox(css_classes=["separators", "background", "view"])
                 self.chat_list_block.set_selection_mode(Gtk.SelectionMode.NONE)
 
                 self.chat_scroll_window.append(self.chat_list_block)
@@ -1198,11 +1398,13 @@ class MainWindow(Gtk.ApplicationWindow):
                 elif self.chat[i]["User"] == "Assistant":
                     self.show_message(self.chat[i]["Message"], True, id_message=i)
                 elif self.chat[i]["User"] in ["File", "Folder"]:
-                    self.add_message(self.chat[i]["User"], self.get_file_button(self.chat[i]["Message"][1:len(self.chat[i]["Message"])]))
+                    self.add_message(self.chat[i]["User"],
+                                     self.get_file_button(self.chat[i]["Message"][1:len(self.chat[i]["Message"])]))
             self.check_streams["chat"] = False
         GLib.idle_add(self.scrolled_chat)
+        GLib.idle_add(self.update_button_text)
 
-    def show_message(self, message_label, restore=False,id_message=-1, is_user=False, return_widget=False):
+    def show_message(self, message_label, restore=False, id_message=-1, is_user=False, return_widget=False):
         editable = True
         if message_label == " " * len(message_label) and not is_user:
             if not restore:
@@ -1229,7 +1431,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         code_language = table_string[i][3:len(table_string[i])]
                     else:
                         if code_language in self.extensionloader.codeblocks and not is_user:
-                            
+
                             value = '\n'.join(table_string[start_code_index:i])
                             extension = self.extensionloader.codeblocks[code_language]
                             try:
@@ -1238,30 +1440,35 @@ class MainWindow(Gtk.ApplicationWindow):
                                     box.append(widget)
                                 else:
                                     editable = False
-                                    if id_message==-1:
-                                        id_message = len(self.chat)-1
-                                    id_message+=1
+                                    if id_message == -1:
+                                        id_message = len(self.chat) - 1
+                                    id_message += 1
                                     has_terminal_command = True
                                     text_expander = Gtk.Expander(
-                                        label=code_language, css_classes=["toolbar", "osd"], margin_top=10, margin_start=10,
+                                        label=code_language, css_classes=["toolbar", "osd"], margin_top=10,
+                                        margin_start=10,
                                         margin_bottom=10, margin_end=10
                                     )
                                     text_expander.set_expanded(False)
                                     reply_from_the_console = None
-                                    
+
                                     if self.chat[min(id_message, len(self.chat) - 1)]["User"] == "Console":
-                                        reply_from_the_console = self.chat[min(id_message, len(self.chat) - 1)]["Message"]
+                                        reply_from_the_console = self.chat[min(id_message, len(self.chat) - 1)][
+                                            "Message"]
+
                                     def getresponse():
                                         if not restore:
-                                            response = extension.get_answer(value, code_language)  
+                                            response = extension.get_answer(value, code_language)
                                             if response is not None:
                                                 code = (True, response)
                                             else:
-                                                code = (False, "Error:") 
+                                                code = (False, "Error:")
                                         else:
                                             code = (True, reply_from_the_console)
                                         text_expander.set_child(
-                                            Gtk.Label(wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR, label='\n'.join(table_string[start_code_index:i])+"\n"+str(code[1]),
+                                            Gtk.Label(wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
+                                                      label='\n'.join(table_string[start_code_index:i]) + "\n" + str(
+                                                          code[1]),
                                                       selectable=True))
                                         if not code[0]:
                                             self.add_message("Error", text_expander)
@@ -1271,33 +1478,47 @@ class MainWindow(Gtk.ApplicationWindow):
                                             self.add_message("Done", text_expander)
                                         if not restore:
                                             self.chat.append({"User": "Console", "Message": " " + code[1]})
-                                          
+
                                     t = threading.Thread(target=getresponse)
                                     t.start()
                                     running_threads.append(t)
                             except Exception as e:
                                 print("Extension error " + extension.id + ": " + str(e))
-                                box.append(CopyBox("\n".join(table_string[start_code_index:i]), code_language, parent = self))
+                                box.append(
+                                    CopyBox("\n".join(table_string[start_code_index:i]), code_language, parent=self))
                         elif code_language == "image":
-                            for i in table_string[start_code_index:i]: 
-                                image = Gtk.Image(css_classes=["image"])
+                            for i in table_string[start_code_index:i]:
                                 if i.startswith('data:image/jpeg;base64,'):
                                     data = i[len('data:image/jpeg;base64,'):]
                                     raw_data = base64.b64decode(data)
                                     loader = GdkPixbuf.PixbufLoader()
                                     loader.write(raw_data)
                                     loader.close()
+                                    image = Gtk.Image(css_classes=["image"])
                                     image.set_from_pixbuf(loader.get_pixbuf())
+                                    box.append(image)
                                 else:
+                                    image = Gtk.Image(css_classes=["image"])
                                     image.set_from_file(i)
-                                box.append(image)
-
+                                    box.append(image)
+                        elif code_language == "video":
+                            for i in table_string[start_code_index:i]:
+                                video = Gtk.Video(
+                                    css_classes=["video"],
+                                    vexpand=True,
+                                    hexpand=True
+                                )
+                                video.set_size_request(-1, 400)
+                                video.set_file(Gio.File.new_for_path(i))
+                                box.append(video)
                         elif code_language == "console" and not is_user:
                             editable = False
-                            if id_message==-1:
-                                id_message = len(self.chat)-1
-                            id_message+=1
-                            if self.auto_run and not any(command in "\n".join(table_string[start_code_index:i]) for command in ["rm ","apt ","sudo ","yum ","mkfs "]):
+                            if id_message == -1:
+                                id_message = len(self.chat) - 1
+                            id_message += 1
+                            if self.auto_run and not any(
+                                    command in "\n".join(table_string[start_code_index:i]) for command in
+                                    ["rm ", "apt ", "sudo ", "yum ", "mkfs "]):
                                 has_terminal_command = True
                                 value = table_string[start_code_index:i]
                                 text_expander = Gtk.Expander(
@@ -1305,16 +1526,16 @@ class MainWindow(Gtk.ApplicationWindow):
                                     margin_bottom=10, margin_end=10
                                 )
                                 text_expander.set_expanded(False)
-                                path=""
+                                path = ""
                                 reply_from_the_console = None
                                 if self.chat[min(id_message, len(self.chat) - 1)]["User"] == "Console":
                                     reply_from_the_console = self.chat[min(id_message, len(self.chat) - 1)]["Message"]
                                 if not restore:
-                                    path=os.path.normpath(self.main_path)
+                                    path = os.path.normpath(self.main_path)
                                     code = self.execute_terminal_command(value)
                                 else:
                                     code = (True, reply_from_the_console)
-                                val='\n'.join(value)
+                                val = '\n'.join(value)
                                 text = f"[User {path}]:$ {val}\n{code[1]}"
                                 text_expander.set_child(
                                     Gtk.Label(wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR, label=text,
@@ -1330,7 +1551,8 @@ class MainWindow(Gtk.ApplicationWindow):
                             else:
                                 if not restore:
                                     self.chat.append({"User": "Console", "Message": f"None"})
-                                box.append(CopyBox("\n".join(table_string[start_code_index:i]), code_language, self,id_message))
+                                box.append(CopyBox("\n".join(table_string[start_code_index:i]), code_language, self,
+                                                   id_message))
                             result = {}
                         elif code_language in ["file", "folder"]:
                             for obj in table_string[start_code_index:i]:
@@ -1343,16 +1565,17 @@ class MainWindow(Gtk.ApplicationWindow):
                                 if len(parts) == 2:
                                     key = parts[0].strip()
                                     percentages = "%" in parts[1]
-                                    value = ''.join(filter(lambda x: x.isdigit() or x==".", parts[1]))
+                                    value = ''.join(filter(lambda x: x.isdigit() or x == ".", parts[1]))
                                     result[key] = float(value)
                                 else:
-                                    box.append(CopyBox("\n".join(table_string[start_code_index:i]), code_language, parent = self))
+                                    box.append(CopyBox("\n".join(table_string[start_code_index:i]), code_language,
+                                                       parent=self))
                                     result = {}
                                     break
-                            if result !={}:
-                                box.append(BarChartBox(result,percentages))
+                            if result != {}:
+                                box.append(BarChartBox(result, percentages))
                         else:
-                            box.append(CopyBox("\n".join(table_string[start_code_index:i]), code_language, parent = self))
+                            box.append(CopyBox("\n".join(table_string[start_code_index:i]), code_language, parent=self))
                         start_code_index = -1
                 elif len(table_string[i]) > 0 and table_string[i][0] == "|":
                     if start_table_index == -1:
@@ -1363,12 +1586,13 @@ class MainWindow(Gtk.ApplicationWindow):
                         box.append(self.create_table(table_string[start_table_index:i]))
                         start_table_index = i
                 elif start_table_index != -1:
-                    box.append(self.create_table(table_string[start_table_index:i-1]))
+                    box.append(self.create_table(table_string[start_table_index:i - 1]))
                     start_table_index = -1
                 elif start_code_index == -1:
                     label = markwon_to_pango(table_string[i])
                     box.append(Gtk.Label(label=label, wrap=True, halign=Gtk.Align.START,
-                                         wrap_mode=Pango.WrapMode.WORD_CHAR, width_chars=1, selectable=True, use_markup=True))
+                                         wrap_mode=Pango.WrapMode.WORD_CHAR, width_chars=1, selectable=True,
+                                         use_markup=True))
             if start_table_index != -1:
                 box.append(self.create_table(table_string[start_table_index:len(table_string)]))
             if not has_terminal_command:
@@ -1387,11 +1611,12 @@ class MainWindow(Gtk.ApplicationWindow):
                         for t in running_threads:
                             t.join()
                         self.send_message()
+
                     threading.Thread(target=wait_threads_sm).start()
         GLib.idle_add(self.scrolled_chat)
         self.save_chat()
 
-    def get_history(self, chat = None) -> list[dict[str, str]]: 
+    def get_history(self, chat=None) -> list[dict[str, str]]:
         if chat is None:
             chat = self.chat
         history = []
@@ -1413,7 +1638,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Append extensions prompts
         prompts = [replace_variables(value["prompt"]) for value in self.extensions.values() if value["status"]]
-        
+
         for prompt in self.bot_prompts:
             prompts.append(replace_variables(prompt))
         if not self.model.is_installed():
@@ -1438,7 +1663,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.curr_label = ""
             GLib.idle_add(self.create_streaming_message_label)
             self.streaming_lable = None
-            message_label = self.model.send_message_stream(self, self.chat[-1]["Message"], self.update_message, [stream_number_variable])
+            message_label = self.model.send_message_stream(self, self.chat[-1]["Message"], self.update_message,
+                                                           [stream_number_variable])
             try:
                 self.streaming_box.get_parent().set_visible(False)
             except:
@@ -1449,6 +1675,9 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.stream_number_variable == stream_number_variable:
             GLib.idle_add(self.show_message, message_label)
         GLib.idle_add(self.remove_send_button_spinner)
+        # Generate chat name 
+        if self.auto_generate_name and len(self.chat) == 1: 
+            GLib.idle_add(self.generate_chat_name, Gtk.Button(name=str(self.chat_id)))
 
         if self.tts_enabled:
             if self.tts_program in AVAILABLE_TTS:
@@ -1475,10 +1704,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     if self.automatic_stt:
                         threading.Thread(target=restart_recording).start()
 
-
     def create_streaming_message_label(self):
         scrolled_window = Gtk.ScrolledWindow(margin_top=10, margin_start=10, margin_bottom=10, margin_end=10)
-        
+
         scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
         scrolled_window.set_overflow(Gtk.Overflow.HIDDEN)
         scrolled_window.set_max_content_width(200)
@@ -1491,30 +1719,34 @@ class MainWindow(Gtk.ApplicationWindow):
         text_buffer = self.streaming_label.get_buffer()
         tag = text_buffer.create_tag("no-background", background_set=False, paragraph_background_set=False)
         text_buffer.apply_tag(tag, text_buffer.get_start_iter(), text_buffer.get_end_iter())
-        self.streaming_box=self.add_message("Assistant", scrolled_window)
+        self.streaming_box = self.add_message("Assistant", scrolled_window)
         self.streaming_box.set_overflow(Gtk.Overflow.VISIBLE)
-    
-    def update_message(self, message, stream_number_variable):  
+
+    def update_message(self, message, stream_number_variable):
         if self.stream_number_variable != stream_number_variable:
             return
         self.streamed_message = message
         if self.streaming_label is not None:
             added_message = message[len(self.curr_label):]
             self.curr_label = message
+
             def idle_edit():
-                self.streaming_label.get_buffer().insert(self.streaming_label.get_buffer().get_end_iter(), added_message)
+                self.streaming_label.get_buffer().insert(self.streaming_label.get_buffer().get_end_iter(),
+                                                         added_message)
                 pl = self.streaming_label.create_pango_layout(self.curr_label)
                 width, height = pl.get_size()
                 width = Gtk.Widget.get_scale_factor(self.streaming_label) * width / Pango.SCALE
                 height = Gtk.Widget.get_scale_factor(self.streaming_label) * height / Pango.SCALE
                 wmax = self.chat_list_block.get_size(Gtk.Orientation.HORIZONTAL)
                 # Dynamically take the width of the label
-                self.streaming_label.set_size_request(min(width, wmax-150), -1)
+                self.streaming_label.set_size_request(min(width, wmax - 150), -1)
+
             GLib.idle_add(idle_edit)
 
     def edit_message(self, gesture, data, x, y, box: Gtk.Box, apply_edit_stack: Gtk.Stack):
         if not self.status:
-            self.notification_block.add_toast(Adw.Toast(title=_("You can't edit a message while the program is running."), timeout=2))
+            self.notification_block.add_toast(
+                Adw.Toast(title=_("You can't edit a message while the program is running."), timeout=2))
             return False
 
         old_message = box.get_last_child()
@@ -1530,7 +1762,7 @@ class MainWindow(Gtk.ApplicationWindow):
         entry.set_margin_bottom(10)
         entry.set_size_request(wmax, hmax)
         apply_edit_stack.set_visible_child_name("apply")
-        entry.set_on_enter(lambda entry: self.apply_edit_message(gesture, box, apply_edit_stack)) 
+        entry.set_on_enter(lambda entry: self.apply_edit_message(gesture, box, apply_edit_stack))
         box.remove(old_message)
         box.append(entry)
 
@@ -1546,15 +1778,18 @@ class MainWindow(Gtk.ApplicationWindow):
         self.chat[int(gesture.get_name())]["Message"] = entry.get_text()
         self.save_chat()
         box.remove(entry)
-        box.append(self.show_message(entry.get_text(), restore=True, id_message=int(gesture.get_name()), is_user=self.chat[int(gesture.get_name())]["User"] == "User", return_widget=True))
-   
+        box.append(self.show_message(entry.get_text(), restore=True, id_message=int(gesture.get_name()),
+                                     is_user=self.chat[int(gesture.get_name())]["User"] == "User", return_widget=True))
+
     def cancel_edit_message(self, gesture, box: Gtk.Box, apply_edit_stack: Gtk.Stack):
         entry = self.edit_entries[int(gesture.get_name())]
         self.focus_input()
         apply_edit_stack.set_visible_child_name("edit")
         box.remove(entry)
-        box.append(self.show_message(self.chat[int(gesture.get_name())]["Message"], restore=True, id_message=int(gesture.get_name()), is_user=self.chat[int(gesture.get_name())]["User"] == "User", return_widget=True))
-    
+        box.append(self.show_message(self.chat[int(gesture.get_name())]["Message"], restore=True,
+                                     id_message=int(gesture.get_name()),
+                                     is_user=self.chat[int(gesture.get_name())]["User"] == "User", return_widget=True))
+
     def delete_message(self, gesture, box):
         del self.chat[int(gesture.get_name())]
         self.chat_list_block.remove(box.get_parent())
@@ -1564,24 +1799,28 @@ class MainWindow(Gtk.ApplicationWindow):
     def build_edit_box(self, box, id):
         edit_box = Gtk.Box()
         apply_box = Gtk.Box()
-        
+
         # Apply box
         apply_edit_stack = Gtk.Stack()
-        apply_button = Gtk.Button(icon_name="check-plain-symbolic", css_classes=["flat", "success"], valign=Gtk.Align.CENTER, name=id)
-        apply_button.connect("clicked", self.apply_edit_message,box,apply_edit_stack)
-        cancel_button = Gtk.Button(icon_name="circle-crossed-symbolic", css_classes=["flat", "destructive-action"], valign=Gtk.Align.CENTER, name=id)
-        cancel_button.connect("clicked", self.cancel_edit_message,box,apply_edit_stack)
+        apply_button = Gtk.Button(icon_name="check-plain-symbolic", css_classes=["flat", "success"],
+                                  valign=Gtk.Align.CENTER, name=id)
+        apply_button.connect("clicked", self.apply_edit_message, box, apply_edit_stack)
+        cancel_button = Gtk.Button(icon_name="circle-crossed-symbolic", css_classes=["flat", "destructive-action"],
+                                   valign=Gtk.Align.CENTER, name=id)
+        cancel_button.connect("clicked", self.cancel_edit_message, box, apply_edit_stack)
         apply_box.append(apply_button)
         apply_box.append(cancel_button)
 
         # Edit box
-        button = Gtk.Button(icon_name="document-edit-symbolic", css_classes=["flat", "success"], valign=Gtk.Align.CENTER, name=id)
+        button = Gtk.Button(icon_name="document-edit-symbolic", css_classes=["flat", "success"],
+                            valign=Gtk.Align.CENTER, name=id)
         button.connect("clicked", self.edit_message, None, None, None, box, apply_edit_stack)
-        remove_button = Gtk.Button(icon_name="user-trash-symbolic", css_classes=["flat", "destructive-action"], valign=Gtk.Align.CENTER, name=id)
+        remove_button = Gtk.Button(icon_name="user-trash-symbolic", css_classes=["flat", "destructive-action"],
+                                   valign=Gtk.Align.CENTER, name=id)
         remove_button.connect("clicked", self.delete_message, box)
         edit_box.append(button)
         edit_box.append(remove_button)
-        
+
         apply_edit_stack.add_named(apply_box, "apply")
         apply_edit_stack.add_named(edit_box, "edit")
         apply_edit_stack.set_visible_child_name("edit")
@@ -1589,7 +1828,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def add_message(self, user, message=None, id_message=0, editable=False):
         box = Gtk.Box(css_classes=["card"], margin_top=10, margin_start=10, margin_bottom=10, margin_end=10,
-                      halign=Gtk.Align.START) 
+                      halign=Gtk.Align.START)
         if editable:
             edit_box, apply_edit_stack = self.build_edit_box(box, str(id_message))
             evk = Gtk.GestureClick.new()
@@ -1597,17 +1836,17 @@ class MainWindow(Gtk.ApplicationWindow):
             evk.set_name(str(id_message))
             evk.set_button(3)
             box.add_controller(evk)
-            ev = Gtk.EventControllerMotion.new() 
+            ev = Gtk.EventControllerMotion.new()
 
             stack = Gtk.Stack()
-            ev.connect("enter", lambda x,y,data: stack.set_visible_child_name("edit"))
+            ev.connect("enter", lambda x, y, data: stack.set_visible_child_name("edit"))
             ev.connect("leave", lambda data: stack.set_visible_child_name("label"))
             box.add_controller(ev)
 
         if user == "User":
             label = Gtk.Label(label=user + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
-                                 css_classes=["accent", "heading"]) 
-            if editable: 
+                              css_classes=["accent", "heading"])
+            if editable:
                 stack.add_named(label, "label")
                 stack.add_named(apply_edit_stack, "edit")
                 stack.set_visible_child_name("label")
@@ -1615,10 +1854,10 @@ class MainWindow(Gtk.ApplicationWindow):
             else:
                 box.append(label)
             box.set_css_classes(["card", "user"])
-        if user == "Assistant": 
-            label = Gtk.Label(label=user + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
-                                 css_classes=["warning", "heading"])
-            if editable: 
+        if user == "Assistant":
+            label = Gtk.Label(label=self.current_profile + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
+                              css_classes=["warning", "heading"], wrap=True, ellipsize=Pango.EllipsizeMode.END)
+            if editable:
                 stack.add_named(label, "label")
                 stack.add_named(apply_edit_stack, "edit")
                 stack.set_visible_child_name("label")
@@ -1651,7 +1890,8 @@ class MainWindow(Gtk.ApplicationWindow):
             box_warning.append(icon)
 
             label = Gtk.Label(
-                label=_("The neural network has access to your computer and any data in this chat and can run commands, be careful, we are not responsible for the neural network. Do not share any sensitive information."),
+                label=_(
+                    "The neural network has access to your computer and any data in this chat and can run commands, be careful, we are not responsible for the neural network. Do not share any sensitive information."),
                 margin_top=10, margin_start=10, margin_bottom=10, margin_end=10, wrap=True,
                 wrap_mode=Pango.WrapMode.WORD_CHAR)
 
@@ -1668,7 +1908,8 @@ class MainWindow(Gtk.ApplicationWindow):
             box_warning.append(icon)
 
             label = Gtk.Label(
-                label=_("The neural network has access to any data in this chat, be careful, we are not responsible for the neural network. Do not share any sensitive information."),
+                label=_(
+                    "The neural network has access to any data in this chat, be careful, we are not responsible for the neural network. Do not share any sensitive information."),
                 margin_top=10, margin_start=10, margin_bottom=10, margin_end=10, wrap=True,
                 wrap_mode=Pango.WrapMode.WORD_CHAR)
 

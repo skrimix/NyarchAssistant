@@ -13,6 +13,12 @@
         <key name="hidden-files" type="b">
             <default>false</default>
         </key>
+        <key name="reverse-order" type="b">
+            <default>false</default>
+        </key>
+        <key name="auto-generate-name" type="b">
+            <default>false</default>
+        </key>
         <key name="path" type="s">
             <default>"~"</default>
         </key>
@@ -93,6 +99,12 @@
         </key>
         <key name="extensions-settings" type="s">
           <default>"{}"</default>
+        </key>
+        <key name="profiles" type="s">
+          <default>"{}"</default>
+        </key>
+        <key name="current-profile" type="s">
+          <default>"Assistant"</default>
         </key>
         <key name="translator" type="s">
           <default>"LibreTranslate"</default>

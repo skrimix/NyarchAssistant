@@ -1,5 +1,4 @@
-
-from .llm import BingHandler, GPT4AllHandler, GroqHandler, NyarchApiHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler
+from .llm import BingHandler, ClaudeHandler, GPT4AllHandler, GroqHandler, NyarchApiHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler
 from .tts import VoiceVoxHanlder,ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler, VitsHandler, EdgeTTSHandler
 from .stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperHandler, WitAIHandler, VoskHandler, CustomSRHandler
 
@@ -46,7 +45,7 @@ AVAILABLE_LLMS = {
     "gemini": {
         "key": "gemini",
         "title": _("Google Gemini API"),
-        "description": "Official APIs for google gemini, requires an API Key",
+        "description": "Official APIs for Google Gemini, requires an API Key",
         "class": GeminiHandler,
     },
     "openai": {
@@ -54,6 +53,13 @@ AVAILABLE_LLMS = {
         "title": _("OpenAI API"),
         "description": _("OpenAI API"),
         "class": OpenAIHandler,
+    },
+    "claude": {
+        "key": "claude",
+        "title": _("Anthropic Claude"),
+        "description": _("Official APIs for Anthropic Claude's models, with image and file support, requires an API key"),
+        "class": ClaudeHandler,
+        "secondary": True
     },
     "mistral": {
         "key": "mistral",

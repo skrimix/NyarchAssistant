@@ -4,6 +4,8 @@ import re, base64, io
 import os, sys
 import xml.dom.minidom, html
 import json
+from gi.repository import GLib
+
 import importlib, subprocess, functools
 
 
@@ -103,6 +105,27 @@ class ReplaceHelper:
             desktop = "Unknown"
         return desktop
 
+def get_settings_dict(settings, blacklisted_keys:list = []):
+    """
+    Return a dictionary containing all settings from a Gio.Settings object.
+    """
+    settings_dict = {}
+    for key in settings.list_keys():
+        if key in blacklisted_keys:
+            continue
+        value = settings.get_value(key)
+        settings_dict[key] = value.unpack()
+    return settings_dict
+
+def restore_settings_from_dict(settings, settings_dict):
+    """
+    Restore settings from a dictionary into a Gio.Settings object.
+    """
+    for key, value in settings_dict.items():
+        current_value = settings.get_value(key)
+        variant = GLib.Variant(current_value.get_type_string(), value)
+        settings.set_value(key, variant)
+
 def get_spawn_command() -> list:
     """
     Get the spawn command to run commands on the user system
@@ -197,10 +220,25 @@ def convert_history_openai(history: list, prompts: list, vision_support : bool =
 def open_website(website):
     subprocess.Popen(get_spawn_command() + ["xdg-open", website])
 
-def encode_image_base64(image_path):
-    with open(image_path, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
-    return "data:image/jpeg;base64," + encoded_string
+
+def encode_image_base64(file_path):
+    mime_types = {
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.webp': 'image/webp',
+        '.mp4': 'video/mp4',
+        '.avi': 'video/x-msvideo',
+        '.mov': 'video/quicktime'
+    }
+
+    ext = os.path.splitext(file_path)[1].lower()
+    mime_type = mime_types.get(ext, 'image/jpeg')
+
+    with open(file_path, "rb") as file:
+        encoded = base64.b64encode(file.read()).decode("utf-8")
+
+    return f"data:{mime_type};base64,{encoded}"
 
 def extract_image(message: str) -> tuple[str | None, str]:
     """
@@ -220,6 +258,44 @@ def extract_image(message: str) -> tuple[str | None, str]:
     else:
         text = message
     return img, text
+
+def extract_video(message: str) -> tuple[str | None, str]:
+    """
+    Extract video from message
+
+    Args:
+        message: message string
+
+    Returns:
+        tuple[str, str]: image and text, if no image, image is None 
+    """
+    img = None
+    if message.startswith("```video"):
+        img = message.split("\n")[1]
+        text = message.split("\n")[3:]                    
+        text = "\n".join(text)
+    else:
+        text = message
+    return img, text
+
+def extract_file(message: str) -> tuple[str | None, str]:
+    """
+    Extract file from message
+
+    Args:
+        message: message string
+
+    Returns:
+        tuple[str, str]: file and text, if no file, file is None 
+    """
+    file = None
+    if message.startswith("```file"):
+        file = message.split("\n")[1]
+        text = message.split("\n")[3:]                    
+        text = "\n".join(text)
+    else:
+        text = message
+    return file, text
 
 def quote_string(s):
     if "'" in s:
