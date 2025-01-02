@@ -352,7 +352,9 @@ class ExtensionLoader:
         Args:
             file_path: the path of the file to copy 
         """
-        os.makedirs(os.path.join(self.extension_dir, os.path.basename(file_path)), exist_ok=True)
+        print(self.extension_dir)
+        os.makedirs(os.path.join(self.extension_cache, os.path.basename(file_path)), exist_ok=True)
+        print(file_path)
         shutil.copyfile(file_path, os.path.join(self.extension_dir, os.path.basename(file_path)))
 
     def get_extension_by_id(self, id: str) -> NewelleExtension | None:
