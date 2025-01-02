@@ -119,12 +119,21 @@ class LLMHandler(Handler):
             list[str]: prompt suggestions
         """
         result = []
+        max_requests = 3
+        req = 0
         history = ""
         # Only get the last four elements and reconstruct partial history
         for message in self.history[-4:] if len(self.history) >= 4 else self.history:
-            history += message["User"] + ": " + message["Message"] + "\n"
+            image, text = extract_image(message["Message"])
+            history += message["User"] + ": " + text + "\n"
         for i in range(0, amount):
-            generated = self.generate_text(history + "\n\n" + request_prompt)
+            if req >= max_requests:
+                break
+            try:
+                req+=1
+                generated = self.generate_text(request_prompt + "\n\n" + history)
+            except Exception as e:
+                continue
             generated = extract_json(generated)
             try:
                 j = json.loads(generated)
@@ -139,7 +148,7 @@ class LLMHandler(Handler):
                             break
         return result
 
-    def generate_chat_name(self, request_prompt:str = "") -> str:
+    def generate_chat_name(self, request_prompt:str = "") -> str | None:
         """Generate name of the current chat
 
         Args:
@@ -148,7 +157,11 @@ class LLMHandler(Handler):
         Returns:
             str: name of the chat
         """
-        return self.generate_text(request_prompt, self.history)
+        try:
+             self.generate_text(request_prompt, self.history)
+        except Exception as _:
+            return None 
+
 
 class G4FHandler(LLMHandler):
     """Common methods for g4f models"""
@@ -212,7 +225,7 @@ class G4FHandler(LLMHandler):
             )
             return response.choices[0].message.content
         except Exception as e:
-            return f"Error: {e}"
+            raise e
     
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
         model = self.get_setting("model")
@@ -245,7 +258,7 @@ class G4FHandler(LLMHandler):
                         prev_message = full_message
             return full_message.strip()
         except Exception as e:
-            return f"Error: {e}"
+            raise e
 
 class GPT3AnyHandler(G4FHandler):
     """
@@ -545,7 +558,7 @@ class GeminiHandler(LLMHandler):
             response = chat.send_message(txt)
             return response.text
         except Exception as e:
-            return "Message blocked: " + str(e)
+            raise "Message blocked: " + str(e)
 
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None , extra_args: list = []) -> str:
         import google.generativeai as genai
@@ -580,7 +593,7 @@ class GeminiHandler(LLMHandler):
                 on_update(*args)
             return full_message.strip()
         except Exception as e:
-            return "Message blocked: " + str(e)
+            raise "Message blocked: " + str(e)
 
 class CustomLLMHandler(LLMHandler):
     key = "custom_command"
@@ -1011,7 +1024,7 @@ class OllamaHandler(LLMHandler):
             )
             return response["message"]["content"]
         except Exception as e:
-            return str(e)
+            raise e
     
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
         from ollama import Client
@@ -1038,7 +1051,7 @@ class OllamaHandler(LLMHandler):
                     prev_message = full_message
             return full_message.strip()
         except Exception as e:
-            return str(e)
+            raise e
 
 
 class OpenAIHandler(LLMHandler):
@@ -1296,9 +1309,11 @@ class OpenAIHandler(LLMHandler):
                 presence_penalty=presence_penalty,
                 frequency_penalty=frequency_penalty
             )
+            if not hasattr(response, "choices") or response.choices is None or len(response.choices) == 0 or response.choices[0].message.content is None:
+                raise Exception(str(response))
             return response.choices[0].message.content
         except Exception as e:
-            return self.error_message + " " + str(e)
+            raise e
     
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None, extra_args: list = []) -> str:
         from openai import OpenAI
@@ -1335,8 +1350,8 @@ class OpenAIHandler(LLMHandler):
                         prev_message = full_message
             return full_message.strip()
         except Exception as e:
-            return self.error_message + " " + str(e)
-
+            raise e
+            
  
 class NyarchApiHandler(OpenAIHandler):
     key = "nyarch"
@@ -1361,7 +1376,6 @@ class NyarchApiHandler(OpenAIHandler):
         else:
             self.set_setting("endpoint", "https://llm.nyarchlinux.moe/")
         return super().generate_text_stream(prompt, history, system_prompt, on_update, extra_args)
-
 
 class MistralHandler(OpenAIHandler):
     key = "mistral"
