@@ -104,7 +104,7 @@
           <default>"{}"</default>
         </key>
         <key name="current-profile" type="s">
-          <default>"Assistant"</default>
+          <default>"Arch-chan"</default>
         </key>
         <key name="translator" type="s">
           <default>"LibreTranslate"</default>
