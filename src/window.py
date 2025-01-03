@@ -6,24 +6,18 @@ from .avatar import AvatarHandler
 from .llm import LLMHandler
 
 from .presentation import PresentationWindow
-from .gtkobj import File, CopyBox, BarChartBox, MultilineEntry, apply_css_to_widget
+from .gtkobj import File, CopyBox, BarChartBox, MultilineEntry, ProfileRow, apply_css_to_widget
 from .constants import AVAILABLE_LLMS, AVAILABLE_SMART_PROMPTS, AVAILABLE_TRANSLATORS, EXTRA_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_PROMPTS
 from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
 from .stt import AudioRecorder
 from .extra import ReplaceHelper, get_spawn_command, is_flatpak, markwon_to_pango, override_prompts, replace_variables, remove_markdown, install_module
+from .extra import get_settings_dict, restore_settings_from_dict
 import threading
 import posixpath
-import json, base64
+import json 
+import base64
 
 from .profile import ProfileDialog
-from .llm import LLMHandler
-from .presentation import PresentationWindow
-from .gtkobj import File, CopyBox, BarChartBox, MultilineEntry, ProfileRow, apply_css_to_widget
-from .constants import AVAILABLE_LLMS, AVAILABLE_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT
-from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
-from .stt import AudioRecorder
-from .extra import get_settings_dict, get_spawn_command, install_module, markwon_to_pango, override_prompts, remove_markdown, \
-    replace_variables, restore_settings_from_dict
 from .screenrecorder import ScreenRecorder
 
 from .extensions import ExtensionLoader
@@ -815,6 +809,8 @@ class MainWindow(Gtk.ApplicationWindow):
         status = self.main_program_block.get_reveal_flap() or self.avatar_flap.get_reveal_flap()
         
         if self.avatar_flap.get_reveal_flap():
+            if self.avatar_flap.get_name() == "hide":
+                self.avatar_flap.set_reveal_flap(False)
             self.chat_panel_header.set_show_end_title_buttons(False)
             self.chat_header.set_show_end_title_buttons(False)
             header_widget = self.web_panel_header
