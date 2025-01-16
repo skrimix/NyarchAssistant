@@ -1,24 +1,35 @@
-import time, re, sys
-import gi, os, subprocess
+import time 
+import re 
+import sys
+import os 
+import subprocess
 import pickle
-from .avatar import AvatarHandler
+from .handlers.avatar import AvatarHandler
 
-from .llm import LLMHandler
-
-from .presentation import PresentationWindow
-from .gtkobj import File, CopyBox, BarChartBox, MultilineEntry, ProfileRow, apply_css_to_widget
 from .constants import AVAILABLE_LLMS, AVAILABLE_SMART_PROMPTS, AVAILABLE_TRANSLATORS, EXTRA_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_PROMPTS
-from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
-from .stt import AudioRecorder
-from .extra import ReplaceHelper, get_spawn_command, is_flatpak, markwon_to_pango, override_prompts, replace_variables, remove_markdown, install_module
-from .extra import get_settings_dict, restore_settings_from_dict
 import threading
 import posixpath
 import json 
 import base64
 
-from .profile import ProfileDialog
-from .screenrecorder import ScreenRecorder
+from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
+
+from .ui.profile import ProfileDialog
+from .handlers.llm import LLMHandler
+from .ui.presentation import PresentationWindow
+from .ui.widgets import File, CopyBox, BarChartBox
+from .ui import apply_css_to_widget
+from .ui.widgets import MultilineEntry, ProfileRow
+from .constants import AVAILABLE_LLMS, AVAILABLE_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT
+
+from .utility import override_prompts
+from .utility.system import get_spawn_command, is_flatpak 
+from .utility.pip import install_module
+from .utility.strings import markwon_to_pango, remove_markdown
+from .utility.replacehelper import ReplaceHelper, replace_variables
+from .utility.profile_settings import get_settings_dict, restore_settings_from_dict
+from .utility.audio_recorder import AudioRecorder
+from .ui.screenrecorder import ScreenRecorder
 
 from .extensions import ExtensionLoader
 
@@ -486,12 +497,14 @@ class MainWindow(Gtk.ApplicationWindow):
             self.notification_block.add_toast(Adw.Toast(title=_('Could not recognize your voice'), timeout=2))
 
     def start_screen_recording(self, button):
-
         if self.video_recorder is None:
             self.video_recorder = ScreenRecorder(self)
             self.video_recorder.start()
-            self.screen_record_button.set_icon_name("media-playback-stop-symbolic")
-            self.screen_record_button.set_css_classes(["destructive-action", "circular"])
+            if self.video_recorder.recording:
+                self.screen_record_button.set_icon_name("media-playback-stop-symbolic")
+                self.screen_record_button.set_css_classes(["destructive-action", "circular"])
+            else:
+                self.video_recorder = None
         else:
             self.screen_record_button.set_visible(False)
             self.video_recorder.stop()
@@ -675,7 +688,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.extensionloader = ExtensionLoader(self.extension_path, pip_path=self.pip_directory,
                                                extension_cache=self.extensions_cache, settings=self.settings)
         self.extensionloader.load_extensions()
-        self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT)
+        self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
         self.extensionloader.add_prompts(PROMPTS, AVAILABLE_PROMPTS)
         self.last_avatar_enabled = self.avatar_enabled
         self.avatar_enabled = settings.get_boolean("avatar-on")

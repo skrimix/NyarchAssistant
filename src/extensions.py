@@ -1,19 +1,17 @@
-import sys, importlib, os, json, shutil
-from typing import Any
-
+import importlib.util 
+import os 
+import json 
+import shutil
+import sys
 from gi.repository import Gtk
 
-from .avatar import AvatarHandler
-from .constants import AVAILABLE_AVATARS, AVAILABLE_SMART_PROMPTS, AVAILABLE_TRANSLATORS
-from .smart_prompt import SmartPromptHandler
-from .translator import TranslatorHandler
-
-from .handler import Handler
-
-from .llm import LLMHandler
-from .stt import STTHandler
-from .tts import TTSHandler
-
+from .handlers import Handler
+from .handlers.llm import LLMHandler
+from .handlers.stt import STTHandler
+from .handlers.tts import TTSHandler
+from .handlers.avatar import AvatarHandler
+from .handlers.smart_prompt import SmartPromptHandler
+from .handlers.translator import TranslatorHandler
 
 class NewelleExtension(Handler):
     """The base class for all extensions"""
@@ -256,7 +254,7 @@ class ExtensionLoader:
             
         sys.path.remove(self.project_dir)
 
-    def add_handlers(self, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT):
+    def add_handlers(self, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS):
         """Add the handlers of each extension to the available handlers
 
         Args:
@@ -303,7 +301,7 @@ class ExtensionLoader:
                     AVAILABLE_PROMPTS.append(prompt)
                 PROMPTS[prompt["key"]] = prompt["text"]
 
-    def remove_handlers(self, extension, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT):
+    def remove_handlers(self, extension, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS):
         """Remove handlers of an extension
 
         Args:
@@ -320,6 +318,15 @@ class ExtensionLoader:
         handlers = extension.get_stt_handlers()
         for handler in handlers:
             AVAILABLE_STT.pop(handler["key"])
+        handler = extension.get_translators_handlers()
+        for h in handler:
+            AVAILABLE_TRANSLATORS.pop(h["key"])
+        handler = extension.get_smart_prompts_handlers()
+        for h in handler:
+            AVAILABLE_SMART_PROMPTS.pop(h["key"])
+        handler = extension.get_avatar_handlers()
+        for h in handler:
+            AVAILABLE_AVATARS.pop(h["key"])
 
     def remove_prompts(self, extension, PROMPTS, AVAILABLE_PROMPTS):
         """Remove prompts of an extension
@@ -400,7 +407,8 @@ class ExtensionLoader:
 
     def save_settings(self):
         """Save the extensions settings"""
-        
+        if self.settings is None:
+            return
         self.settings.set_string("extensions-settings", json.dumps(self.extensions_settings))
     
     def check_validity(self, extension : NewelleExtension):

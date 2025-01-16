@@ -1,6 +1,6 @@
 import csv
 
-from .extra import is_flatpak
+from .utility.system import is_flatpak
 
 
 def reconstruct_dataset_from_csv(filename):

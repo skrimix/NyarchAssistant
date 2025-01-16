@@ -1,10 +1,13 @@
-from .llm import BingHandler, ClaudeHandler, GPT4AllHandler, GroqHandler, NyarchApiHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler
-from .tts import VoiceVoxHanlder,ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler, VitsHandler, EdgeTTSHandler
-from .stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperHandler, WitAIHandler, VoskHandler, CustomSRHandler
+from .handlers.llm import BingHandler, ClaudeHandler, GPT4AllHandler, GroqHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler, NewelleAPIHandler
+from .handlers.tts import ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler
+from .handlers.stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperHandler, WitAIHandler, VoskHandler, CustomSRHandler
 
-from .avatar import Live2DHandler, LivePNGHandler
-from .translator import CustomTranslatorHandler, GoogleTranslatorHandler, LibreTranslateHandler, LigvaTranslateHandler
-from .smart_prompt import LogicalRegressionHandler, WordLlamaHandler
+# Nyarch specific imports
+from .handlers.tts import EdgeTTSHandler, VitsHandler, VoiceVoxHanlder
+from .handlers.llm import NyarchApiHandler
+from .handlers.avatar import Live2DHandler, LivePNGHandler
+from .handlers.translator import CustomTranslatorHandler, GoogleTranslatorHandler, LibreTranslateHandler, LigvaTranslateHandler
+from .handlers.smart_prompt import LogicalRegressionHandler, WordLlamaHandler
 
 from .dataset import DATASET, WIKI_PROMPTS
 
