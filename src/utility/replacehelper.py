@@ -5,7 +5,8 @@ from .system import get_spawn_command
 
 class ReplaceHelper:
     DISTRO = None
-
+    AVATAR_HANDLER = None
+    
     @staticmethod
     def get_distribution() -> str:
         """
@@ -29,6 +30,19 @@ class ReplaceHelper:
         if desktop is None:
             desktop = "Unknown"
         return desktop
+
+    @staticmethod
+    def set_handler(handler):
+        ReplaceHelper.AVATAR_HANDLER = handler
+
+    @staticmethod
+    def get_expressions() -> str:
+        if ReplaceHelper.AVATAR_HANDLER is None:
+            return ""
+        result = ""
+        for expression in ReplaceHelper.AVATAR_HANDLER.get_expressions():
+            result += " (" + expression + ")"
+        return result
 
 
 def replace_variables(text: str) -> str:
