@@ -128,6 +128,10 @@ avatar_sources = [
 translator_sources = [
  'handlers/translator/__init__.py',
  'handlers/translator/translator.py',
+ 'handlers/translator/customtr_handler.py',
+ 'handlers/translator/googletr_handler.py',
+ 'handlers/translator/libretranslate_handler.py',
+ 'handlers/translator/ligva_handler.py',
 ]
 
 smart_prompts_sources = [
