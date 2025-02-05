@@ -405,7 +405,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.first_start()
         else:
             threading.Thread(target=self.check_version).start()
-
         self.first_load = False
         self.load_avatar()
 
@@ -937,6 +936,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.load_avatar()
     
     # UI Functions for chat management
+
     def send_button_start_spinner(self):
         """Show a spinner when you click on send button"""
         spinner = Gtk.Spinner(spinning=True)
@@ -1520,7 +1520,8 @@ class MainWindow(Gtk.ApplicationWindow):
         if not self.model.is_installed():
             print("Installing the model...")
             self.model.install()
-            self.update_settings()
+            self.update_settings() 
+
         # Get smart prompts
         if self.smart_prompt_enabled:
             if self.smart_prompt_handler in AVAILABLE_SMART_PROMPTS:

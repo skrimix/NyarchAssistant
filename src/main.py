@@ -15,6 +15,7 @@ from .ui.thread_editing import ThreadEditing
 from .ui.extension import Extension
 from .ui.mini_window import MiniWindow
 
+
 class MyApp(Adw.Application):
     def __init__(self, version, **kwargs):
         self.version = version

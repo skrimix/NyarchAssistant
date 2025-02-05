@@ -32,12 +32,13 @@
 
 Nyarch Assistant supports extensions to enhance its functionality. You can either use [existing extensions](https://github.com/topics/newelle-extension) or create your own to add new features to the application.
 
+
 ![screenshot](https://raw.githubusercontent.com/qwersyk/newelle/master/screenshots/2w.png#gh-light-mode-only)
 ![screenshot](https://raw.githubusercontent.com/qwersyk/newelle/master/screenshots/2b.png#gh-dark-mode-only)
 
 ## Mini Window Mode
 
-A lightweight version of Newelle that can be triggered via keyboard shortcuts.
+A lightweight version of Nyarch Assistant that can be triggered via keyboard shortcuts.
 
 ### Configuration
 
@@ -45,7 +46,7 @@ A lightweight version of Newelle that can be triggered via keyboard shortcuts.
 To configure the mini window launch (example using Ctrl+Space), set the following command in your system keyboard settings:
 
 ```bash
-/bin/bash -c 'flatpak run --command=gsettings io.github.qwersyk.Newelle set io.github.qwersyk.Newelle startup-mode "mini" && flatpak run io.github.qwersyk.Newelle'
+/bin/bash -c 'flatpak run --command=gsettings moe.nyarchlinux.assistant set io.github.qwersyk.Newelle startup-mode "mini" && flatpak run moe.nyarchlinux.assistant'
 ```
 
 #### 2. Enable Window Centering

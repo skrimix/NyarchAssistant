@@ -14,6 +14,7 @@ from ..handlers import Handler
 from ..handlers.stt import STTHandler
 from ..handlers.tts import TTSHandler
 from ..constants import AVAILABLE_LLMS, AVAILABLE_PROMPTS, AVAILABLE_TTS, AVAILABLE_STT, PROMPTS
+
 from ..handlers.llm import LLMHandler
 from ..constants import AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS
 
@@ -48,6 +49,7 @@ class Settings(Adw.PreferencesWindow):
         self.extensionloader.load_extensions()
         self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
         self.extensionloader.add_prompts(PROMPTS, AVAILABLE_PROMPTS)
+
         # Load custom prompts
         self.custom_prompts = json.loads(self.settings.get_string("custom-prompts"))
         self.prompts_settings = json.loads(self.settings.get_string("prompts-settings"))
