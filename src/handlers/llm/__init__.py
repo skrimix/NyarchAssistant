@@ -12,6 +12,7 @@ from .ollama_handler import OllamaHandler
 from .openai_handler import OpenAIHandler 
 from .openrouter_handler import OpenRouterHandler 
 from .newelle_handler import NewelleAPIHandler
+from .deepseek_handler import DeepseekHandler
 from .nyarch_handler import NyarchApiHandler
 
 __all__ = [
@@ -29,5 +30,6 @@ __all__ = [
     "OpenAIHandler",
     "OpenRouterHandler",
     "NewelleAPIHandler",
+    "DeepseekHandler",
     "NyarchApiHandler"
 ]

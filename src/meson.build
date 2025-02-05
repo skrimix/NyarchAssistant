@@ -44,6 +44,7 @@ ui_sources = [
   'ui/thread_editing.py',
   'ui/screenrecorder.py',
   'ui/shortcuts.py',
+  'ui/mini_window.py',
 ]
 
 widgets_sources = [
@@ -54,6 +55,7 @@ widgets_sources = [
   'ui/widgets/comborow.py',
   'ui/widgets/copybox.py',
   'ui/widgets/file.py',
+  'ui/widgets/latex.py',
 ]
 
 handler_sources = [
@@ -77,6 +79,7 @@ llm_sources = [
   'handlers/llm/ollama_handler.py',
   'handlers/llm/openai_handler.py',
   'handlers/llm/openrouter_handler.py',
+  'handlers/llm/deepseek_handler.py',
   'handlers/llm/nyarch_handler.py',
   ]
 
@@ -115,7 +118,8 @@ utility_sources = [
   'utility/util.py',
   'utility/profile_settings.py',
   'utility/audio_recorder.py',
-  'utility/force_sync.py'
+  'utility/message_chunk.py',
+  'utility/force_sync.py',
 ]
 
 avatar_sources = [

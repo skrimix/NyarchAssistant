@@ -19,6 +19,9 @@
         <key name="auto-generate-name" type="b">
             <default>false</default>
         </key>
+        <key name="display-latex" type="b">
+            <default>true</default>
+        </key>
         <key name="path" type="s">
             <default>"~"</default>
         </key>
@@ -46,14 +49,8 @@
 	      <key name="language-model" type="s">
             <default>"nyarch"</default>
         </key>
-	      <key name="local-model" type="s">
-            <default>""</default>
-        </key>
 	      <key name="llm-settings" type="s">
             <default>"{}"</default>
-        </key>
-	      <key name="available-models" type="s">
-            <default>"[]"</default>
         </key>
 	      <key name="tts-on" type="b">
             <default>true</default>
@@ -123,6 +120,9 @@
         </key>
         <key name="smart-prompt-on" type="b">
           <default>true</default>
+        </key>
+	      <key name="startup-mode" type="s">
+          <default>"normal"</default>
         </key>
 	</schema>
 </schemalist>

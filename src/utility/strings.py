@@ -11,7 +11,6 @@ def quote_string(s):
     else:
         return "'" + s + "'"
 
-
 def markwon_to_pango(markdown_text):
     markdown_text = html.escape(markdown_text)
     initial_string = markdown_text
@@ -32,7 +31,7 @@ def markwon_to_pango(markdown_text):
     
     # Convert headers
     absolute_sizes = ['xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large']
-    markdown_text = re.sub(r'^(#+) (.*)$', lambda match: f'<span font_weight="bold" font_size="{absolute_sizes[6 - len(match.group(1)) - 1]}">{match.group(2)}</span>', markdown_text, flags=re.MULTILINE)
+    markdown_text = re.sub(r'^(#+) (.*)$', lambda match: f'<span font_weight="bold" font_size="{absolute_sizes[6 - len(match.group(1))]}">{match.group(2)}</span>', markdown_text, flags=re.MULTILINE)
     
     # Check if the generated text is valid. If not just print it unformatted
     try:
@@ -126,6 +125,16 @@ def remove_markdown(text: str) -> str:
 
     return text.strip()
 
+def convert_think_codeblocks(text: str) -> str:
+    """Convert think codeblocks to markdown
+
+    Args:
+        text (str): The text to convert 
+
+    Returns:
+        str: The converted text 
+    """
+    return text.replace("<think>", "```think").replace("</think>", "```")
 
 def rgb_to_hex(r, g, b):
     """
