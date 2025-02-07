@@ -42,7 +42,7 @@ if is_flatpak():
     BASE_PATH = "/app/data"
 else:
     BASE_PATH = "/usr/share/nyarchassistant/data"
-LIVE2D_VERSION = 0.2
+LIVE2D_VERSION = 0.3
 
 
 class MainWindow(Gtk.ApplicationWindow):
@@ -1901,7 +1901,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     try:
                         box.append(DisplayLatex(chunk.text, 100))
                     except Exception:
-                        print(chunk.text)
                         box.append(CopyBox(chunk.text, "latex", parent=self))
                 elif chunk.type == "thinking":
                     box.append(
