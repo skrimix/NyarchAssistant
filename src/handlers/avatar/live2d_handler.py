@@ -47,7 +47,8 @@ class Live2DHandler(AvatarHandler):
                 "type": "combo",
                 "values": self.get_available_models(),
                 "default": "Arch/arch chan model0.model3.json",
-                "folder": os.path.abspath(self.models_dir)
+                "folder": os.path.abspath(self.models_dir),
+                "refresh": lambda x: self.settings_update(),
             },
             {
              "key": "fps",

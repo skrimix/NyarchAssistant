@@ -64,4 +64,6 @@ def replace_variables(text: str) -> str:
         text = text.replace("{DISTRO}", ReplaceHelper.get_distribution())
     if "{DE}" in text:
         text = text.replace("{DE}", ReplaceHelper.get_desktop_environment())
+    if "{EXPRESSIONS}" in text:
+        text = text.replace("{EXPRESSIONS}", ReplaceHelper.get_expressions())
     return text

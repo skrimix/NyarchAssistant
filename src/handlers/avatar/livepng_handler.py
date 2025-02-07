@@ -26,7 +26,8 @@ class LivePNGHandler(AvatarHandler):
                 "values": self.get_available_models(),
                 "default": "kurisu/model.json",
                 "folder": os.path.abspath(self.models_path),
-                "update_settings": True
+                "update_settings": True,
+                "refresh": lambda x: self.settings_update(),
             },
             {
              "key": "fps",
