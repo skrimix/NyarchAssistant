@@ -41,7 +41,8 @@ class ReplaceHelper:
             return ""
         result = ""
         for expression in ReplaceHelper.AVATAR_HANDLER.get_expressions():
-            result += " (" + expression + ")"
+            if expression is not None:
+                result += " (" + expression + ")"
         return result
 
 
