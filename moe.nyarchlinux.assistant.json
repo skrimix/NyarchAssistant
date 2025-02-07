@@ -1,9 +1,9 @@
 {
-    "app-id" : "io.github.qwersyk.Newelle",
+    "app-id" : "moe.nyarchlinux.assistant",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "47",
     "sdk" : "org.gnome.Sdk",
-    "command" : "newelle",
+    "command" : "nyarchassistant",
     "finish-args" : [
         "--share=network",
         "--share=ipc",
@@ -26,21 +26,32 @@
         "*.la",
         "*.a"
     ],
-    "modules" : [
 
-    	"modules/python3-requests.json",
+    "modules" : [
+    	"modules/git.json",
+      "modules/python3-requests.json",
+      "modules/python3-requests-toolbelt.json",
     	"modules/python3-expandvars.json",
     	"modules/python3-gpt4all.json",
     	"modules/python3-gtts.json",
     	"modules/portaudio.json",
     	"modules/python3-pyaudio.json",
-      "modules/python3-speechrecognition.json",
-      "modules/python3-pygame.json",
       "modules/python3-pillow.json",
       "modules/python3-matplotlib.json",
       "modules/python3-pylatexenc.json",
-        {
-            "name" : "newelle",
+	    "modules/python3-speechrecognition.json",
+      "modules/python3-openai.json",
+      "modules/python3-pygame.json",
+    	"modules/python3-pydub.json",
+    	"modules/python3-voicevox-client.json",
+      "modules/python3-livepng.json",
+      "modules/python3-wordllama.json",
+      "modules/python3-edge-tts.json",
+      "modules/live2d.json",
+      "modules/python3-scikit-learn.json",
+      "modules/smart-prompts.json",
+      {
+            "name" : "nyarchassistant",
             "builddir" : true,
             "buildsystem" : "meson",
             "sources" : [

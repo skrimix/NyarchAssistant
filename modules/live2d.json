@@ -1,0 +1,32 @@
+{
+  "name": "live2d",
+  "buildsystem": "simple",
+  "build-commands": [
+    "rm -rf ${FLATPAK_DEST}/extra/config/avatar/live2d/web || echo ok",
+    "mkdir -p ${FLATPAK_DEST}/extra/config/avatar/live2d/web",
+    "tar -xJf download.tar.xz -C ${FLATPAK_DEST}/extra/config/avatar/live2d/web --no-same-owner",
+    "cp -r arch-chan.png ${FLATPAK_DEST}/extra/config/avatar/live2d/web/",
+    "mkdir -p ${FLATPAK_DEST}/data/live2d",
+    "mv ${FLATPAK_DEST}/extra/config/avatar/live2d/web ${FLATPAK_DEST}/data/live2d"
+  ],
+  "sources" : [
+    {
+      "type": "file",
+      "url": "https://github.com/NyarchLinux/live2d-lipsync-viewer/releases/download/0.3/pack.tar.xz",
+      "sha256": "83a8a437703ec7aaf0e395b0f3cdf506a735d5c26f33ea4fbced1c32fac83264",
+      "dest-filename": "download.tar.xz"
+    },
+    {
+      "type": "file",
+      "url": "https://avatars.githubusercontent.com/u/95960775?v=4",
+      "sha256": "86a403388436d421fd255c451ddf79a47b2f723a70407da81b7676962e08f1e1",
+      "dest-filename": "arch-chan.png"
+    }
+  ],
+    "build-options": {
+    	"build-args": [
+    		"--share=network"
+    	]
+    },
+  "modules": []
+}
