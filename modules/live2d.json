@@ -13,13 +13,13 @@
     {
       "type": "file",
       "url": "https://github.com/NyarchLinux/live2d-lipsync-viewer/releases/download/0.3/pack.tar.xz",
-      "sha256": "16f776c2b0f8960dd1742f280c6e6c4f4b5c2578c7e69b958405911ef5479e7b",
+      "sha256": "83a8a437703ec7aaf0e395b0f3cdf506a735d5c26f33ea4fbced1c32fac83264",
       "dest-filename": "download.tar.xz"
     },
     {
       "type": "file",
       "url": "https://avatars.githubusercontent.com/u/95960775?v=4",
-      "sha256": "83a8a437703ec7aaf0e395b0f3cdf506a735d5c26f33ea4fbced1c32fac83264",
+      "sha256": "1ac325a7eb84eae529238203932172800574238c022ad26993609faa4b51e8e2",
       "dest-filename": "arch-chan.png"
     }
   ],
