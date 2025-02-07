@@ -39,6 +39,7 @@ class Settings(Adw.PreferencesWindow):
             self.set_transient_for(app.win)
         self.set_modal(True)
         self.downloading = {}
+        self.model_threads = {}
         self.slider_labels = {}
         self.directory = GLib.get_user_config_dir()
         self.extension_path = os.path.join(self.directory, "extensions")
