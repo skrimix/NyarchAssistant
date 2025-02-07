@@ -30,7 +30,7 @@ from .constants import AVAILABLE_LLMS, AVAILABLE_PROMPTS, PROMPTS, AVAILABLE_TTS
 from .utility import override_prompts
 from .utility.system import get_spawn_command, is_flatpak 
 from .utility.pip import install_module
-from .utility.strings import markwon_to_pango, remove_markdown
+from .utility.strings import markwon_to_pango, remove_markdown, convert_think_codeblocks
 from .utility.replacehelper import ReplaceHelper, replace_variables
 from .utility.profile_settings import get_settings_dict, restore_settings_from_dict
 from .utility.audio_recorder import AudioRecorder
@@ -1566,10 +1566,11 @@ class MainWindow(Gtk.ApplicationWindow):
         # Generate chat name 
         if self.auto_generate_name and len(self.chat) == 1: 
             GLib.idle_add(self.generate_chat_name, Gtk.Button(name=str(self.chat_id)))
-
+            
         if self.tts_enabled:
             if self.tts_program in AVAILABLE_TTS:
                 # Remove text in *text*
+                message_label = convert_think_codeblocks(message_label)
                 message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
                 message = remove_markdown(message)
                 # Remove text in *text*
@@ -1586,6 +1587,8 @@ class MainWindow(Gtk.ApplicationWindow):
                         tts_thread = threading.Thread(target=self.tts.play_audio, args=(message, ))
                     tts_thread.start()
                     def restart_recording():
+                        if not self.automatic_stt_status:
+                            return
                         if tts_thread is not None:
                             tts_thread.join()
                         GLib.idle_add(self.start_recording, self.recording_button)
