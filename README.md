@@ -76,7 +76,7 @@ gsettings set org.gnome.mutter center-new-windows true
 # Permission
 
 To extend functionality, you can either temporarily grant access with:
-```flatpak run --talk-name=org.freedesktop.Flatpak --filesystem=home moe.nyarchlinux.nyarchassistant```
+```flatpak run --talk-name=org.freedesktop.Flatpak --filesystem=home moe.nyarchlinux.assistant```
 or adjust settings permanently using Flatseal:
 - Open Flatseal, find "nyarchassistant," enable "All user files" and "Session Bus," and add `org.freedesktop.Flatpak` to run outside the sandbox.
 
