@@ -1574,9 +1574,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     prompts += generated
                 except Exception as e:
                     print(e)
-
-        # Set history and prompts
-            self.update_settings()
         # Set the history for the model
         history = self.get_history()
         # Let extensions preprocess the history 
