@@ -139,7 +139,7 @@ class MyApp(Adw.Application):
                         documenters=["Francesco Caracciolo https://github.com/FrancescoCaracciolo"],
                         designers=["Nokse22 https://github.com/Nokse22"],
                         translator_credits="\n".join(["Amine Saoud (Arabic) https://github.com/amiensa","Heimen Stoffels (Dutch) https://github.com/Vistaus","Albano Battistella (Italian) https://github.com/albanobattistella"]),
-                        copyright='© 2024 qwersyk').present()
+                        copyright='© 2025 qwersyk & NyarchLinux').present()
 
     def thread_editing_action(self, *a):
         threadediting = ThreadEditing(self)

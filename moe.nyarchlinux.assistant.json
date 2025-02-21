@@ -15,6 +15,7 @@
         "--socket=pulseaudio",
         "--talk-name=org.gnome.Shell.Screencast"
     ],
+
     "cleanup" : [
         "/include",
         "/lib/pkgconfig",
