@@ -504,7 +504,10 @@ class MainWindow(Gtk.ApplicationWindow):
             self.tts = AVAILABLE_TTS[self.tts_program]["class"](self.settings, self.directory)
             self.tts.connect('start', lambda: GLib.idle_add(self.mute_tts_button.set_visible, True))
             self.tts.connect('stop', lambda: GLib.idle_add(self.mute_tts_button.set_visible, False))
-        
+    
+        if not self.first_load:
+            self.load_avatar()
+
     def quick_settings_update(self):  
         """Update LLM and prompt settings"""
         self.language_model = self.settings.get_string("language-model")
@@ -535,7 +538,6 @@ class MainWindow(Gtk.ApplicationWindow):
     
         # Setup attach buttons to the model capabilities
         if not self.first_load:
-            self.load_avatar()
             self.build_offers()
             if not self.model.supports_vision() and not self.model.supports_video_vision() and len(self.model.get_supported_files()) == 0:
                 if self.attached_image_data is not None:
