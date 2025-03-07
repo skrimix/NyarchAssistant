@@ -45,6 +45,15 @@ class ReplaceHelper:
                 result += " (" + expression + ")"
         return result
 
+    @staticmethod
+    def get_motions() -> str:
+        if ReplaceHelper.AVATAR_HANDLER is None:
+            return ""
+        result = ""
+        for motion in ReplaceHelper.AVATAR_HANDLER.get_motions():
+            if motion is not None:
+                result += " (" + motion + ")"
+        return result
 
 def replace_variables(text: str) -> str:
     """
@@ -67,4 +76,6 @@ def replace_variables(text: str) -> str:
         text = text.replace("{DE}", ReplaceHelper.get_desktop_environment())
     if "{EXPRESSIONS}" in text:
         text = text.replace("{EXPRESSIONS}", ReplaceHelper.get_expressions())
+    if "{MOTIONS}" in text:
+        text = text.replace("{MOTIONS}", ReplaceHelper.get_motions())
     return text

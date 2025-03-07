@@ -177,9 +177,12 @@ def extract_expressions(text, expressions_list):
     tokens = text.split()
     i = 0
     while i < len(tokens):
+        tokens[i] = tokens[i].rstrip(".").rstrip("?").rstrip("!").rstrip(",")
         if tokens[i].startswith("(") and tokens[i].endswith(")"):
             expression = tokens[i][1:-1]
-            if expression in expressions_list:
+            if expression in [exp.replace("_", "") for exp in expressions_list]:
+                if expression not in expressions:
+                    expression = expressions_list[[exp.replace("_", "") for exp in expressions_list].index(expression)]
                 if current_text.strip():
                     expressions.append({"expression": current_expression, "text": current_text.strip()})
                     current_text = ""
