@@ -1,5 +1,5 @@
-project('newelle',
-          version: '0.7.0',
+project('nyarchassistant',
+          version: '0.7.1',
     meson_version: '>= 0.62.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )
