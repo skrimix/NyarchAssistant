@@ -9,6 +9,9 @@ from .handlers import Handler
 from .handlers.llm import LLMHandler
 from .handlers.stt import STTHandler
 from .handlers.tts import TTSHandler
+from .handlers.rag import RAGHandler
+from .handlers.memory import MemoryHandler
+from .handlers.embeddings import EmbeddingHandler
 from .handlers.avatar import AvatarHandler
 from .handlers.smart_prompt import SmartPromptHandler
 from .handlers.translator import TranslatorHandler
@@ -37,6 +40,26 @@ class NewelleExtension(Handler):
         self.key = self.id
         self.schema_key = "extensions-settings"
         pass
+
+    def set_handlers(self, llm: LLMHandler, stt: STTHandler, tts:TTSHandler|None, secondary_llm: LLMHandler, embedding: EmbeddingHandler, rag: RAGHandler|None, memory: MemoryHandler|None):
+        """Set the handlers for the extension
+
+        Args:
+            llm: LLMHandler 
+            stt: STTHandler 
+            tts: TTSHandler|None if disabled None is given 
+            secondary_llm: LLMHandler (if disabled, is the same of LLMHandler) 
+            embedding: EmbeddingHandler 
+            rag: RAGHandler|None if disabled None is given 
+            memory: MemoryHandler|None if disabled None is given 
+        """
+        self.llm = llm 
+        self.stt = stt
+        self.tts = tts
+        self.secondary_llm = secondary_llm
+        self.embedding = embedding
+        self.rag = rag
+        self.memory = memory
 
     def get_llm_handlers(self) -> list[dict]:
         """
@@ -84,16 +107,52 @@ class NewelleExtension(Handler):
         """
         return [] 
 
+    def get_memory_handlers(self) -> list[dict]:
+        """
+        Returns the list of memory handlers
+
+        Returns:
+            list: list of memory handlers in this format
+            {
+                "key": "key of the handler",
+                "title": "title of the handler",
+                "description": "description of the handler",
+                "class": MemoryHandler - The class of the handler,
+            }
+        """
+        return []
+
+    def get_embedding_handlers(self) -> list[dict]:
+        """
+        Returns the list of embedding handlers
+
+        Returns:
+            list: list of embedding handlers in this format
+                "class": EmbeddingHandler - The class of the handler,
+            }
+        """
+        return []
+
+    def get_rag_handlers(self) -> list[dict]:
+        """
+        Returns the list of RAG handlers
+
+        Returns:
+            list: list of RAG handlers in this format 
+            {
+                "key": "key of the handler",
+                "title": "title of the handler",
+                "description": "description of the handler",
+                "class": RAGHandler - The class of the handler,
+            }
+        """
+        return []
     def get_translators_handlers(self) -> list[dict]:
         """
         Returns the list of Translators handlers
 
         Returns:
             list: list of Translators handlers in this format
-            {
-                "key": "key of the handler",
-                "title": "title of the handler",
-                "description": "description of the handler",
                 "class": TranslatorHandler - The class of the handler,
             }
         """
@@ -120,10 +179,6 @@ class NewelleExtension(Handler):
 
         Returns:
             list: list of Smart Prompts handlers in this format
-            {
-                "key": "key of the handler",
-                "title": "title of the handler",
-                "description": "description of the handler",
                 "class": SmartPromptsHandler - The class of the handler,
             }
         """
@@ -233,6 +288,9 @@ class ExtensionLoader:
     def get_extensions(self) -> list[NewelleExtension]:
         return self.extensions
 
+    def get_enabled_extensions(self) -> list[NewelleExtension]:
+        return [x for x in self.get_extensions() if x not in self.disabled_extensions]
+
     def load_extensions(self):
         """Load extensions from the extension directory"""
         sys.path.insert(0, self.project_dir)
@@ -267,7 +325,11 @@ class ExtensionLoader:
             
         sys.path.remove(self.project_dir)
 
-    def add_handlers(self, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS):
+    def set_handlers(self, llm: LLMHandler, stt: STTHandler, tts:TTSHandler|None, secondary_llm: LLMHandler, embedding: EmbeddingHandler, rag: RAGHandler|None, memory: MemoryHandler|None):
+        for extension in self.extensions:
+            extension.set_handlers(llm, stt, tts, secondary_llm, embedding, rag, memory)
+
+    def add_handlers(self, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAG, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS):
         """Add the handlers of each extension to the available handlers
 
         Args:
@@ -287,6 +349,15 @@ class ExtensionLoader:
             handlers = extension.get_stt_handlers()
             for handler in handlers:
                 AVAILABLE_STT[handler["key"]] = handler
+            handlers = extension.get_memory_handlers()
+            for handler in handlers:
+                AVAILABLE_MEMORIES[handler["key"]] = handler
+            handlers = extension.get_embedding_handlers()
+            for handler in handlers:
+                AVAILABLE_EMBEDDINGS[handler["key"]] = handler
+            handlers = extension.get_rag_handlers()
+            for handler in handlers:
+                AVAILABLE_RAG[handler["key"]] = handler
             handler = extension.get_translators_handlers()
             for h in handler:
                 AVAILABLE_TRANSLATORS[h["key"]] = h
@@ -314,7 +385,7 @@ class ExtensionLoader:
                     AVAILABLE_PROMPTS.append(prompt)
                 PROMPTS[prompt["key"]] = prompt["text"]
 
-    def remove_handlers(self, extension, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS):
+    def remove_handlers(self, extension, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAG, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS):
         """Remove handlers of an extension
 
         Args:
@@ -331,6 +402,15 @@ class ExtensionLoader:
         handlers = extension.get_stt_handlers()
         for handler in handlers:
             AVAILABLE_STT.pop(handler["key"])
+        handlers = extension.get_memory_handlers()
+        for handler in handlers:
+            AVAILABLE_MEMORIES.pop(handler["key"])
+        handlers = extension.get_embedding_handlers()
+        for handler in handlers:
+            AVAILABLE_EMBEDDINGS.pop(handler["key"])
+        handlers = extension.get_rag_handlers()
+        for handler in handlers:
+            AVAILABLE_RAG.pop(handler["key"])
         handler = extension.get_translators_handlers()
         for h in handler:
             AVAILABLE_TRANSLATORS.pop(h["key"])
@@ -481,7 +561,7 @@ class ExtensionLoader:
         """
         Called on the history before it is sent to the LLM. History is given in Newelle format
         """
-        for extension in self.extensions:
+        for extension in self.get_enabled_extensions():
             try:
                 history, prompts = extension.preprocess_history(history, prompts)
             except Exception as e:
@@ -492,7 +572,7 @@ class ExtensionLoader:
         """
         Called on the history after it is received from the LLM. History is given in Newelle format
         """
-        for extension in self.extensions:
+        for extension in self.get_enabled_extensions():
             try:
                 history, bot_response = extension.postprocess_history(history, bot_response)
             except Exception as e:

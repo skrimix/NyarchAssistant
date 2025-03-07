@@ -19,7 +19,7 @@ class SmartPromptHandler(Handler):
     def get_extra_prompts(self, message: str, history : list[dict[str, str]], available_prompts : list[dict]) -> list[str]:
         return []
 
-class WordLlamaHandler(SmartPromptHandler):
+class WordLlamaPromptHandler(SmartPromptHandler):
     key = "WordLlama"
 
     def __init__(self, settings, path: str):

@@ -1,13 +1,16 @@
-from .handlers.llm import BingHandler, ClaudeHandler, DeepseekHandler, GPT4AllHandler, GroqHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler, NewelleAPIHandler
+from .handlers.llm import ClaudeHandler, DeepseekHandler, GPT4AllHandler, GroqHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler, NewelleAPIHandler
 from .handlers.tts import ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler
 from .handlers.stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperHandler, WitAIHandler, VoskHandler, CustomSRHandler
+from .handlers.embeddings import WordLlamaHandler, OpenAIEmbeddingHandler, GeminiEmbeddingHanlder, OllamaEmbeddingHandler
+from .handlers.memory import MemoripyHandler, UserSummaryHandler
+from .handlers.rag import LlamaIndexHanlder
 
 # Nyarch specific imports
 from .handlers.tts import EdgeTTSHandler, VitsHandler, VoiceVoxHanlder
 from .handlers.llm import NyarchApiHandler
 from .handlers.avatar import Live2DHandler, LivePNGHandler
 from .handlers.translator import CustomTranslatorHandler, GoogleTranslatorHandler, LibreTranslateHandler, LigvaTranslateHandler
-from .handlers.smart_prompt import LogicalRegressionHandler, WordLlamaHandler
+from .handlers.smart_prompt import LogicalRegressionHandler, WordLlamaPromptHandler
 
 from .dataset import DATASET, WIKI_PROMPTS
 
@@ -86,13 +89,6 @@ AVAILABLE_LLMS = {
         "description": _("Deepseek API, strongest open source models"),
         "class": DeepseekHandler, 
         "secondary": True,
-    },
-    "bing": {
-        "key": "bing",
-        "title": _("Microsoft Copilot"),
-        "description": _("Microsoft Copilot model using GPT4 - Requires a cookies json file"),
-        "class": BingHandler,
-        "secondary": True
     },
     "custom_command": {
         "key": "custom_command",
@@ -206,6 +202,56 @@ AVAILABLE_TTS = {
     }
 }
 
+AVAILABLE_EMBEDDINGS = {
+    "wordllama": {
+        "key": "wordllama",
+        "title": _("WordLlama"),
+        "description": _("Light local embedding model based on llama. Works offline, very low resources usage"),
+        "class": WordLlamaHandler,
+    },
+    "ollamaembedding": {
+        "key": "ollamaembedding",
+        "title": _("Ollama Embedding"),
+        "description": _("Use Ollama models for Embedding. Works offline, very low resources usage"),
+        "class": OllamaEmbeddingHandler,
+    },
+    "openaiembedding": {
+        "key": "openaiembedding",
+        "title": _("OpenAI API"),
+        "description": _("OpenAI API"),
+        "class": OpenAIEmbeddingHandler,
+    },
+    "geminiembedding": {
+        "key": "geminiembedding",
+        "title": _("Google Gemini API"),
+        "description": _("Use Google Gemini API to get embeddings"),
+        "class": GeminiEmbeddingHanlder,
+    }
+}
+
+AVAILABLE_MEMORIES = {
+    "user-summary": {
+        "key": "user-summary",
+        "title": _("User Summary"),
+        "description": _("Generate a summary of the user's conversation"),
+        "class": UserSummaryHandler,
+    },
+    "memoripy": {
+        "key": "memoripy",
+        "title": _("Memoripy"),
+        "description": _("Extract messages from previous conversations using contextual memory retrivial, memory decay, concept extraction and other advanced techniques. Does 1 llm call per message."),
+        "class": MemoripyHandler,
+    }
+}
+
+AVAILABLE_RAGS = {
+    "llamaindex": {
+        "key": "llamaindex",
+        "title": _("Document reader"),
+        "description": _("Classic RAG approach - chunk documents and embed them, then compare them to the query and return the most relevant documents"),
+        "class": LlamaIndexHanlder,
+    },
+}
 AVAILABLE_AVATARS = {
     "Live2D": {
         "key": "Live2D",
@@ -253,7 +299,7 @@ AVAILABLE_SMART_PROMPTS = {
         "key": "WordLlama",
         "title": _("Nyarch Smart Prompt Lite"),
         "description": _("EXPERIMENTAL: Local mini models that helps the llm to provide better responses"),
-        "class": WordLlamaHandler,
+        "class": WordLlamaPromptHandler,
     },
     "LogicalRegression": {
         "key": "LogicalRegression",

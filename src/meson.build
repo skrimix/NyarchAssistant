@@ -10,8 +10,7 @@ gnome.compile_resources('nyarchassistant',
 )
 
 python = import('python')
-
-conf = configuration_data()
+conf = configuration_data() 
 conf.set('PYTHON', python.find_installation('python3').path())
 conf.set('VERSION', meson.project_version())
 conf.set('localedir', join_paths(get_option('prefix'), get_option('localedir')))
@@ -61,12 +60,12 @@ widgets_sources = [
 handler_sources = [
   'handlers/__init__.py',
   'handlers/handler.py',
+  'handlers/extra_settings.py',
 ]
 
 llm_sources = [
   'handlers/llm/__init__.py',
   'handlers/llm/llm.py',
-  'handlers/llm/bing_handler.py',
   'handlers/llm/claude_handler.py',
   'handlers/llm/custom_handler.py',
   'handlers/llm/g4f_handler.py',
@@ -106,6 +105,28 @@ stt_sources = [
   'handlers/stt/whisper_handler.py',
   'handlers/stt/custom_handler.py',
   'handlers/stt/vosk_handler.py',
+]
+
+embedding_sources = [  
+  'handlers/embeddings/__init__.py',
+  'handlers/embeddings/embedding.py',
+  'handlers/embeddings/wordllama_handler.py',
+  'handlers/embeddings/openai_handler.py',
+  'handlers/embeddings/gemini_handler.py',
+  'handlers/embeddings/ollama_handler.py',
+]
+
+memory_sources = [  
+  'handlers/memory/__init__.py',
+  'handlers/memory/memory_handler.py',
+  'handlers/memory/memoripy_handler.py',
+  'handlers/memory/user_summary_handler.py',
+]
+
+rag_sources = [  
+  'handlers/rag/__init__.py',
+  'handlers/rag/rag_handler.py',
+  'handlers/rag/llamaindex_handler.py',
 ]
 
 utility_sources = [
@@ -150,6 +171,9 @@ install_data(handler_sources, install_dir: moduledir / 'handlers')
 install_data(llm_sources, install_dir: moduledir / 'handlers' / 'llm')
 install_data(tts_sources, install_dir: moduledir / 'handlers' / 'tts')
 install_data(stt_sources, install_dir: moduledir / 'handlers' / 'stt')
+install_data(memory_sources, install_dir: moduledir / 'handlers' / 'memory')
+install_data(rag_sources, install_dir: moduledir / 'handlers' / 'rag')
+install_data(embedding_sources, install_dir: moduledir / 'handlers' / 'embeddings')
 install_data(translator_sources, install_dir: moduledir / 'handlers' / 'translator')
 install_data(avatar_sources, install_dir: moduledir / 'handlers' / 'avatar')
 install_data(smart_prompts_sources, install_dir: moduledir / 'handlers' / 'smart_prompt')

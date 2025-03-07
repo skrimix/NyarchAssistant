@@ -15,6 +15,9 @@ import base64
 import copy
 
 from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
+from .handlers.embeddings.embedding import EmbeddingHandler
+from .handlers.memory.memoripy_handler import MemoripyHandler
+from .handlers.rag import RAGHandler
 
 from .ui.settings import Settings
 
@@ -26,7 +29,7 @@ from .ui.presentation import PresentationWindow
 from .ui.widgets import File, CopyBox, BarChartBox
 from .ui import apply_css_to_widget
 from .ui.widgets import MultilineEntry, ProfileRow, DisplayLatex
-from .constants import AVAILABLE_LLMS, AVAILABLE_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT
+from .constants import AVAILABLE_LLMS, AVAILABLE_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS
 
 from .utility import override_prompts
 from .utility.system import get_spawn_command, is_flatpak 
@@ -35,6 +38,7 @@ from .utility.strings import convert_think_codeblocks, get_edited_messages, mark
 from .utility.replacehelper import ReplaceHelper, replace_variables
 from .utility.profile_settings import get_settings_dict, restore_settings_from_dict
 from .utility.audio_recorder import AudioRecorder
+from .utility.media import extract_supported_files
 from .ui.screenrecorder import ScreenRecorder
 
 from .extensions import ExtensionLoader
@@ -345,7 +349,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.attach_button = button
         self.input_box.append(button)
         self.input_box.append(self.attached_image)
-        if not self.model.supports_vision() and not self.model.supports_video_vision() and len(self.model.get_supported_files()) == 0:
+        if (not self.model.supports_vision() and not self.model.supports_video_vision() and 
+                (len(self.model.get_supported_files()) + (len(self.rag_handler.get_supported_files()) if self.rag_handler is not None else 0) == 0)):
             self.attach_button.set_visible(False)
         else:
             self.attach_button.set_visible(True)
@@ -359,7 +364,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.screen_record_button.connect("clicked", self.start_screen_recording)
         self.input_box.append(self.screen_record_button)
 
-        # if "mp4" in self.model.get_supported_files():
         if not self.model.supports_video_vision():
             self.screen_record_button.set_visible(False)
         self.video_recorder = None
@@ -477,6 +481,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.automatic_stt = settings.get_boolean("automatic-stt")
         self.stt_silence_detection_threshold = settings.get_double("stt-silence-detection-threshold")
         self.stt_silence_detection_duration = settings.get_int("stt-silence-detection-duration")
+        self.embedding_model = self.settings.get_string("embedding-model")
+        self.memory_on = self.settings.get_boolean("memory-on")
+        self.memory_model = self.settings.get_string("memory-model")
+        self.rag_on = self.settings.get_boolean("rag-on")
+        self.rag_on_documents = self.settings.get_boolean("rag-on-documents")
+        self.rag_model = self.settings.get_string("rag-model")
         # Nyarch Settings 
         self.last_avatar_enabled = self.avatar_enabled
         self.avatar_enabled = settings.get_boolean("avatar-on")
@@ -489,40 +499,85 @@ class MainWindow(Gtk.ApplicationWindow):
         self.extensionloader = ExtensionLoader(self.extension_path, pip_path=self.pip_directory,
                                                extension_cache=self.extensions_cache, settings=self.settings)
         self.extensionloader.load_extensions()
-        self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
+        self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
         self.extensionloader.add_prompts(PROMPTS, AVAILABLE_PROMPTS)
 
-        # Load quick settings 
-        self.quick_settings_update()
-        
-        if os.path.exists(os.path.expanduser(self.main_path)):
-            os.chdir(os.path.expanduser(self.main_path))
-        else:
-            self.main_path = "~"
         # Setup TTS
         if self.tts_program in AVAILABLE_TTS:
             self.tts = AVAILABLE_TTS[self.tts_program]["class"](self.settings, self.directory)
             self.tts.connect('start', lambda: GLib.idle_add(self.mute_tts_button.set_visible, True))
             self.tts.connect('stop', lambda: GLib.idle_add(self.mute_tts_button.set_visible, False))
-    
+        
+        # Create RAG and memory handler and embedding handler first
+        if self.rag_on or self.rag_on_documents:
+            self.rag_handler : RAGHandler | None = AVAILABLE_RAGS[self.rag_model]["class"](self.settings, os.path.join(self.directory, "models"))
+        else:
+            self.rag_handler = None
+
+        if self.memory_on:
+            self.memory_handler : MemoripyHandler= AVAILABLE_MEMORIES[self.memory_model]["class"](self.settings, os.path.join(self.directory, "models"))
+            self.memory_handler.set_memory_size(self.memory)
+        self.embeddings : EmbeddingHandler = AVAILABLE_EMBEDDINGS[self.embedding_model]["class"](self.settings, os.path.join(self.directory, "models"))
+        if not self.embeddings.is_installed():
+            # Install embeddings if missing
+            threading.Thread(target=self.embeddings.install).start()
+        
+        # Quick settings will add the handlers to RAG and memory 
+        # Load quick settings 
+        self.quick_settings_update()
+        # Load embeddings only if required
+        if self.rag_on or self.memory_on or self.rag_on_documents:
+            self.embeddings.load_model()
+        # Load RAG
+        if self.rag_on:
+            self.rag_handler.load()
+        
+        # Adjust paths
+        if os.path.exists(os.path.expanduser(self.main_path)):
+            os.chdir(os.path.expanduser(self.main_path))
+        else:
+            self.main_path = "~"
+            
         if not self.first_load:
             self.load_avatar()
 
     def quick_settings_update(self):  
         """Update LLM and prompt settings"""
         self.language_model = self.settings.get_string("language-model")
+        self.secondary_language_model = self.settings.get_string("secondary-language-model")
+        self.use_secondary_language_model = self.settings.get_boolean("secondary-llm-on")
         self.custom_prompts = json.loads(self.settings.get_string("custom-prompts"))
         self.prompts = override_prompts(self.custom_prompts, PROMPTS)
         self.prompts_settings = json.loads(self.settings.get_string("prompts-settings"))
-
+        # Primary LLM
         if self.language_model in AVAILABLE_LLMS:
             self.model: LLMHandler = AVAILABLE_LLMS[self.language_model]["class"](self.settings, os.path.join(self.directory, "models"))
         else:
             mod = list(AVAILABLE_LLMS.values())[0]
             self.model: LLMHandler = mod["class"](self.settings, os.path.join(self.directory))
+       
+        # Secondary LLM
+        if self.use_secondary_language_model:
+            if self.secondary_language_model in AVAILABLE_LLMS:
+                self.secondary_model: LLMHandler = AVAILABLE_LLMS[self.secondary_language_model]["class"](self.settings, os.path.join(self.directory, "models"))
+            else:
+                mod = list(AVAILABLE_LLMS.values())[0]
+                self.secondary_model: LLMHandler = mod["class"](self.settings, os.path.join(self.directory))
+            self.secondary_model.set_secondary_settings(True)
+        else:
+            self.secondary_model = self.model
+        # Update handlers in memory and rag 
+        if self.memory_on:
+            self.memory_handler.set_handlers(self.secondary_model, self.embeddings)
+        if self.rag_on or self.rag_on_documents:
+            self.rag_handler.set_handlers(self.secondary_model, self.embeddings)
+
         # Load handlers and models
         self.model.load_model(None)
         self.stt_handler = AVAILABLE_STT[self.stt_engine]["class"](self.settings, self.pip_directory)
+       
+        # Update handlers in extensions 
+        self.extensionloader.set_handlers(self.model, self.stt_handler, self.tts if self.tts_enabled else None, self.secondary_model, self.embeddings, self.rag_handler if (self.rag_on or self.rag_on_documents) else None, self.memory_handler if self.memory_on else None)
         # Load prompts
         self.bot_prompts = []
         for prompt in AVAILABLE_PROMPTS:
@@ -539,7 +594,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # Setup attach buttons to the model capabilities
         if not self.first_load:
             self.build_offers()
-            if not self.model.supports_vision() and not self.model.supports_video_vision() and len(self.model.get_supported_files()) == 0:
+            if (not self.model.supports_vision() and not self.model.supports_video_vision() 
+                    and len(self.model.get_supported_files()) + (len(self.rag_handler.get_supported_files()) if self.rag_handler is not None else 0) == 0):
                 if self.attached_image_data is not None:
                     self.delete_attachment(self.attach_button)
                 self.attach_button.set_visible(False)
@@ -579,7 +635,7 @@ class MainWindow(Gtk.ApplicationWindow):
         box.append(switcher)
         box.append(scroll)
         self.model_menu_button.set_popover(self.model_popup)
-        self.model_popup.connect("closed", lambda x: self.quick_settings_update())
+        self.model_popup.connect("closed", lambda x: GLib.idle_add(self.quick_settings_update))
         self.model_popup.set_child(box)
         return self.model_menu_button
 
@@ -840,7 +896,13 @@ class MainWindow(Gtk.ApplicationWindow):
         image_filter = Gtk.FileFilter(name="Images", patterns=["*.png", "*.jpg", "*.jpeg", "*.webp"])
         video_filter = Gtk.FileFilter(name="Video", patterns=["*.mp4"])
         file_filter = Gtk.FileFilter(name="Supported Files", patterns=self.model.get_supported_files())
+        second_file_filter = None
+        if self.rag_handler is not None and self.rag_on_documents:
+            second_file_filter = Gtk.FileFilter(name="RAG Supported files", patterns=self.rag_handler.get_supported_files())
         default_filter = None
+        if second_file_filter is not None:
+            filters.append(second_file_filter)
+            default_filter = video_filter
         if self.model.supports_video_vision():    
             filters.append(video_filter)
             default_filter = video_filter
@@ -1356,9 +1418,12 @@ class MainWindow(Gtk.ApplicationWindow):
             button.set_can_target(False)
             button.set_has_frame(True)
 
-            self.model.set_history([], self.get_history(self.chats[int(button.get_name())]["chat"]))
-            name = self.model.generate_chat_name(self.prompts["generate_name_prompt"])
+            self.secondary_model.set_history([], self.get_history(self.chats[int(button.get_name())]["chat"]))
+            print("Generating")
+            name = self.secondary_model.generate_chat_name(self.prompts["generate_name_prompt"])
+            print(name)
             if name is None:
+                self.update_history()
                 return
             name = remove_markdown(name)
             if name != "Chat has been stopped":
@@ -1508,7 +1573,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def generate_suggestions(self):
         """Create the suggestions and update the UI when it's finished"""
         self.model.set_history([], self.get_history())
-        suggestions = self.model.get_suggestions(self.prompts["get_suggestions_prompt"], self.offers)
+        suggestions = self.secondary_model.get_suggestions(self.prompts["get_suggestions_prompt"], self.offers)
         GLib.idle_add(self.populate_suggestions, suggestions)
 
     def populate_suggestions(self, suggestions):
@@ -1528,7 +1593,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.chat_stop_button.set_visible(False)
         GLib.idle_add(self.scrolled_chat)
 
-    def get_history(self, chat=None) -> list[dict[str, str]]:
+    def get_history(self, chat=None, include_last_message=False) -> list[dict[str, str]]:
         """Format the history excluding none messages and picking the right context size 
 
         Args:
@@ -1541,7 +1606,8 @@ class MainWindow(Gtk.ApplicationWindow):
             chat = self.chat
         history = []
         count = self.memory
-        for msg in chat[:-1]:
+        msgs = chat[:-1] if not include_last_message else chat
+        for msg in msgs:
             if count == 0:
                 break
             if msg["User"] == "Console" and msg["Message"] == "None":
@@ -1550,6 +1616,21 @@ class MainWindow(Gtk.ApplicationWindow):
             count -= 1
         return history
 
+    def get_memory_prompt(self):
+        r = [] 
+        if self.memory_on:
+            r += self.memory_handler.get_context(self.chat[-1]["Message"], self.get_history())
+        if self.rag_on:
+            r += self.rag_handler.get_context(self.chat[-1]["Message"], self.get_history())
+        if self.rag_on_documents and self.rag_handler is not None:
+            documents = extract_supported_files(self.get_history(include_last_message=True), self.rag_handler.get_supported_files())
+            if len(documents) > 0:
+                r += self.rag_handler.query_document(self.chat[-1]["Message"],documents) 
+        return r
+    def update_memory(self, bot_response):
+        if self.memory_on:
+            threading.Thread(target=self.memory_handler.register_response, args=(bot_response, self.chat)).start()
+    
     def send_message(self):
         """Send a message in the chat and get bot answer, handle TTS etc"""
         self.stream_number_variable += 1
@@ -1561,6 +1642,11 @@ class MainWindow(Gtk.ApplicationWindow):
         prompts = []
         for prompt in self.bot_prompts:
             prompts.append(replace_variables(prompt))
+        
+        # Append memory
+        if self.memory_on or self.rag_on:
+            prompts += self.get_memory_prompt()
+
         # If the model is not installed, install it
         if not self.model.is_installed():
             print("Installing the model...")
@@ -1627,6 +1713,7 @@ class MainWindow(Gtk.ApplicationWindow):
             GLib.idle_add(self.show_message, message_label)
         GLib.idle_add(self.remove_send_button_spinner)
         # Generate chat name 
+        self.update_memory(message_label)
         if self.auto_generate_name and len(self.chat) == 1: 
             GLib.idle_add(self.generate_chat_name, Gtk.Button(name=str(self.chat_id)))
             
