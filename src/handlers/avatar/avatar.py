@@ -49,7 +49,7 @@ class AvatarHandler(Handler):
     @abstractmethod 
     def get_motions(self) -> list[str]:
         """Get the list of possible motions"""
-        pass
+        return []
 
     @abstractmethod 
     def set_expression(self, expression: str):

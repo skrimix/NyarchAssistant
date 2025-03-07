@@ -47,7 +47,7 @@ if is_flatpak():
     BASE_PATH = "/app/data"
 else:
     BASE_PATH = "/usr/share/nyarchassistant/data"
-LIVE2D_VERSION = 0.3
+LIVE2D_VERSION = 0.4
 
 
 class MainWindow(Gtk.ApplicationWindow):
@@ -434,7 +434,17 @@ class MainWindow(Gtk.ApplicationWindow):
             os.makedirs(os.path.expanduser("~/.cache/wordllama/tokenizers"), exist_ok=True)
         except Exception as e:
             print(e)
-        subprocess.run(['cp', '-r', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.directory, "avatars/live2d/web")])
+        try:
+            subprocess.check_output(['mv', os.path.join(self.directory, "avatars/live2d/web/models"), os.path.join(self.directory, 'avatars/live2d/models')])
+            subprocess.check_output(['rm', '-rf',  os.path.join(self.directory, "avatars/live2d/web")])
+        except Exception as e:
+            print(e)
+        subprocess.check_output(['cp', '-r', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.directory, "avatars/live2d/web")])
+        try:
+            subprocess.check_output(['cp', '-rf', os.path.join(self.directory, "avatars/live2d/models"), os.path.join(self.directory, "avatars/live2d/web/")])
+            subprocess.check_output(['rm', '-rf', os.path.join(self.directory, "avatars/live2d/models")])
+        except Exception as e:
+            print(e)
 
     def build_offers(self):
         """Build offers buttons, called by update_settings to update the number of buttons"""
