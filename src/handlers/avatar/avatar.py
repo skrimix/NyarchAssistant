@@ -47,10 +47,20 @@ class AvatarHandler(Handler):
         pass
 
     @abstractmethod 
+    def get_motions(self) -> list[str]:
+        """Get the list of possible motions"""
+        pass
+
+    @abstractmethod 
     def set_expression(self, expression: str):
         """Set the expression"""
         pass
 
+    @abstractmethod 
+    def do_motion(self, motion: str):
+        """Set the motion"""
+        pass
+    
     @abstractmethod
     def speak_with_tts(self, text: str, tts : TTSHandler, translator: TranslatorHandler):
         """ Speak the given text with the given TTS handler and Translation handler
@@ -61,7 +71,7 @@ class AvatarHandler(Handler):
             translator: Translation handler 
         """
         frame_rate = int(self.get_setting("fps"))
-        chunks = extract_expressions(text, self.get_expressions()) 
+        chunks = extract_expressions(text, self.get_expressions() + self.get_motions()) 
         threads = []
         results = {}
         i = 0
@@ -81,7 +91,10 @@ class AvatarHandler(Handler):
                 break
             result = results[i]
             if result["expression"] is not None:
-                self.set_expression(result["expression"])
+                if result["expression"] in self.get_expressions():
+                    self.set_expression(result["expression"])
+                elif result["expression"] in self.get_motions():
+                    self.do_motion(result["expression"])
             path = result["filename"]
             self.speak(path, tts, frame_rate)
             i+=1
