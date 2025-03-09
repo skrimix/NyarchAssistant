@@ -113,6 +113,13 @@ class PresentationWindow(Adw.Window):
                 ] 
             },
             {
+                "title": _("Chat with your documents"),
+                "description": _("Nyarch Assistant can retrieve relevant information from documents you send in the chat or from your own files! Information relevant to your query will be sent to the LLM."),
+                "widget": self.__steal_from_settings(settings.RAG),
+                "actions": [
+                ] 
+            },
+            {
                 "title": _("Choose your favourite Voice configuration"),
                 "description": _("You can speak to Nyarch Assistant! Use any TTS/STT provider in any language, with translation support!"),
                 "widget": self.__steal_from_settings(settings.Voicegroup),

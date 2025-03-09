@@ -136,6 +136,20 @@ def convert_think_codeblocks(text: str) -> str:
     """
     return text.replace("<think>", "```think").replace("</think>", "```")
 
+def remove_thinking_blocks(text):
+  """
+  Removes <think>...</think> blocks from a given text using regular expressions.
+
+  Args:
+    text: The input text string.
+
+  Returns:
+    The text string with all <think>...</think> blocks removed.
+  """
+  pattern = r"<think>.*?</think>"  # Non-greedy match
+  cleaned_text = re.sub(pattern, "", text, flags=re.DOTALL) # flags=re.DOTALL allows . to match newline characters
+  return cleaned_text
+
 def get_edited_messages(history: list, old_history: list) -> list | None:
     """Get the edited messages from the history
 
@@ -153,6 +167,44 @@ def get_edited_messages(history: list, old_history: list) -> list | None:
         if history[i] != old_history[i]:
             edited_messages.append(i)
     return edited_messages
+
+
+def add_S_to_sudo(commands_string):
+    """
+    Adds the -S flag to every sudo command in a string of Linux commands.
+
+    Args:
+        commands_string: A string containing Linux commands.
+
+    Returns:
+        A string with the -S flag added to all sudo commands.
+    """
+
+    def replace_sudo(match):
+        command_parts = match.group(0).split()
+        if "-S" in command_parts:
+            return " ".join(command_parts)  # Already has -S
+        
+        sudo_index = command_parts.index("sudo")
+
+        if len(command_parts) > sudo_index + 1 and command_parts[sudo_index + 1].startswith("-"):
+            #sudo has options, insert -S
+            command_parts.insert(sudo_index + 1, "-S")
+            return " ".join(command_parts)
+
+        elif len(command_parts) > sudo_index:
+            #Insert -S after sudo, no existing option
+            command_parts.insert(sudo_index + 1, "-S")
+            return " ".join(command_parts)
+        else:
+            # this case should not happen in normal command string
+            return " ".join(command_parts)
+
+
+    # Use regex to find all "sudo" commands, handling different scenarios
+    modified_string = re.sub(r'(^|\s)sudo(\s+[\w\/\.-]+)*', replace_sudo, commands_string)
+
+    return modified_string
 
 def rgb_to_hex(r, g, b):
     """

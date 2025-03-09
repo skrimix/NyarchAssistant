@@ -28,7 +28,10 @@ class OllamaHandler(LLMHandler):
             self.model_library = self.get_setting("model-library", False)
         if models is None or len(models) == 0:
             self.models = self.default_models
-            threading.Thread(target=self.get_models, args=()).start()
+            lr = self.get_setting("last_request", False)
+            if lr is None or time.time() - lr > 3600:
+                self.set_setting("last_request", time.time())
+                threading.Thread(target=self.get_models, args=()).start()
         else:
             self.models = json.loads(models)
         if self.get_setting("models-info", False) is not None:
@@ -170,7 +173,7 @@ class OllamaHandler(LLMHandler):
                             refresh_icon="plus-symbolic",
                             website="https://ollama.com/library"
                         )
-                    ] + self.get_model_library()
+                    ] + self.get_model_library(), refresh=self.get_models_infomation
                 )
             )
         settings.append(get_streaming_extra_setting())
