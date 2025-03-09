@@ -370,7 +370,7 @@ Chat History:
     "custom_prompt": "",
     "expression_prompt": """You can show expressions by writing (expression) in parenthesis.
 You can ONLY show the following expressions: 
-{EXPRESSIONS}
+{EXPRESSIONS} {MOTIONS}
 Do not use any other expression
 
 YOU CAN NOT SHOW OTHER EXPRESSIONS.""",

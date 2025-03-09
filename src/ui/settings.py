@@ -67,6 +67,7 @@ class Settings(Adw.PreferencesWindow):
         self.LLMPage = Adw.PreferencesPage(icon_name="brain-augemnted-symbolic", title=_("LLM")) 
         self.PromptsPage = Adw.PreferencesPage(icon_name="question-round-outline-symbolic", title=_("Prompts"))
         self.MemoryPage = Adw.PreferencesPage(icon_name="vcard-symbolic", title=_("Memory"))
+        self.AvatarPage = Adw.PreferencesPage(icon_name="avatar-symbolic", title=_("Avatar"))
         # Dictionary containing all the rows for settings update
         self.settingsrows = {}
         # Build the LLMs settings
@@ -137,7 +138,7 @@ class Settings(Adw.PreferencesWindow):
 
         # Build the TTS settings
         self.Voicegroup = Adw.PreferencesGroup(title=_('Voice'))
-        self.general_page.add(self.Voicegroup)
+        self.AvatarPage.add(self.Voicegroup)
         tts_enabled = Gtk.Switch(valign=Gtk.Align.CENTER)
         self.settings.bind("tts-on", tts_enabled, 'active', Gio.SettingsBindFlags.DEFAULT)
         tts_program = Adw.ExpanderRow(title=_('Text To Speech Program'), subtitle=_("Choose which text to speech to use"))
@@ -175,7 +176,7 @@ class Settings(Adw.PreferencesWindow):
         
         # Build the AVATAR settings
         self.avatargroup = Adw.PreferencesGroup(title=_('Avatar'))
-        self.general_page.add(self.avatargroup)
+        self.AvatarPage.add(self.avatargroup)
         avatar_enabled = Gtk.Switch(valign=Gtk.Align.CENTER)
         self.settings.bind("avatar-on", avatar_enabled, 'active', Gio.SettingsBindFlags.DEFAULT)
         avatar = Adw.ExpanderRow(title=_('Avatar model'), subtitle=_("Choose which avatar model to choose"))
@@ -188,10 +189,10 @@ class Settings(Adw.PreferencesWindow):
            avatar.add_row(row) 
         # Build the Smart Prompt settings
         self.smartpromptgroup = Adw.PreferencesGroup(title=_('Smart Prompt'))
-        self.general_page.add(self.smartpromptgroup)
+        self.PromptsPage.add(self.smartpromptgroup)
         smart_prompt_enabled = Gtk.Switch(valign=Gtk.Align.CENTER)
         self.settings.bind("smart-prompt-on", smart_prompt_enabled, 'active', Gio.SettingsBindFlags.DEFAULT)
-        smartprompt = Adw.ExpanderRow(title=_('Smart Prompt selector'), subtitle=_("Choose which smart prompt model to choose"))
+        smartprompt = Adw.ExpanderRow(title=_('Smart Prompt selector'), subtitle=_("Give extra context on Nyarch Linux based on your prompt"))
         smartprompt.add_action(smart_prompt_enabled)
         self.smartpromptgroup.add(smartprompt)
         group = Gtk.CheckButton()
@@ -305,6 +306,7 @@ class Settings(Adw.PreferencesWindow):
         self.add(self.LLMPage)
         self.add(self.PromptsPage)
         self.add(self.MemoryPage)
+        self.add(self.AvatarPage)
         self.add(self.general_page)
     def build_rag_settings(self):
         self.RAG = Adw.PreferencesGroup(title=_('Document Sources (RAG)'), description=_("Include content from your documents in the responses"))
