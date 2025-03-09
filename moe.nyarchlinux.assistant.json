@@ -29,6 +29,7 @@
     ],
 
     "modules" : [
+      "modules/vte.json",
     	"modules/git.json",
       "modules/python3-requests.json",
       "modules/python3-requests-toolbelt.json",
