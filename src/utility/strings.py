@@ -248,10 +248,9 @@ def extract_expressions(text, expressions_list):
                 current_text += tokens[i] + " "
         i += 1
 
-    if current_text.strip():
-        if current_expression:
-            expressions.append({"expression": current_expression, "text": current_text.strip()})
-        else:
-            expressions.append({"expression": None, "text": current_text.strip()})
+    if current_expression:
+        expressions.append({"expression": current_expression, "text": current_text.strip()})
+    else:
+        expressions.append({"expression": None, "text": current_text.strip()})
 
     return expressions

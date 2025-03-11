@@ -76,7 +76,11 @@ class AvatarHandler(Handler):
         results = {}
         i = 0
         for chunk in chunks:
-            t = threading.Thread(target=self.async_create_file, args=(chunk, tts, translator, frame_rate, i, results))
+            if not chunk["text"].strip():
+                t = threading.Thread(target=lambda : None)
+                results[i] = {"filename": None, "expression": chunk["expression"]}
+            else:
+                t = threading.Thread(target=self.async_create_file, args=(chunk, tts, translator, frame_rate, i, results))
             t.start()
             threads.append(t)
             i+=1
@@ -96,7 +100,8 @@ class AvatarHandler(Handler):
                 elif result["expression"] in self.get_motions():
                     self.do_motion(result["expression"])
             path = result["filename"]
-            self.speak(path, tts, frame_rate)
+            if path is not None:
+                self.speak(path, tts, frame_rate)
             i+=1
         self.lock.release()
 
