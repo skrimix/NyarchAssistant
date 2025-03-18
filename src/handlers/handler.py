@@ -90,22 +90,23 @@ class Handler():
             if find_module(module) is None:
                 return False
         return True
- 
-    def get_setting(self, key: str, search_default: bool = True) -> Any:
+
+    def get_setting(self, key: str, search_default = True, return_value = None) -> Any:
         """Get a setting from the given key
+
         Args:
             key (str): key of the setting
             search_default (bool, optional): if the default value should be searched. Defaults to True. 
-
+            return_value (bool, optional): value to return if the settings was not found. Defaults to None. 
         Returns:
             object: value of the setting
-        """
+        """        
         j = json.loads(self.settings.get_string(self.schema_key))
-        if self.key not in j or not isinstance(j[self.key], dict) or key not in j[self.key]:
+        if self.key not in j or key not in j[self.key]:
             if search_default:
                 return self.get_default_setting(key)
             else:
-                return None
+                return return_value
         return j[self.key][key]
 
     def set_setting(self, key : str, value):

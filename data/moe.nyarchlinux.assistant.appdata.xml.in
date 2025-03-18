@@ -35,6 +35,21 @@
 	<url type="bugtracker">https://github.com/nyarchlinux/nyarchassistant/issues</url>
 	<content_rating type="oars-1.0" />
 	<releases>
+	    <release version="0.8.1" date="2025-03-16">
+            <description>
+                <p>Support for new features and bug fixes</p>
+            </description>
+        </release>
+	    <release version="0.8.0" date="2025-03-11">
+            <description>
+                <p>Added many new features and bug fixes</p>
+            </description>
+        </release>
+	    <release version="0.7.0" date="2025-02-06">
+            <description>
+                <p>Added many new features and bug fixes</p>
+            </description>
+        </release>
 	    <release version="0.6.0" date="2025-01-04">
             <description>
                 <p>Added many new features and bug fixes</p>
