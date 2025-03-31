@@ -31,8 +31,8 @@ nyarchassistant_sources = [
   'constants.py',
   'window.py',
   'extensions.py',
-  'controller.py'
-  'dataset.py'
+  'controller.py',
+  'dataset.py',
 ]
 
 ui_sources = [

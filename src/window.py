@@ -401,7 +401,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def check_version(self):
         try:
-            live2d_version = open(os.path.join(self.directory, "avatars/live2d/web/VERSION"), "r").read()
+            live2d_version = open(os.path.join(self.controller.config_dir, "avatars/live2d/web/VERSION"), "r").read()
             live2d_version = float(live2d_version)
         except Exception as e:
             live2d_version = 0.1
@@ -411,19 +411,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def install_live2d(self):
         try:
-            os.makedirs(os.path.join(self.directory, "avatars/live2d"), exist_ok=True)
+            os.makedirs(os.path.join(self.controller.config_dir, "avatars/live2d"), exist_ok=True)
             os.makedirs(os.path.expanduser("~/.cache/wordllama/tokenizers"), exist_ok=True)
         except Exception as e:
             print(e)
         try:
-            subprocess.check_output(['mv', os.path.join(self.directory, "avatars/live2d/web/models"), os.path.join(self.directory, 'avatars/live2d/models')])
-            subprocess.check_output(['rm', '-rf',  os.path.join(self.directory, "avatars/live2d/web")])
+            subprocess.check_output(['mv', os.path.join(self.controller.config_dir, "avatars/live2d/web/models"), os.path.join(self.controller.config_dir, 'avatars/live2d/models')])
+            subprocess.check_output(['rm', '-rf',  os.path.join(self.controller.config_dir, "avatars/live2d/web")])
         except Exception as e:
             print(e)
-        subprocess.check_output(['cp', '-r', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.directory, "avatars/live2d/web")])
+        subprocess.check_output(['cp', '-r', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.controller.config_dir, "avatars/live2d/web")])
         try:
-            subprocess.check_output(['cp', '-rf', os.path.join(self.directory, "avatars/live2d/models"), os.path.join(self.directory, "avatars/live2d/web/")])
-            subprocess.check_output(['rm', '-rf', os.path.join(self.directory, "avatars/live2d/models")])
+            subprocess.check_output(['cp', '-rf', os.path.join(self.controller.config_dir, "avatars/live2d/models"), os.path.join(self.controller.config_dir, "avatars/live2d/web/")])
+            subprocess.check_output(['rm', '-rf', os.path.join(self.controller.config_dir, "avatars/live2d/models")])
         except Exception as e:
             print(e)
 
@@ -537,7 +537,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Setup TTS
         self.tts.connect('start', lambda: GLib.idle_add(self.mute_tts_button.set_visible, True))
         self.tts.connect('stop', lambda: GLib.idle_add(self.mute_tts_button.set_visible, False))
-        if self.first_load:
+        if ReloadType.AVATAR in reloads and not self.first_load:
             self.load_avatar()
          
     # Model popup 
@@ -581,15 +581,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def load_avatar(self):
         if self.controller.newelle_settings.avatar_enabled:
-            # If the avatar is enabled, check if it requires reloading
+            # If the avatar is enabled, check if it requires reloading 
+            if not hasattr(self, "avatar_handler"):
+                self.avatar_handler = None
             old_avatar = self.avatar_handler
             selected_key = self.settings.get_string("avatar-model")
-            for avatar in AVAILABLE_AVATARS:
-                if selected_key == avatar:
-                    self.avatar_handler = AVAILABLE_AVATARS[avatar]["class"](self.settings, self.directory)
-                    break
+            self.avatar_handler = self.controller.handlers.avatar
             # If it does not require reloading, then just return
-            if old_avatar is not None and not old_avatar.requires_reloading(self.avatar_handler) and self.avatar_enabled == self.last_avatar_enabled:
+            if old_avatar is not None and not old_avatar.requires_reloading(self.avatar_handler):
                 self.avatar_handler = old_avatar
                 return
             # If it requires reloading, reload the old avatar
@@ -961,7 +960,7 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.main_program_block.set_name("visible")
             self.main_program_block.set_reveal_flap(True)
-        if not self.avatar_enabled:
+        if not self.controller.newelle_settings.avatar_enabled:
             self.load_avatar()
     
     # UI Functions for chat management
@@ -1576,11 +1575,11 @@ class MainWindow(Gtk.ApplicationWindow):
             print("Installing the model...")
             self.model.install()
         # Get smart prompts
-        if self.smart_prompt_enabled:
+        if self.controller.newelle_settings.smart_prompt_enabled:
+            self.smart_prompt_handler = self.controller.handlers.smart_prompt
             if self.smart_prompt_handler in AVAILABLE_SMART_PROMPTS:
                 try:
-                    smart_prompt = AVAILABLE_SMART_PROMPTS[self.smart_prompt_handler]["class"](self.settings, self.directory)
-                    generated = smart_prompt.get_extra_prompts(self.chat[-1]["Message"], self.get_history(), EXTRA_PROMPTS)
+                    generated = self.smart_prompt_handler.get_extra_prompts(self.chat[-1]["Message"], self.get_history(), EXTRA_PROMPTS)
                     prompts += generated
                 except Exception as e:
                     print(e)
@@ -1642,32 +1641,31 @@ class MainWindow(Gtk.ApplicationWindow):
             GLib.idle_add(self.generate_chat_name, Gtk.Button(name=str(self.chat_id)))
             
         if self.tts_enabled:
-            if self.tts_program in AVAILABLE_TTS:
-                # Remove text in *text*
-                message_label = convert_think_codeblocks(message_label)
-                message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
-                message = remove_markdown(message)
-                # Remove text in *text*
-                if not(not message.strip() or message.isspace() or all(char == '\n' for char in message)):
-                    # Translate the message
-                    translator = None
-                    if self.translation_enabled:
-                        translator = self.translator          
-                    if self.controller.newelle_settings.avatar_enabled and self.avatar_handler is not None:
-                        tts_thread = threading.Thread(target=self.avatar_handler.speak_with_tts, args=(message, self.tts, translator))
-                    else:
-                        if translator is not None:
-                            message = translator.translate(message)
-                        tts_thread = threading.Thread(target=self.tts.play_audio, args=(message, ))
-                    tts_thread.start()
-                    def restart_recording():
-                        if not self.automatic_stt_status:
-                            return
-                        if tts_thread is not None:
-                            tts_thread.join()
-                        GLib.idle_add(self.start_recording, self.recording_button)
-                    if self.controller.newelle_settings.automatic_stt:
-                        threading.Thread(target=restart_recording).start()
+            # Remove text in *text*
+            message_label = convert_think_codeblocks(message_label)
+            message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
+            message = remove_markdown(message)
+            # Remove text in *text*
+            if not(not message.strip() or message.isspace() or all(char == '\n' for char in message)):
+                # Translate the message
+                translator = None
+                if self.translation_enabled:
+                    translator = self.translator          
+                if self.controller.newelle_settings.avatar_enabled and self.avatar_handler is not None:
+                    tts_thread = threading.Thread(target=self.avatar_handler.speak_with_tts, args=(message, self.tts, translator))
+                else:
+                    if translator is not None:
+                        message = translator.translate(message)
+                    tts_thread = threading.Thread(target=self.tts.play_audio, args=(message, ))
+                tts_thread.start()
+                def restart_recording():
+                    if not self.automatic_stt_status:
+                        return
+                    if tts_thread is not None:
+                        tts_thread.join()
+                    GLib.idle_add(self.start_recording, self.recording_button)
+                if self.controller.newelle_settings.automatic_stt:
+                    threading.Thread(target=restart_recording).start()
 
     def create_streaming_message_label(self):
         """Create a label for message streaming"""

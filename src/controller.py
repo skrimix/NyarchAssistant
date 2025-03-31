@@ -64,6 +64,10 @@ class ReloadType(Enum):
     SECONDARY_LLM = 9
     RELOAD_CHAT = 10
     RELOAD_CHAT_LIST = 11
+    # Nyarch Vars
+    AVATAR = 40
+    SMART_PROMPTS = 41
+    TRANSLATORS = 42
 
 class NewelleController:
     """Main controller, manages the application
@@ -96,7 +100,7 @@ class NewelleController:
         self.newelle_settings = NewelleSettings()
         self.newelle_settings.load_settings(self.settings)
         self.load_chats(self.newelle_settings.chat_id)
-        self.handlers = HandlersManager(self.settings, self.extensionloader, self.models_dir)
+        self.handlers = HandlersManager(self.settings, self.extensionloader, self.models_dir, self.config_dir)
         self.handlers.select_handlers(self.newelle_settings)
         threading.Thread(target=self.handlers.cache_handlers).start()
 
@@ -176,7 +180,7 @@ class NewelleController:
             self.extensionloader = ExtensionLoader(self.extension_path, pip_path=self.pip_path,
                                                    extension_cache=self.extensions_cache, settings=self.settings)
             self.extensionloader.load_extensions()
-            self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS)
+            self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
             self.extensionloader.add_prompts(PROMPTS, AVAILABLE_PROMPTS)
             self.newelle_settings.load_prompts()
             self.handlers.select_handlers(self.newelle_settings)
@@ -189,6 +193,8 @@ class NewelleController:
             threading.Thread(target=self.handlers.secondary_llm.load_model, args=(None,)).start()
         elif reload_type == ReloadType.TTS or reload_type == ReloadType.STT or reload_type == ReloadType.MEMORIES:
             self.handlers.select_handlers(self.newelle_settings)
+        elif reload_type in [ReloadType.AVATAR, ReloadType.SMART_PROMPTS, ReloadType.TRANSLATORS]:
+            self.handlers.select_handlers(self.newelle_settings)
         elif reload_type == ReloadType.RAG:
             self.handlers.select_handlers(self.newelle_settings)
             threading.Thread(target=self.handlers.rag.load).start()
@@ -197,7 +203,6 @@ class NewelleController:
             threading.Thread(target=self.handlers.embedding.load_model).start()
         elif reload_type == ReloadType.PROMPTS:
             return
-
     def set_extensionsloader(self, extensionloader):
         """Change extension loader
 
@@ -213,7 +218,7 @@ class NewelleController:
         self.extensionloader = ExtensionLoader(self.extension_path, pip_path=self.pip_path,
                                                extension_cache=self.extensions_cache, settings=self.settings)
         self.extensionloader.load_extensions()
-        self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS)
+        self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS,AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
         self.extensionloader.add_prompts(PROMPTS, AVAILABLE_PROMPTS)
 
     def create_profile(self, profile_name, picture=None, settings={}):
@@ -299,11 +304,13 @@ class NewelleSettings:
         self.load_prompts()
         # Nyarch Settings
         self.avatar_enabled = settings.get_boolean("avatar-on")
-        self.avatar_settings = settings.get_string("avatar-settings")
+        self.avatar_settings = settings.get_string("avatars")
+        self.avatar = settings.get_string("avatar-model")
+        self.translator = settings.get_string("translator")  
         self.translation_enabled = settings.get_boolean("translator-on")
         self.translation_handler = settings.get_string("translator")
         self.smart_prompt_enabled = settings.get_boolean("smart-prompt-on")
-        self.smart_prompt_handler = settings.get_string("smart-prompt")
+        self.smart_prompt = settings.get_string("smart-prompt")
         # Adjust paths
         if os.path.exists(os.path.expanduser(self.main_path)):
             os.chdir(os.path.expanduser(self.main_path))
@@ -359,6 +366,13 @@ class NewelleSettings:
             reloads.append(ReloadType.RELOAD_CHAT)
         if self.reverse_order != new_settings.reverse_order:
             reloads.append(ReloadType.RELOAD_CHAT_LIST)
+        if self.avatar_enabled != new_settings.avatar_enabled or self.avatar_settings != new_settings.avatar_settings or self.avatar != new_settings.avatar:
+            reloads.append(ReloadType.AVATAR)
+        if self.translator != new_settings.translator or self.translation_enabled != new_settings.translation_enabled or self.translation_handler != new_settings.translation_handler:
+            reloads.append(ReloadType.TRANSLATORS)
+
+        if self.smart_prompt_enabled != new_settings.smart_prompt_enabled or self.smart_prompt != new_settings.smart_prompt:
+            reloads.append(ReloadType.SMART_PROMPTS)
         # Check prompts
         if len(self.prompts) != len(new_settings.prompts):
             reloads.append(ReloadType.PROMPTS)
@@ -381,10 +395,11 @@ class HandlersManager:
         memory: Memory Handler
         rag: RAG Handler 
     """
-    def __init__(self, settings: Gio.Settings, extensionloader : ExtensionLoader, models_path):
+    def __init__(self, settings: Gio.Settings, extensionloader : ExtensionLoader, models_path, config_dir):
         self.settings = settings
         self.extensionloader = extensionloader
         self.directory = models_path
+        self.config_dir = config_dir
         self.handlers =  {} 
 
     def fix_handlers_integrity(self, newelle_settings: NewelleSettings):
@@ -579,7 +594,7 @@ class HandlersManager:
         elif constants == AVAILABLE_RAGS:
             model = constants[key]["class"](self.settings, self.directory)
         elif constants == AVAILABLE_AVATARS:
-            model = constants[key]["class"](self.settings, self.directory)
+            model = constants[key]["class"](self.settings, self.config_dir)
         elif constants == AVAILABLE_TRANSLATORS:
             model = constants[key]["class"](self.settings, self.directory)
         elif constants == AVAILABLE_SMART_PROMPTS:
