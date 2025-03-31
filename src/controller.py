@@ -15,7 +15,7 @@ from .handlers.embeddings import EmbeddingHandler
 import time
 from .utility.system import is_flatpak
 from .utility.pip import install_module
-from .constants import DIR_NAME, SCHEMA_ID, PROMPTS, AVAILABLE_STT, AVAILABLE_TTS, AVAILABLE_LLMS, AVAILABLE_RAGS, AVAILABLE_PROMPTS, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS
+from .constants import AVAILABLE_AVATARS, AVAILABLE_SMART_PROMPTS, AVAILABLE_TRANSLATORS, DIR_NAME, SCHEMA_ID, PROMPTS, AVAILABLE_STT, AVAILABLE_TTS, AVAILABLE_LLMS, AVAILABLE_RAGS, AVAILABLE_PROMPTS, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS
 import threading
 import pickle
 import json
@@ -23,6 +23,12 @@ from .extensions import ExtensionLoader
 from .utility import override_prompts
 from enum import Enum 
 from .handlers import Handler
+
+# Nyarch Specific 
+
+from .handlers.translator import TranslatorHandler
+from .handlers.avatar import AvatarHandler
+from .handlers.smart_prompt import SmartPromptHandler
 
 """
 Not yet used in the code.
@@ -291,6 +297,13 @@ class NewelleSettings:
         self.extensions_settings = self.settings.get_string("extensions-settings")
         self.username = self.settings.get_string("user-name")
         self.load_prompts()
+        # Nyarch Settings
+        self.avatar_enabled = settings.get_boolean("avatar-on")
+        self.avatar_settings = settings.get_string("avatar-settings")
+        self.translation_enabled = settings.get_boolean("translator-on")
+        self.translation_handler = settings.get_string("translator")
+        self.smart_prompt_enabled = settings.get_boolean("smart-prompt-on")
+        self.smart_prompt_handler = settings.get_string("smart-prompt")
         # Adjust paths
         if os.path.exists(os.path.expanduser(self.main_path)):
             os.chdir(os.path.expanduser(self.main_path))
@@ -410,6 +423,9 @@ class HandlersManager:
         self.memory : MemoryHandler = self.get_object(AVAILABLE_MEMORIES, newelle_settings.memory_model)
         self.memory.set_memory_size(newelle_settings.memory)
         self.rag : RAGHandler = self.get_object(AVAILABLE_RAGS, newelle_settings.rag_model)
+        self.avatar : AvatarHandler = self.get_object(AVAILABLE_AVATARS, newelle_settings.avatar)
+        self.translator : TranslatorHandler = self.get_object(AVAILABLE_TRANSLATORS, newelle_settings.translator)
+        self.smart_prompt : SmartPromptHandler = self.get_object(AVAILABLE_SMART_PROMPTS, newelle_settings.smart_prompt)
         # Assign handlers 
         self.extensionloader.set_handlers(self.llm, self.stt, self.tts, self.secondary_llm, self.embedding, self.rag, self.memory)
         self.memory.set_handlers(self.secondary_llm, self.embedding)
@@ -462,7 +478,15 @@ class HandlersManager:
             self.handlers[(key, self.convert_constants(AVAILABLE_RAGS), False)] = self.get_object(AVAILABLE_RAGS, key)
         for key in AVAILABLE_EMBEDDINGS:
             self.handlers[(key, self.convert_constants(AVAILABLE_EMBEDDINGS), False)] = self.get_object(AVAILABLE_EMBEDDINGS, key)
-
+        # Nyarch Specific
+        # Nyarch Hanlders
+        for key in AVAILABLE_AVATARS:
+            self.handlers[(key, self.convert_constants(AVAILABLE_AVATARS))] = self.get_object(AVAILABLE_AVATARS, key)
+        for key in AVAILABLE_TRANSLATORS:
+            self.handlers[(key, self.convert_constants(AVAILABLE_TRANSLATORS))] = self.get_object(AVAILABLE_TRANSLATORS, key)
+        for key in AVAILABLE_SMART_PROMPTS:
+            self.handlers[(key, self.convert_constants(AVAILABLE_SMART_PROMPTS))] = self.get_object(AVAILABLE_SMART_PROMPTS, key)
+    
     def convert_constants(self, constants: str | dict[str, Any]) -> (str | dict):
         """Get an handler instance for the specified handler key
 
@@ -492,6 +516,12 @@ class HandlersManager:
                     return AVAILABLE_RAGS
                 case "extension":
                     return self.extensionloader.extensionsmap
+                case "avatar":
+                    return AVAILABLE_AVATARS
+                case "translator":
+                    return AVAILABLE_TRANSLATORS
+                case "smart-prompt":
+                    return AVAILABLE_SMART_PROMPTS
                 case _:
                     raise Exception("Unknown constants")
         else:
@@ -509,6 +539,12 @@ class HandlersManager:
                 return "rag"
             elif constants == self.extensionloader.extensionsmap:
                 return "extension"
+            elif constants == AVAILABLE_AVATARS:
+                return "avatar"
+            elif constants == AVAILABLE_TRANSLATORS:
+                return "translator"
+            elif constants == AVAILABLE_SMART_PROMPTS:
+                return "smart-prompt"
             else:
                 raise Exception("Unknown constants")
 
@@ -541,6 +577,12 @@ class HandlersManager:
         elif constants == AVAILABLE_EMBEDDINGS:
             model = constants[key]["class"](self.settings, self.directory)
         elif constants == AVAILABLE_RAGS:
+            model = constants[key]["class"](self.settings, self.directory)
+        elif constants == AVAILABLE_AVATARS:
+            model = constants[key]["class"](self.settings, self.directory)
+        elif constants == AVAILABLE_TRANSLATORS:
+            model = constants[key]["class"](self.settings, self.directory)
+        elif constants == AVAILABLE_SMART_PROMPTS:
             model = constants[key]["class"](self.settings, self.directory)
         elif constants == self.extensionloader.extensionsmap:
             model = self.extensionloader.extensionsmap[key]
@@ -575,6 +617,12 @@ class HandlersManager:
             return AVAILABLE_EMBEDDINGS
         elif issubclass(type(handler), RAGHandler):
             return AVAILABLE_RAGS
+        elif issubclass(type(handler), AvatarHandler):
+            return AVAILABLE_AVATARS
+        elif issubclass(type(handler), TranslatorHandler):
+            return AVAILABLE_TRANSLATORS
+        elif issubclass(type(handler), SmartPromptHandler):
+            return AVAILABLE_SMART_PROMPTS
         else:
             raise Exception("Unknown handler")
 
