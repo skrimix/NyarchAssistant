@@ -1,3 +1,4 @@
+import cairo
 from pylatexenc.latex2text import LatexNodes2Text
 import time 
 import re 
@@ -15,32 +16,28 @@ import base64
 import copy
 
 from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
-from .handlers.embeddings.embedding import EmbeddingHandler
-from .handlers.memory.memoripy_handler import MemoripyHandler
-from .handlers.rag import RAGHandler
 
 from .ui.settings import Settings
 
 from .utility.message_chunk import get_message_chunks
 
 from .ui.profile import ProfileDialog
-from .handlers.llm import LLMHandler
 from .ui.presentation import PresentationWindow
 from .ui.widgets import File, CopyBox, BarChartBox
 from .ui import apply_css_to_widget
 from .ui.widgets import MultilineEntry, ProfileRow, DisplayLatex
-from .constants import AVAILABLE_LLMS, AVAILABLE_PROMPTS, PROMPTS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS
+from .constants import AVAILABLE_LLMS
 
-from .utility import override_prompts
-from .utility.system import get_spawn_command, is_flatpak 
-from .utility.pip import install_module
-from .utility.strings import convert_think_codeblocks, get_edited_messages, markwon_to_pango, remove_markdown, remove_thinking_blocks
-from .utility.replacehelper import ReplaceHelper, replace_variables
+from .utility.system import get_spawn_command 
+from .utility.strings import convert_think_codeblocks, get_edited_messages, markwon_to_pango, remove_markdown, remove_thinking_blocks, simple_markdown_to_pango
+from .utility.replacehelper import replace_variables, ReplaceHelper
 from .utility.profile_settings import get_settings_dict, restore_settings_from_dict
 from .utility.audio_recorder import AudioRecorder
 from .utility.media import extract_supported_files
+from .utility.system import is_flatpak
 from .ui.screenrecorder import ScreenRecorder
 
+from .controller import NewelleController, ReloadType
 from .extensions import ExtensionLoader
 
 if is_flatpak():
@@ -59,48 +56,28 @@ class MainWindow(Gtk.ApplicationWindow):
                                            swipe_to_open=False)
         self.main_program_block.set_name("hide")
         self.check_streams = {"folder": False, "chat": False}
-
-        # Directories
-        self.path = GLib.get_user_data_dir()
-        self.directory = GLib.get_user_config_dir()
-        # Pip directory for optional modules
-        self.pip_directory = os.path.join(self.directory, "pip")
-        self.extension_path = os.path.join(self.directory, "extensions")
-        self.extensions_cache = os.path.join(self.directory, "extensions_cache")
-        if not os.path.exists(self.extension_path):
-            os.makedirs(self.extension_path)
-        if not os.path.exists(self.extensions_cache):
-            os.makedirs(self.extensions_cache)
-        if os.path.isdir(self.pip_directory):
-            sys.path.append(self.pip_directory)
-        else:
-            threading.Thread(target=self.init_pip_path, args=(sys.path,)).start()
-
-        # Chat loading
-        if not os.path.exists(self.path):
-            os.makedirs(self.path)
-        self.filename = "chats.pkl"
-        if os.path.exists(self.path + self.filename):
-            with open(self.path + self.filename, 'rb') as f:
-                self.chats = pickle.load(f)
-        else:
-            self.chats = [{"name": _("Chat ") + "1", "chat": []}]
-
-        # Init variables 
-        self.streams = []
-        # Init Settings
-        self.avatar_enabled = None
-        settings = Gio.Settings.new('moe.nyarchlinux.assistant')
-        self.settings = settings
-        # Indicate that it's the first load of the program
+        # Init controller
+        self.controller = NewelleController(sys.path)
+        self.controller.ui_init()
+        # Set basic vars
+        self.chats = self.controller.chats
+        self.chat = self.controller.chat
+        self.settings = self.controller.settings
+        self.extensionloader = self.controller.extensionloader
+        self.chat_id = self.controller.newelle_settings.chat_id
+        self.main_path = self.controller.newelle_settings.main_path
+        
+        # Update the settings
         self.first_load = True
         self.update_settings()
         self.first_load = False
-
-        # Build Window
+        
+        # Helper vars
+        self.streams = []
         self.last_error_box = None
         self.edit_entries = {}
 
+        # Build Window
         self.set_titlebar(Gtk.Box())
         self.chat_panel = Gtk.Box(hexpand_set=True, hexpand=True)
         self.chat_panel.set_size_request(450, -1)
@@ -402,16 +379,19 @@ class MainWindow(Gtk.ApplicationWindow):
         self.send_button.connect('clicked', self.on_entry_button_clicked)
         self.main.connect("notify::folded", self.handle_main_block_change)
         self.main_program_block.connect("notify::reveal-flap", self.handle_second_block_change)
-
-        self.chat_header.set_title_widget(self.build_model_popup())
+        
+        def build_model_popup():
+            self.chat_header.set_title_widget(self.build_model_popup())
         self.stream_number_variable = 0
         GLib.idle_add(self.update_folder)
         GLib.idle_add(self.update_history)
         GLib.idle_add(self.show_chat)
         if not self.settings.get_boolean("welcome-screen-shown"):
+            GLib.idle_add(self.show_presentation_window) 
             self.first_start()
         else:
             threading.Thread(target=self.check_version).start()
+        GLib.timeout_add(10, build_model_popup)
         self.first_load = False
         self.load_avatar()
 
@@ -421,7 +401,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def check_version(self):
         try:
-            live2d_version = open(os.path.join(self.directory, "avatars/live2d/web/VERSION"), "r").read()
+            live2d_version = open(os.path.join(self.controller.config_dir, "avatars/live2d/web/VERSION"), "r").read()
             live2d_version = float(live2d_version)
         except Exception as e:
             live2d_version = 0.1
@@ -431,19 +411,19 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def install_live2d(self):
         try:
-            os.makedirs(os.path.join(self.directory, "avatars/live2d"), exist_ok=True)
+            os.makedirs(os.path.join(self.controller.config_dir, "avatars/live2d"), exist_ok=True)
             os.makedirs(os.path.expanduser("~/.cache/wordllama/tokenizers"), exist_ok=True)
         except Exception as e:
             print(e)
         try:
-            subprocess.check_output(['mv', os.path.join(self.directory, "avatars/live2d/web/models"), os.path.join(self.directory, 'avatars/live2d/models')])
-            subprocess.check_output(['rm', '-rf',  os.path.join(self.directory, "avatars/live2d/web")])
+            subprocess.check_output(['mv', os.path.join(self.controller.config_dir, "avatars/live2d/web/models"), os.path.join(self.controller.config_dir, 'avatars/live2d/models')])
+            subprocess.check_output(['rm', '-rf',  os.path.join(self.controller.config_dir, "avatars/live2d/web")])
         except Exception as e:
             print(e)
-        subprocess.check_output(['cp', '-r', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.directory, "avatars/live2d/web")])
+        subprocess.check_output(['cp', '-r', os.path.join(BASE_PATH, 'live2d/web/build'), os.path.join(self.controller.config_dir, "avatars/live2d/web")])
         try:
-            subprocess.check_output(['cp', '-rf', os.path.join(self.directory, "avatars/live2d/models"), os.path.join(self.directory, "avatars/live2d/web/")])
-            subprocess.check_output(['rm', '-rf', os.path.join(self.directory, "avatars/live2d/models")])
+            subprocess.check_output(['cp', '-rf', os.path.join(self.controller.config_dir, "avatars/live2d/models"), os.path.join(self.controller.config_dir, "avatars/live2d/web/")])
+            subprocess.check_output(['rm', '-rf', os.path.join(self.controller.config_dir, "avatars/live2d/models")])
         except Exception as e:
             print(e)
 
@@ -492,6 +472,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.quick_toggles.set_popover(self.quick_toggles_popover)
         self.input_box.append(self.quick_toggles)
         self.quick_toggles_popover.connect("closed", self.update_toggles)
+    
 
     def build_offers(self):
         """Build offers buttons, called by update_settings to update the number of buttons"""
@@ -515,167 +496,54 @@ class MainWindow(Gtk.ApplicationWindow):
             if self.rag_on:
                 self.rag_handler.load()
 
+    def quick_settings_update(self):
+        """Update settings from the quick settings"""
+        self.controller.update_settings()
+        self.model = self.controller.handlers.llm
+        self.tts_enabled = self.controller.newelle_settings.tts_enabled
+        self.rag_on = self.controller.newelle_settings.rag_on
+        self.rag_on_documents = self.controller.newelle_settings.rag_on_documents
+        self.memory_on = self.controller.newelle_settings.memory_on
+        self.update_model_popup()
+
     def update_settings(self):
-        """Update settings, run every time the program is started or settings dialog closed"""
-        # Load profile
-        self.profile_settings = json.loads(self.settings.get_string("profiles"))
-        self.current_profile = self.settings.get_string("current-profile")
-        if len(self.profile_settings) == 0 or self.current_profile not in self.profile_settings:
-            self.profile_settings[self.current_profile] = {"settings": {}, "picture": os.path.join(BASE_PATH, 'live2d/web/arch-chan.png')}
-
-        # Init variables
-        self.automatic_stt_status = False
-        settings = self.settings
-       
-        # Get settings variables
-        self.offers = settings.get_int("offers")
-        self.virtualization = settings.get_boolean("virtualization")
-        self.memory = settings.get_int("memory")
-        self.hidden_files = settings.get_boolean("hidden-files")
-        self.reverse_order = settings.get_boolean("reverse-order")
-        self.remove_thinking = settings.get_boolean("remove-thinking")
-        self.auto_generate_name = settings.get_boolean("auto-generate-name")
-        self.chat_id = settings.get_int("chat")
-        self.main_path = settings.get_string("path")
-        self.auto_run = settings.get_boolean("auto-run")
-        self.display_latex = settings.get_boolean("display-latex")
-        self.chat = self.chats[min(self.chat_id, len(self.chats) - 1)]["chat"]
-        self.tts_enabled = settings.get_boolean("tts-on")
-        self.tts_program = settings.get_string("tts")
-        self.tts_voice = settings.get_string("tts-voice")
-        self.stt_engine = settings.get_string("stt-engine")
-        self.stt_settings = settings.get_string("stt-settings")
-        self.external_terminal = settings.get_string("external-terminal")
-        self.automatic_stt = settings.get_boolean("automatic-stt")
-        self.stt_silence_detection_threshold = settings.get_double("stt-silence-detection-threshold")
-        self.stt_silence_detection_duration = settings.get_int("stt-silence-detection-duration")
-        self.embedding_model = self.settings.get_string("embedding-model")
-        self.memory_on = self.settings.get_boolean("memory-on")
-        self.memory_model = self.settings.get_string("memory-model")
-        self.rag_on = self.settings.get_boolean("rag-on")
-        self.rag_on_documents = self.settings.get_boolean("rag-on-documents")
-        self.rag_model = self.settings.get_string("rag-model")
-        # Nyarch Settings 
-        self.last_avatar_enabled = self.avatar_enabled
-        self.avatar_enabled = settings.get_boolean("avatar-on")
-        self.translation_enabled = settings.get_boolean("translator-on")
-        self.translation_handler = settings.get_string("translator")
-        self.smart_prompt_enabled = settings.get_boolean("smart-prompt-on")
-        self.smart_prompt_handler = settings.get_string("smart-prompt")
-        
-        # Load extensions
-        self.extensionloader = ExtensionLoader(self.extension_path, pip_path=self.pip_directory,
-                                               extension_cache=self.extensions_cache, settings=self.settings)
-        self.extensionloader.load_extensions()
-        self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
-        self.extensionloader.add_prompts(PROMPTS, AVAILABLE_PROMPTS)
-
+        """Update settings, run every time the program is started or settings dialog closed""" 
+        reloads = self.controller.update_settings()
+        if self.first_load:
+            threading.Thread(target=self.controller.handlers.load_handlers).start()
+        # Basic settings 
+        self.offers = self.controller.newelle_settings.offers
+        self.current_profile = self.controller.newelle_settings.current_profile
+        self.profile_settings = self.controller.newelle_settings.profile_settings
+        self.memory_on = self.controller.newelle_settings.memory_on
+        self.rag_on = self.controller.newelle_settings.rag_on
+        self.tts_enabled = self.controller.newelle_settings.tts_enabled
+        self.translation_enabled = self.controller.newelle_settings.translation_enabled
+        # Handlers
+        self.tts = self.controller.handlers.tts
+        self.stt = self.controller.handlers.stt
+        self.model = self.controller.handlers.llm
+        self.secondary_model = self.controller.handlers.secondary_llm
+        self.embeddings = self.controller.handlers.embedding
+        self.memory_handler = self.controller.handlers.memory
+        self.rag_handler = self.controller.handlers.rag
+        self.translator = self.controller.handlers.translator
+        # Nyarch Scpecific 
+        self.avatar = self.controller.handlers.avatar
+        if ReloadType.RELOAD_CHAT in reloads:
+            self.show_chat()
+        if ReloadType.RELOAD_CHAT_LIST in reloads:
+            self.update_history()
         # Setup TTS
-        if self.tts_program in AVAILABLE_TTS:
-            self.tts = AVAILABLE_TTS[self.tts_program]["class"](self.settings, self.directory)
-            self.tts.connect('start', lambda: GLib.idle_add(self.mute_tts_button.set_visible, True))
-            self.tts.connect('stop', lambda: GLib.idle_add(self.mute_tts_button.set_visible, False))
-        
-        # Create RAG and memory handler and embedding handler first
-        self.rag_handler : RAGHandler = AVAILABLE_RAGS[self.rag_model]["class"](self.settings, os.path.join(self.directory, "models"))
-        self.memory_handler : MemoripyHandler= AVAILABLE_MEMORIES[self.memory_model]["class"](self.settings, os.path.join(self.directory, "models"))
-        self.memory_handler.set_memory_size(self.memory)
-        self.embeddings : EmbeddingHandler = AVAILABLE_EMBEDDINGS[self.embedding_model]["class"](self.settings, os.path.join(self.directory, "models"))
-        if not self.embeddings.is_installed():
-            # Install embeddings if missing
-            threading.Thread(target=self.embeddings.install).start()
-        if not self.rag_handler.is_installed():
-            # Install RAG if missing
-            threading.Thread(target=self.rag_handler.install).start()
-
-        # Quick settings will add the handlers to RAG and memory 
-        # Load quick settings 
-        self.quick_settings_update()
-        # Load embeddings only if required
-        if self.rag_on or self.memory_on or self.rag_on_documents:
-            self.embeddings.load_model()
-        # Load RAG
-        if self.rag_on:
-            GLib.idle_add(self.rag_handler.load)
-        
-        # Adjust paths
-        if os.path.exists(os.path.expanduser(self.main_path)):
-            os.chdir(os.path.expanduser(self.main_path))
-        else:
-            self.main_path = "~"
-            
-        if not self.first_load:
+        self.tts.connect('start', lambda: GLib.idle_add(self.mute_tts_button.set_visible, True))
+        self.tts.connect('stop', lambda: GLib.idle_add(self.mute_tts_button.set_visible, False))
+        if ReloadType.AVATAR in reloads and not self.first_load:
             self.load_avatar()
-
-    def quick_settings_update(self):  
-        """Update LLM and prompt settings"""
-        self.language_model = self.settings.get_string("language-model")
-        self.secondary_language_model = self.settings.get_string("secondary-language-model")
-        self.use_secondary_language_model = self.settings.get_boolean("secondary-llm-on")
-        self.custom_prompts = json.loads(self.settings.get_string("custom-prompts"))
-        self.prompts = override_prompts(self.custom_prompts, PROMPTS)
-        self.prompts_settings = json.loads(self.settings.get_string("prompts-settings"))
-        # Primary LLM
-        if self.language_model in AVAILABLE_LLMS:
-            self.model: LLMHandler = AVAILABLE_LLMS[self.language_model]["class"](self.settings, os.path.join(self.directory, "models"))
-        else:
-            mod = list(AVAILABLE_LLMS.values())[0]
-            self.model: LLMHandler = mod["class"](self.settings, os.path.join(self.directory))
-       
-        # Secondary LLM
-        if self.use_secondary_language_model:
-            if self.secondary_language_model in AVAILABLE_LLMS:
-                self.secondary_model: LLMHandler = AVAILABLE_LLMS[self.secondary_language_model]["class"](self.settings, os.path.join(self.directory, "models"))
-            else:
-                mod = list(AVAILABLE_LLMS.values())[0]
-                self.secondary_model: LLMHandler = mod["class"](self.settings, os.path.join(self.directory))
-            self.secondary_model.set_secondary_settings(True)
-        else:
-            self.secondary_model = self.model
-        # Update handlers in memory and rag 
-        self.memory_handler.set_handlers(self.secondary_model, self.embeddings)
-        self.rag_handler.set_handlers(self.secondary_model, self.embeddings)
-
-        # Load handlers and models
-        self.model.load_model(None)
-        self.stt_handler = AVAILABLE_STT[self.stt_engine]["class"](self.settings, self.pip_directory)
-       
-        # Update handlers in extensions 
-        self.extensionloader.set_handlers(self.model, self.stt_handler, self.tts if self.tts_enabled else None, self.secondary_model, self.embeddings, self.rag_handler if (self.rag_on or self.rag_on_documents) else None, self.memory_handler if self.memory_on else None)
-        # Load prompts
-        self.bot_prompts = []
-        for prompt in AVAILABLE_PROMPTS:
-            is_active = False
-            if prompt["setting_name"] in self.prompts_settings:
-                is_active = self.prompts_settings[prompt["setting_name"]]
-            else:
-                is_active = prompt["default"]
-            if is_active:
-                self.bot_prompts.append(self.prompts[prompt["key"]])
-        if hasattr(self, "model_popup"):
-            self.update_model_popup()
-    
-        # Setup attach buttons to the model capabilities
-        if not self.first_load:
-            self.build_offers()
-            if (not self.model.supports_vision() and not self.model.supports_video_vision() 
-                    and len(self.model.get_supported_files()) + (len(self.rag_handler.get_supported_files()) if self.rag_handler is not None else 0) == 0):
-                if self.attached_image_data is not None:
-                    self.delete_attachment(self.attach_button)
-                self.attach_button.set_visible(False)
-            else:
-                self.attach_button.set_visible(True)
-            if not self.model.supports_video_vision():
-                if self.video_recorder is not None:
-                    self.video_recorder.stop()
-                    self.video_recorder = None
-            self.screen_record_button.set_visible(self.model.supports_video_vision() and not self.attached_image_data)
-            self.chat_header.set_title_widget(self.build_model_popup())
-    
+         
     # Model popup 
     def update_model_popup(self):
         """Update the label in the popup"""
-        model_name = AVAILABLE_LLMS[self.language_model]["title"]
+        model_name = AVAILABLE_LLMS[self.model.key]["title"]
         if self.model.get_setting("model") is not None:
             model_name = model_name + " - " + self.model.get_setting("model")
         self.model_menu_button.set_child(Gtk.Label(label=model_name, ellipsize=Pango.EllipsizeMode.MIDDLE))
@@ -688,7 +556,7 @@ class MainWindow(Gtk.ApplicationWindow):
         scroll = Gtk.ScrolledWindow()
         scroll.set_vexpand(True)
         scroll.set_hexpand(True)
-        settings = Settings(self, headless=True) 
+        settings = Settings(self, self.controller, headless=True) 
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         stack = Adw.ViewStack()
         stack.add_titled_with_icon(self.steal_from_settings(settings.LLM), title="LLM", name="LLM", icon_name="brain-augemnted-symbolic")
@@ -712,16 +580,15 @@ class MainWindow(Gtk.ApplicationWindow):
         return widget
 
     def load_avatar(self):
-        if self.avatar_enabled:
-            # If the avatar is enabled, check if it requires reloading
+        if self.controller.newelle_settings.avatar_enabled:
+            # If the avatar is enabled, check if it requires reloading 
+            if not hasattr(self, "avatar_handler"):
+                self.avatar_handler = None
             old_avatar = self.avatar_handler
             selected_key = self.settings.get_string("avatar-model")
-            for avatar in AVAILABLE_AVATARS:
-                if selected_key == avatar:
-                    self.avatar_handler = AVAILABLE_AVATARS[avatar]["class"](self.settings, self.directory)
-                    break
+            self.avatar_handler = self.controller.handlers.avatar
             # If it does not require reloading, then just return
-            if old_avatar is not None and not old_avatar.requires_reloading(self.avatar_handler) and self.avatar_enabled == self.last_avatar_enabled:
+            if old_avatar is not None and not old_avatar.requires_reloading(self.avatar_handler):
                 self.avatar_handler = old_avatar
                 return
             # If it requires reloading, reload the old avatar
@@ -751,7 +618,7 @@ class MainWindow(Gtk.ApplicationWindow):
     # UI Functions
     def show_presentation_window(self):
         """Show the window for the initial program presentation on first start"""
-        self.presentation_dialog = PresentationWindow("presentation", self.settings, self.directory, self)
+        self.presentation_dialog = PresentationWindow("presentation", self.settings, self)
         self.presentation_dialog.show()
 
     def mute_tts(self, button: Gtk.Button):
@@ -765,13 +632,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def focus_input(self):
         """Focus the input box. Often used to avoid removing focues objects"""
         self.input_panel.input_panel.grab_focus()
-
-    # Utility functions
-    def init_pip_path(self, path):
-        """Install a pip module to init a pip path"""
-        install_module("pip-install-test", self.pip_directory)
-        path.append(self.pip_directory)
-    
+ 
     # Profiles
     def refresh_profiles_box(self):
         """Changes the profile switch button on the header"""
@@ -779,7 +640,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.chat_header.remove(self.profiles_box)
         self.profiles_box = self.get_profiles_box()
         self.chat_header.pack_start(self.profiles_box)
-    
+     
     def create_profile(self, profile_name, picture=None, settings={}):
         """Create a profile
 
@@ -788,8 +649,7 @@ class MainWindow(Gtk.ApplicationWindow):
             picture (): path to the profile picture 
             settings (): settings to override for that profile 
         """
-        self.profile_settings[profile_name] = {"picture": picture, "settings": settings}
-        self.settings.set_string("profiles", json.dumps(self.profile_settings))
+        self.controller.create_profile(profile_name, picture, settings)
 
     def delete_profile(self, profile_name):
         """Delete a profile
@@ -797,10 +657,7 @@ class MainWindow(Gtk.ApplicationWindow):
         Args:
             profile_name (): name of the profile to delete 
         """
-        if profile_name == "Assistant" or profile_name == self.settings.get_string("current-profile"):
-            return
-        del self.profile_settings[profile_name]
-        self.settings.set_string("profiles", json.dumps(self.profile_settings))
+        self.controller.delete_profile(profile_name)
         self.refresh_profiles_box()
         self.update_settings()
 
@@ -882,10 +739,10 @@ class MainWindow(Gtk.ApplicationWindow):
     # Voice Recording
     def start_recording(self, button):
         """Start recording voice for Speech to Text"""
-        path = os.path.join(self.directory, "recording.wav")
+        path = os.path.join(self.controller.cache_dir, "recording.wav")
         if os.path.exists(path):
             os.remove(path)
-        if self.automatic_stt:
+        if self.controller.newelle_settings.automatic_stt:
             self.automatic_stt_status = True
         # button.set_child(Gtk.Spinner(spinning=True))
         button.set_icon_name("media-playback-stop-symbolic")
@@ -894,8 +751,8 @@ class MainWindow(Gtk.ApplicationWindow):
         button.add_css_class("error")
         button.connect("clicked", self.stop_recording)
         self.recorder = AudioRecorder(auto_stop=True, stop_function=self.auto_stop_recording,
-                                      silence_duration=self.stt_silence_detection_duration,
-                                      silence_threshold_percent=self.stt_silence_detection_threshold)
+                                      silence_duration=self.controller.newelle_settings.stt_silence_detection_duration,
+                                      silence_threshold_percent=self.controller.newelle_settings.stt_silence_detection_threshold)
         t = threading.Thread(target=self.recorder.start_recording,
                              args=(path,))
         t.start()
@@ -908,7 +765,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def stop_recording(self, button=False):
         """Stop a recording manually"""
         self.automatic_stt_status = False
-        self.recorder.stop_recording(os.path.join(self.directory, "recording.wav"))
+        self.recorder.stop_recording(os.path.join(self.controller.cache_dir, "recording.wav"))
         self.stop_recording_ui(self.recording_button)
         t = threading.Thread(target=self.stop_recording_async)
         t.start()
@@ -924,8 +781,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def stop_recording_async(self, button=False):
         """Stop recording and save the file"""
-        recognizer = self.stt_handler
-        result = recognizer.recognize_file(os.path.join(self.directory, "recording.wav"))
+        recognizer = self.stt
+        result = recognizer.recognize_file(os.path.join(self.controller.cache_dir, "recording.wav"))
         def idle_record():
             if result is not None and "stop" not in result.lower() and len(result.replace(" ", "")) > 2:
                 self.input_panel.set_text(result)
@@ -961,7 +818,7 @@ class MainWindow(Gtk.ApplicationWindow):
         video_filter = Gtk.FileFilter(name="Video", patterns=["*.mp4"])
         file_filter = Gtk.FileFilter(name="Supported Files", patterns=self.model.get_supported_files())
         second_file_filter = None
-        if self.rag_handler is not None and self.rag_on_documents:
+        if self.rag_handler is not None and self.controller.newelle_settings.rag_on_documents:
             second_file_filter = Gtk.FileFilter(name="RAG Supported files", patterns=self.rag_handler.get_supported_files())
         default_filter = None
         if second_file_filter is not None:
@@ -1103,7 +960,7 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.main_program_block.set_name("visible")
             self.main_program_block.set_reveal_flap(True)
-        if not self.avatar_enabled:
+        if not self.controller.newelle_settings.avatar_enabled:
             self.load_avatar()
     
     # UI Functions for chat management
@@ -1252,7 +1109,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     halign=Gtk.Align.CENTER, hexpand=True))
                 if len(os.listdir(os.path.expanduser(self.main_path))) == 0 or (sum(
                         1 for filename in os.listdir(os.path.expanduser(self.main_path)) if
-                        not filename.startswith('.')) == 0 and not self.hidden_files) and os.path.normpath(
+                        not filename.startswith('.')) == 0 and not self.controller.newelle_settings.hidden_files) and os.path.normpath(
                     self.main_path) != "~":
                     self.explorer_panel.remove(self.folder_blocks_panel)
                     self.folder_blocks_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, opacity=0.25)
@@ -1297,7 +1154,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
                         flow_box.append(button)
                     for file_info in os.listdir(os.path.expanduser(self.main_path)):
-                        if file_info[0] == "." and not self.hidden_files:
+                        if file_info[0] == "." and not self.controller.newelle_settings.hidden_files:
                             continue
                         button = Gtk.Button(css_classes=["flat"])
                         button.set_name(file_info)
@@ -1413,7 +1270,7 @@ class MainWindow(Gtk.ApplicationWindow):
         list_box = Gtk.ListBox(css_classes=["separators", "background"])
         list_box.set_selection_mode(Gtk.SelectionMode.NONE)
         self.chats_buttons_scroll_block.set_child(list_box)
-        chat_range = range(len(self.chats)).__reversed__() if self.reverse_order else range(len(self.chats))
+        chat_range = range(len(self.chats)).__reversed__() if self.controller.newelle_settings.reverse_order else range(len(self.chats))
         for i in chat_range:
             box = Gtk.Box(spacing=6, margin_top=3, margin_bottom=3, margin_start=3, margin_end=3)
             generate_chat_name_button = Gtk.Button(css_classes=["flat", "accent"],
@@ -1637,7 +1494,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def generate_suggestions(self):
         """Create the suggestions and update the UI when it's finished"""
         self.model.set_history([], self.get_history())
-        suggestions = self.secondary_model.get_suggestions(self.prompts["get_suggestions_prompt"], self.offers)
+        suggestions = self.secondary_model.get_suggestions(self.controller.newelle_settings.prompts["get_suggestions_prompt"], self.offers)
         GLib.idle_add(self.populate_suggestions, suggestions)
 
     def populate_suggestions(self, suggestions):
@@ -1669,14 +1526,14 @@ class MainWindow(Gtk.ApplicationWindow):
         if chat is None:
             chat = self.chat
         history = []
-        count = self.memory
+        count = self.controller.newelle_settings.memory
         msgs = chat[:-1] if not include_last_message else chat
         for msg in msgs:
             if count == 0:
                 break
             if msg["User"] == "Console" and msg["Message"] == "None":
                 continue
-            if self.remove_thinking:
+            if self.controller.newelle_settings.remove_thinking:
                 msg["Message"] = remove_thinking_blocks(msg["Message"])
             history.append(msg)
             count -= 1
@@ -1688,7 +1545,7 @@ class MainWindow(Gtk.ApplicationWindow):
             r += self.memory_handler.get_context(self.chat[-1]["Message"], self.get_history())
         if self.rag_on:
             r += self.rag_handler.get_context(self.chat[-1]["Message"], self.get_history())
-        if self.rag_on_documents and self.rag_handler is not None:
+        if self.controller.newelle_settings.rag_on_documents and self.rag_handler is not None:
             documents = extract_supported_files(self.get_history(include_last_message=True), self.rag_handler.get_supported_files())
             if len(documents) > 0:
                 r += self.rag_handler.query_document(self.chat[-1]["Message"],documents) 
@@ -1702,11 +1559,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.stream_number_variable += 1
         stream_number_variable = self.stream_number_variable
         self.status = False
-        self.update_button_text()
+        GLib.idle_add(self.update_button_text)
 
         # Append extensions prompts
         prompts = []
-        for prompt in self.bot_prompts:
+        for prompt in self.controller.newelle_settings.bot_prompts:
             prompts.append(replace_variables(prompt))
         
         # Append memory
@@ -1718,11 +1575,11 @@ class MainWindow(Gtk.ApplicationWindow):
             print("Installing the model...")
             self.model.install()
         # Get smart prompts
-        if self.smart_prompt_enabled:
+        if self.controller.newelle_settings.smart_prompt_enabled:
+            self.smart_prompt_handler = self.controller.handlers.smart_prompt
             if self.smart_prompt_handler in AVAILABLE_SMART_PROMPTS:
                 try:
-                    smart_prompt = AVAILABLE_SMART_PROMPTS[self.smart_prompt_handler]["class"](self.settings, self.directory)
-                    generated = smart_prompt.get_extra_prompts(self.chat[-1]["Message"], self.get_history(), EXTRA_PROMPTS)
+                    generated = self.smart_prompt_handler.get_extra_prompts(self.chat[-1]["Message"], self.get_history(), EXTRA_PROMPTS)
                     prompts += generated
                 except Exception as e:
                     print(e)
@@ -1767,7 +1624,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.streaming_box.unparent()
             GLib.timeout_add(250, remove_streaming_box)
             return
-        
         if self.stream_number_variable == stream_number_variable:
             history, message_label = self.extensionloader.postprocess_history(self.chat, message_label)
             # Edit messages that require to be updated 
@@ -1781,36 +1637,35 @@ class MainWindow(Gtk.ApplicationWindow):
         GLib.idle_add(self.remove_send_button_spinner)
         # Generate chat name 
         self.update_memory(message_label)
-        if self.auto_generate_name and len(self.chat) == 1: 
+        if self.controller.newelle_settings.auto_generate_name and len(self.chat) == 1: 
             GLib.idle_add(self.generate_chat_name, Gtk.Button(name=str(self.chat_id)))
             
         if self.tts_enabled:
-            if self.tts_program in AVAILABLE_TTS:
-                # Remove text in *text*
-                message_label = convert_think_codeblocks(message_label)
-                message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
-                message = remove_markdown(message)
-                # Remove text in *text*
-                if not(not message.strip() or message.isspace() or all(char == '\n' for char in message)):
-                    # Translate the message
-                    translator = None
-                    if self.translation_enabled and self.translation_handler in AVAILABLE_TRANSLATORS:
-                        translator = AVAILABLE_TRANSLATORS[self.translation_handler]["class"](self.settings, self.directory)          
-                    if self.avatar_enabled and self.avatar_handler is not None:
-                        tts_thread = threading.Thread(target=self.avatar_handler.speak_with_tts, args=(message, self.tts, translator))
-                    else:
-                        if translator is not None:
-                            message = translator.translate(message)
-                        tts_thread = threading.Thread(target=self.tts.play_audio, args=(message, ))
-                    tts_thread.start()
-                    def restart_recording():
-                        if not self.automatic_stt_status:
-                            return
-                        if tts_thread is not None:
-                            tts_thread.join()
-                        GLib.idle_add(self.start_recording, self.recording_button)
-                    if self.automatic_stt:
-                        threading.Thread(target=restart_recording).start()
+            # Remove text in *text*
+            message_label = convert_think_codeblocks(message_label)
+            message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
+            message = remove_markdown(message)
+            # Remove text in *text*
+            if not(not message.strip() or message.isspace() or all(char == '\n' for char in message)):
+                # Translate the message
+                translator = None
+                if self.translation_enabled:
+                    translator = self.translator          
+                if self.controller.newelle_settings.avatar_enabled and self.avatar_handler is not None:
+                    tts_thread = threading.Thread(target=self.avatar_handler.speak_with_tts, args=(message, self.tts, translator))
+                else:
+                    if translator is not None:
+                        message = translator.translate(message)
+                    tts_thread = threading.Thread(target=self.tts.play_audio, args=(message, ))
+                tts_thread.start()
+                def restart_recording():
+                    if not self.automatic_stt_status:
+                        return
+                    if tts_thread is not None:
+                        tts_thread.join()
+                    GLib.idle_add(self.start_recording, self.recording_button)
+                if self.controller.newelle_settings.automatic_stt:
+                    threading.Thread(target=restart_recording).start()
 
     def create_streaming_message_label(self):
         """Create a label for message streaming"""
@@ -1890,7 +1745,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.chat_scroll_window.remove(self.offers_entry_block)
             self.chat_scroll_window.append(self.chat_controls_entry_block)
             self.chat_scroll_window.append(self.offers_entry_block)
-            if not self.virtualization:
+            if not self.controller.newelle_settings.virtualization:
                 self.add_message("WarningNoVirtual")
             else:
                 self.add_message("Disclaimer")
@@ -1945,7 +1800,7 @@ class MainWindow(Gtk.ApplicationWindow):
             if not restore and not is_user:
                 self.chat.append({"User": "Assistant", "Message": message_label})
                 self.add_prompt(prompt)
-            chunks = get_message_chunks(message_label, self.display_latex)  
+            chunks = get_message_chunks(message_label, self.controller.newelle_settings.display_latex)  
             box = Gtk.Box(margin_top=10, margin_start=10, margin_bottom=10, margin_end=10,
                           orientation=Gtk.Orientation.VERTICAL)
             code_language = ""
@@ -1988,20 +1843,20 @@ class MainWindow(Gtk.ApplicationWindow):
                                             code = (False, "Error:")
                                     else:
                                         code = (True, reply_from_the_console)
-                                    text_expander.set_child(
-                                        Gtk.Label(wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
-                                                  label=chunk.text + "\n" + str(
-                                                      code[1]),
-                                                  selectable=True))
-                                    if not code[0]:
-                                        self.add_message("Error", text_expander)
-                                    elif restore:
-                                        self.add_message("Assistant", text_expander)
-                                    else:
-                                        self.add_message("Done", text_expander)
-                                    if not restore:
-                                        self.chat.append({"User": "Console", "Message": " " + str(code[1])})
-
+                                    # Apply the changes on the main thread 
+                                    # Avoid crashes
+                                    def apply_sync():
+                                        text_expander.set_child(
+                                            Gtk.Label(wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
+                                                      label=chunk.text + "\n" + str(
+                                                          code[1]),
+                                                      selectable=True))
+                                        
+                                        if not code[0]:
+                                            self.add_message("Error", text_expander)
+                                    self.chat.append({"User": "Console", "Message": " " + str(code[1])})
+                                    GLib.idle_add(apply_sync)
+                                box.append(text_expander)
                                 t = threading.Thread(target=getresponse)
                                 t.start()
                                 running_threads.append(t)
@@ -2046,7 +1901,7 @@ class MainWindow(Gtk.ApplicationWindow):
                         if id_message == -1:
                             id_message = len(self.chat) - 1
                         id_message += 1
-                        if self.auto_run and not any(
+                        if self.controller.newelle_settings.auto_run and not any(
                                 command in chunk.text for command in
                                 ["rm ", "apt ", "sudo ", "yum ", "mkfs "]):
                             has_terminal_command = True
@@ -2056,28 +1911,30 @@ class MainWindow(Gtk.ApplicationWindow):
                                 margin_bottom=10, margin_end=10
                             )
                             text_expander.set_expanded(False)
+                            box.append(text_expander)
                             path = ""
                             reply_from_the_console = None
                             if self.chat[min(id_message, len(self.chat) - 1)]["User"] == "Console":
                                 reply_from_the_console = self.chat[min(id_message, len(self.chat) - 1)]["Message"]
-                            if not restore:
-                                path = os.path.normpath(self.main_path)
-                                code = self.execute_terminal_command(value)
-                            else:
-                                code = (True, reply_from_the_console)
-                            val = '\n'.join(value)
-                            text = f"[User {path}]:$ {val}\n{code[1]}"
-                            text_expander.set_child(
-                                Gtk.Label(wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR, label=text,
-                                          selectable=True))
-                            if not code[0]:
-                                self.add_message("Error", text_expander)
-                            elif restore:
-                                self.add_message("Assistant", text_expander)
-                            else:
-                                self.add_message("Done", text_expander)
-                            if not restore:
-                                self.chat.append({"User": "Console", "Message": " " + str(code[1])})
+                            def getresponse(path): 
+                                if not restore:
+                                    path = os.path.normpath(self.main_path)
+                                    code = self.execute_terminal_command(value)
+                                else:
+                                    code = (True, reply_from_the_console)
+                                text = f"[User {path}]:$ {value}\n{code[1]}"
+                                if not restore:
+                                    self.chat.append({"User": "Console", "Message": " " + str(code[1])})
+                                def apply_sync():
+                                    text_expander.set_child(
+                                        Gtk.Label(wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR, label=text,
+                                                  selectable=True)) 
+                                    if not code[0]:
+                                        self.add_message("Error", text_expander)
+                                GLib.idle_add(apply_sync)
+                            t = threading.Thread(target=getresponse, args=(path,))
+                            t.start()
+                            running_threads.append(t)
                         else:
                             if not restore:
                                 self.chat.append({"User": "Console", "Message": "None"})
@@ -2113,7 +1970,11 @@ class MainWindow(Gtk.ApplicationWindow):
                     else:
                         box.append(CopyBox(chunk.text, code_language, parent=self))
                 elif chunk.type == "table":
-                    box.append(self.create_table(chunk.text.split("\n")))
+                    try:
+                        box.append(self.create_table(chunk.text.split("\n")))
+                    except Exception as e:
+                        print(e)
+                        box.append(CopyBox(chunk.text, "table", parent=self))
                 elif chunk.type == "inline_chunks":
                     if chunk.subchunks is None:
                         continue
@@ -2123,11 +1984,13 @@ class MainWindow(Gtk.ApplicationWindow):
                             txt += chunk.text
                         elif chunk.type == "latex_inline":
                             txt += LatexNodes2Text().latex_to_text(chunk.text)
+                            print(chunk.text)
+                            print(txt)
                     label = markwon_to_pango(txt)
                     box.append(Gtk.Label(label=label, wrap=True, halign=Gtk.Align.START,
                                          wrap_mode=Pango.WrapMode.WORD_CHAR, width_chars=1, selectable=True,
                                          use_markup=True))
-                elif chunk.type == "latex":
+                elif chunk.type == "latex" or chunk.type == "latex_inline":
                     try:
                         box.append(DisplayLatex(chunk.text, 100))
                     except Exception:
@@ -2155,11 +2018,17 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.chat_stop_button.set_visible(False)
                     self.chats[self.chat_id]["chat"] = self.chat
             else:
+                if not return_widget:
+                    self.add_message("Assistant", box, id_message, editable)
+                else:
+                    return box
                 if not restore and not is_user:
                     def wait_threads_sm():
                         for t in running_threads:
                             t.join()
-                        self.send_message()
+                        if len(running_threads) > 0:
+                            self.send_message()
+                    self.chats[self.chat_id]["chat"] = self.chat
                     threading.Thread(target=wait_threads_sm).start()
         GLib.idle_add(self.scrolled_chat)
         self.save_chat()
@@ -2179,13 +2048,16 @@ class MainWindow(Gtk.ApplicationWindow):
             data.append([cell.strip() for cell in cells])
         model = Gtk.ListStore(*[str] * len(data[0]))
         for row in data[1:]:
-            if not all(element == "-" * len(element) for element in row):
-                model.append(row)
+            if not all(len(element.replace(":", "").replace(" ", "").replace("-", "").strip()) == 0 for element in row):
+                r = []
+                for element in row:
+                    r.append(simple_markdown_to_pango(element))
+                model.append(r)
         self.treeview = Gtk.TreeView(model=model, css_classes=["toolbar", "view", "transparent"])
 
         for i, title in enumerate(data[0]):
             renderer = Gtk.CellRendererText()
-            column = Gtk.TreeViewColumn(title, renderer, text=i)
+            column = Gtk.TreeViewColumn(title, renderer, markup=i)
             self.treeview.append_column(column)
         return self.treeview
     
@@ -2415,7 +2287,7 @@ class MainWindow(Gtk.ApplicationWindow):
             box.add_controller(ev)
 
         if user == "User":
-            label = Gtk.Label(label=user + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
+            label = Gtk.Label(label=self.controller.newelle_settings.username + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
                               css_classes=["accent", "heading"])
             if editable:
                 stack.add_named(label, "label")
@@ -2445,11 +2317,11 @@ class MainWindow(Gtk.ApplicationWindow):
                                  css_classes=["error", "heading"]))
             box.set_css_classes(["card", "failed"])
         if user == "File":
-            box.append(Gtk.Label(label="User: ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
+            box.append(Gtk.Label(label=self.controller.newelle_settings.username + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
                                  css_classes=["accent", "heading"]))
             box.set_css_classes(["card", "file"])
         if user == "Folder":
-            box.append(Gtk.Label(label="User: ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
+            box.append(Gtk.Label(label=self.controller.newelle_settings.username + ": ", margin_top=10, margin_start=10, margin_bottom=10, margin_end=0,
                                  css_classes=["accent", "heading"]))
             box.set_css_classes(["card", "folder"])
         if user == "WarningNoVirtual":
@@ -2495,11 +2367,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def save_chat(self):
         """Save the chat to a file"""
-        prevdir = os.getcwd()
-        os.chdir(os.path.expanduser("~"))
-        with open(self.path + self.filename, 'wb') as f:
-            pickle.dump(self.chats, f)
-        os.chdir(prevdir)
+        self.controller.save_chats()
 
     def execute_terminal_command(self, command):
         """Run console commands
@@ -2512,9 +2380,9 @@ class MainWindow(Gtk.ApplicationWindow):
         """
         os.chdir(os.path.expanduser(self.main_path))
         console_permissions = ""
-        if not self.virtualization:
+        if not self.controller.newelle_settings.virtualization:
             console_permissions = " ".join(get_spawn_command())
-        commands = ('\n'.join(command)).split(" && ")
+        commands = command.split(" && ")
         txt = ""
         path = self.main_path
         for t in commands:

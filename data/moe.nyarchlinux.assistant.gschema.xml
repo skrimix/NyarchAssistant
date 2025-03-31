@@ -163,6 +163,9 @@
         <key name="smart-prompt-on" type="b">
           <default>true</default>
         </key>
+        <key name="user-name" type="s">
+          <default>"User"</default>
+        </key>
 	      <key name="startup-mode" type="s">
           <default>"normal"</default>
         </key>
