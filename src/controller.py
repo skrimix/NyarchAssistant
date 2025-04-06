@@ -149,6 +149,8 @@ class NewelleController:
             os.makedirs(self.extensions_cache)
         if not os.path.exists(self.models_dir):
             os.makedirs(self.models_dir)
+        if not os.path.exists(os.path.join(self.config_dir, "avatars")):
+            os.makedirs(os.path.join(self.config_dir, "avatars"))
         # Fix Pip environment
         if os.path.isdir(self.pip_path):
             self.python_path.append(self.pip_path)

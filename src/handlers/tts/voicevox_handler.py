@@ -14,7 +14,8 @@ class VoiceVoxHanlder(TTSHandler):
         self.voices = tuple()
         voices = self.get_setting("voices")
         if not voices:
-            threading.Thread(target=self.get_voices).start() 
+            #threading.Thread(target=self.get_voices).start() 
+            pass
         else:
             self.voices = self.get_setting("voices")
 

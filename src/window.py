@@ -483,9 +483,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.first_start()
         else:
             threading.Thread(target=self.check_version).start()
-        GLib.timeout_add(10, build_model_popup)
         self.controller.handlers.set_error_func(self.handle_error)
-
         GLib.timeout_add(10, build_model_popup)
         self.first_load = False
         self.load_avatar()
@@ -508,7 +506,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 "gtk-xft-dpi", settings.get_property("gtk-xft-dpi") + (zoom - 100) * 400
             )
     def first_start(self):
-        GLib.idle_add(self.show_presentation_window)
         threading.Thread(target=self.install_live2d).start()
 
     def check_version(self):
@@ -528,7 +525,8 @@ class MainWindow(Gtk.ApplicationWindow):
         except Exception as e:
             print(e)
         try:
-            subprocess.check_output(['mv', os.path.join(self.controller.config_dir, "avatars/live2d/web/models"), os.path.join(self.controller.config_dir, 'avatars/live2d/models')])
+            if os.path.exists(os.path.join(self.controller.config_dir, "avatars/live2d/web/models")):
+                subprocess.check_output(['mv', os.path.join(self.controller.config_dir, "avatars/live2d/web/models"), os.path.join(self.controller.config_dir, 'avatars/live2d/models')])
             subprocess.check_output(['rm', '-rf',  os.path.join(self.controller.config_dir, "avatars/live2d/web")])
         except Exception as e:
             print(e)
@@ -1367,7 +1365,7 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.avatar_flap.set_name("visible")
             self.avatar_flap.set_reveal_flap(True)
-        if not self.avatar_enabled:
+        if not self.controller.newelle_settings.avatar_enabled:
             self.load_avatar()
     
     def get_file_button(self, path):
@@ -2204,7 +2202,9 @@ class MainWindow(Gtk.ApplicationWindow):
             # Remove text in *text*
             message_label = convert_think_codeblocks(message_label)
             message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
+            message = re.sub(r'\*.*?\*', '', message)
             message = remove_markdown(message)
+            print(message)
             # Remove text in *text*
             if not(not message.strip() or message.isspace() or all(char == '\n' for char in message)):
                 # Translate the message
