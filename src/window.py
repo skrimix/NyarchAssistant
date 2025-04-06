@@ -2204,7 +2204,6 @@ class MainWindow(Gtk.ApplicationWindow):
             message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
             message = re.sub(r'\*.*?\*', '', message)
             message = remove_markdown(message)
-            print(message)
             # Remove text in *text*
             if not(not message.strip() or message.isspace() or all(char == '\n' for char in message)):
                 # Translate the message
