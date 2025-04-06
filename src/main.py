@@ -249,6 +249,15 @@ class MyApp(Adw.Application):
         Gtk.Application.do_shutdown(self)
         os._exit(1)
 
+    def zoom(self, *a):
+        zoom = min(250, self.settings.get_int("zoom") + 10)
+        self.win.set_zoom(zoom)
+        self.settings.set_int("zoom", zoom)
+
+    def zoom_out(self, *a):
+        zoom = max(100, self.settings.get_int("zoom") - 10)
+        self.win.set_zoom(zoom)
+        self.settings.set_int("zoom", zoom)
 
 def main(version):
     app = MyApp(application_id="moe.nyarchlinux.assistant", version = version)
@@ -258,4 +267,7 @@ def main(version):
     app.create_action('focus_message', app.focus_message, ['<primary>l'])
     app.create_action('start_recording', app.start_recording, ['<primary>s'])
     app.create_action('stop_tts', app.stop_tts, ['<primary>k'])
+    app.create_action('zoom', app.zoom, ['<primary>plus'])
+    app.create_action('zoom', app.zoom, ['<primary>equal'])
+    app.create_action('zoom_out', app.zoom_out, ['<primary>minus'])
     app.run(sys.argv)

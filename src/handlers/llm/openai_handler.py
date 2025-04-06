@@ -6,7 +6,7 @@ from typing import Any, Callable
 from .llm import LLMHandler
 from ...utility.system import open_website
 from ...utility import convert_history_openai, get_streaming_extra_setting
-from ...handlers import ExtraSettings
+from ...handlers import ExtraSettings, ErrorSeverity
 
 class OpenAIHandler(LLMHandler):
     key = "openai"
@@ -19,7 +19,10 @@ class OpenAIHandler(LLMHandler):
         else:
             self.models = json.loads(self.get_setting("models", False))
 
-    def get_models(self):
+    def get_models_list(self):
+        return self.models
+
+    def get_models(self, manual=False):
         if self.is_installed():
             try:
                 import openai
@@ -32,9 +35,14 @@ class OpenAIHandler(LLMHandler):
                 for model in models:
                     result += ((model.id, model.id,), )
                 self.models = result
+                print(result)
                 self.set_setting("models", json.dumps(result))
+                print("ok")
                 self.settings_update()
             except Exception as e:
+                raise e
+                if manual:
+                    self.throw("Error getting " + self.key + " models: " + str(e), ErrorSeverity.WARNING)
                 print("Error getting " + self.key + " models: " + str(e))
             
     @staticmethod

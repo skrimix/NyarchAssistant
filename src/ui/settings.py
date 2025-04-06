@@ -34,6 +34,7 @@ from ..controller import NewelleController
 class Settings(Adw.PreferencesWindow):
     def __init__(self,app, controller: NewelleController,headless=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.app = app
         self.controller = controller
         self.settings = controller.settings
         if not headless:
@@ -196,9 +197,15 @@ class Settings(Adw.PreferencesWindow):
         self.prompt = Adw.PreferencesGroup(title=_('Prompt control'))
         self.PromptsPage.add(self.prompt)
 
-        row = Adw.ActionRow(title=_("Auto-run commands"), subtitle=_("Commands that the bot will write will automatically run"))
+        row = Adw.ExpanderRow(title=_("Auto-run commands"), subtitle=_("Commands that the bot will write will automatically run"))
         switch = Gtk.Switch(valign=Gtk.Align.CENTER)
         row.add_suffix(switch)
+        spin = Adw.SpinRow(title=_("Max number of commands"), subtitle=_("Maximum number of commands that the bot will write after a single user request"), adjustment=Gtk.Adjustment(lower=0, upper=30,  page_increment=1, value=self.settings.get_int("max-run-times"), step_increment=1))
+        def update_spin(spin, input):
+            self.settings.set_int("max-run-times", int(spin.get_value()))
+            return False
+        spin.connect("input", update_spin)
+        row.add_row(spin)
         self.settings.bind("auto-run", switch, 'active', Gio.SettingsBindFlags.DEFAULT)
         self.prompt.add(row)
 
@@ -223,6 +230,15 @@ class Settings(Adw.PreferencesWindow):
         # Interface settings
         self.interface = Adw.PreferencesGroup(title=_('Interface'))
         self.general_page.add(self.interface)
+
+        row = Adw.ActionRow(title=_("Interface Size"), subtitle=_("Adjust the size of the interface"))
+        spin = Adw.SpinRow(adjustment=Gtk.Adjustment(lower=100, upper=250, value=self.controller.newelle_settings.zoom, page_increment=20, step_increment=10))
+        row.add_suffix(spin)
+        def update_zoom(x,y):
+            self.controller.settings.set_int("zoom", spin.get_value())
+            self.app.win.set_zoom(spin.get_value())
+        spin.connect("input", update_zoom)
+        self.interface.add(row)
 
         row = Adw.ActionRow(title=_("Hidden files"), subtitle=_("Show hidden files"))
         switch = Gtk.Switch(valign=Gtk.Align.CENTER)
@@ -261,7 +277,7 @@ class Settings(Adw.PreferencesWindow):
         self.settings.bind("offers", int_spin, 'value', Gio.SettingsBindFlags.DEFAULT)
         self.interface.add(row)
         
-        row = Adw.ActionRow(title=_("Username"), subtitle=_("Change the label that appears before your message\nThis information is not sent to the LLM"))
+        row = Adw.ActionRow(title=_("Username"), subtitle=_("Change the label that appears before your message\nThis information is not sent to the LLM by default\nYou can add it to a prompt using the {USER} variable"))
         entry = Gtk.Entry(text=self.controller.newelle_settings.username, valign=Gtk.Align.CENTER)
         entry.connect("changed", lambda entry: self.settings.set_string("user-name", entry.get_text()))
         row.add_suffix(entry)
@@ -305,7 +321,7 @@ class Settings(Adw.PreferencesWindow):
         self.add(self.MemoryPage)
         self.add(self.AvatarPage)
         self.add(self.general_page)
-
+ 
     def build_rag_settings(self):
         self.RAG = Adw.PreferencesGroup(title=_('Document Sources (RAG)'), description=_("Include content from your documents in the responses"))
         tts_program = Adw.ExpanderRow(title=_('Document Analyzer'), subtitle=_("The document analyzer uses multiple techniques to extract relevant information about your documents"))
@@ -499,8 +515,10 @@ class Settings(Adw.PreferencesWindow):
         else:
             return
         self.settings.set_string(setting_name, button.get_name())
-        self.controller.update_settings()
-        if constants == AVAILABLE_RAGS:
+        if constants == AVAILABLE_LLMS:
+            self.app.win.update_available_models()
+        if constants == AVAILABLE_RAGS or constants == AVAILABLE_EMBEDDINGS:
+            self.app.win.update_settings()
             self.update_rag_index()
 
     def add_extra_settings(self, constants : dict[str, Any], handler : Handler, row : Adw.ExpanderRow, nested_settings : list | None = None):

@@ -10,7 +10,7 @@ from .llm import LLMHandler
 from ...utility.media import extract_image, extract_video, extract_file
 from ...utility.pip import find_module
 from ...utility.system import open_website
-from ...handlers import ExtraSettings
+from ...handlers import ExtraSettings, ErrorSeverity
 
 class GeminiHandler(LLMHandler):
     key = "gemini"
@@ -32,8 +32,12 @@ class GeminiHandler(LLMHandler):
             self.models = json.loads(self.get_setting("models", False))
             self.fix_models_format()
 
+    def get_models_list(self):
+        return self.models
+
     def stream_enabled(self) -> bool:
         return True
+    
     def fix_models_format(self):
         m = tuple()
         for model in self.models:
@@ -43,7 +47,7 @@ class GeminiHandler(LLMHandler):
     def get_supported_files(self) -> list[str]:
         return ["*"]
 
-    def get_models(self):
+    def get_models(self, manual=False):
         if self.is_installed():
             try:
                 from google import genai
@@ -62,6 +66,8 @@ class GeminiHandler(LLMHandler):
                 self.set_setting("models", json.dumps(result))
                 self.settings_update()
             except Exception as e:
+                if manual:
+                    self.throw("Error getting " + self.key + " models: " + str(e), ErrorSeverity.WARNING)
                 print("Error getting " + self.key + " models: " + str(e))
     
     @staticmethod

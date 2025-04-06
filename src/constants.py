@@ -1,6 +1,6 @@
 from .handlers.llm import ClaudeHandler, DeepseekHandler, GPT4AllHandler, GroqHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler, NewelleAPIHandler
-from .handlers.tts import ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler, KokoroTTSHandler
-from .handlers.stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperHandler, WitAIHandler, VoskHandler, CustomSRHandler
+from .handlers.tts import ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler, KokoroTTSHandler, CustomOpenAITTSHandler, OpenAITTSHandler, GroqTTSHandler
+from .handlers.stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperCPPHandler, WitAIHandler, VoskHandler, CustomSRHandler
 from .handlers.embeddings import WordLlamaHandler, OpenAIEmbeddingHandler, GeminiEmbeddingHanlder, OllamaEmbeddingHandler
 from .handlers.memory import MemoripyHandler, UserSummaryHandler, SummaryMemoripyHanlder
 from .handlers.rag import LlamaIndexHanlder
@@ -109,11 +109,12 @@ AVAILABLE_STT = {
         "website": "https://cmusphinx.github.io/wiki/",
         "class": SphinxHandler,
     },
-    "whisper": {
-        "key": "whisper",
-        "title": _("Whisper (Local)"),
-        "description": _("OpanAI whisper. Works offline. ~3GB download for dependency install - It is suggested to run NyarchAssistant in terminal when you install in order to see the progress"),
-        "class": WhisperHandler,
+    "whispercpp": {
+        "key": "whispercpp",
+        "title": _("Whisper C++"),
+        "description": _("Works offline. Optimized Whisper impelementation written in C++"),
+        "website": "https://github.com/ggerganov/whisper.cpp",
+        "class": WhisperCPPHandler,
     },
     "google_sr": {
         "key": "google_sr",
@@ -181,6 +182,24 @@ AVAILABLE_TTS = {
         "title": _("ElevenLabs TTS"),
         "description": _("Natural sounding TTS"),
         "class": ElevenLabs,
+    },
+    "openai_tts": {
+        "key": "openai_tts",
+        "title": _("OpenAI TTS"),
+        "description": _("OpenAI TTS"),
+        "class": OpenAITTSHandler,
+    },
+    "groq_tts": {
+        "key": "groq_tts",
+        "title": _("Groq TTS"),
+        "description": _("Groq TTS API"),
+        "class": GroqTTSHandler,
+    },
+    "custom_openai_tts": {
+        "key": "custom_openai_tts",
+        "title": _("Custom OpenAI TTS"),
+        "description": _("Custom OpenAI TTS"),
+        "class": CustomOpenAITTSHandler,
     },
     "voicevox": {
         "key": "voicevox",
@@ -325,13 +344,37 @@ AVAILABLE_SMART_PROMPTS = {
 
 PROMPTS = {
     "generate_name_prompt": """Write a short title for the dialog, summarizing the theme in 5 words. No additional text.""",
-    "console": """You can run commands on the user Linux computer.
-Linux distribution: {DISTRO}
-Execute linux commands using \n```console\ncommand\n```
-To display a directory: \n```folder\npath/to/folder\n```
-To display a file: \n```file\npath/to/file\n```
-To open a webpage: \n```console\nxdg-open https://www.example.com\n```
-""",
+    "assistant": """**Date:** {DATE}  
+
+You are an advanced AI assistant designed to provide clear, accurate, and helpful responses across a wide range of topics. Your goals are:  
+
+1. **Clarity & Conciseness** – Provide direct and well-structured answers.  
+2. **Context Awareness** – Understand and remember details within a conversation.  
+3. **Problem-Solving** – Offer logical solutions and actionable steps.  
+4. **Creativity & Adaptability** – Generate engaging content and adapt to various user needs.  
+5. **User-Friendly Language** – Maintain a friendly and professional tone.  
+
+Always prioritize accuracy, relevance, and user experience in your responses.  
+    """,
+    "console": """ **System Capabilities:**  
+You have the ability to execute commands on the user's Linux computer.  
+- **Linux Distribution:** `{DISTRO}`  
+- **Desktop Environment** `{DE}`
+- **Display Server** `{DISPLAY}`
+**Command Execution Format:**  
+- To execute a Linux command, use:  
+```console  
+command  
+```  
+- To display the link to a directory, use:  
+```folder  
+/path/to/directory  
+```  
+- To display the link to a file, use:  
+```file  
+/path/to/file  
+```  
+Ensure that commands are safe, relevant, and do not cause unintended system modifications unless explicitly requested by the user.""",  
     "basic_functionality": """You can write a multiplication table:
 | - | 1 | 2 | 3 | 4 |\n| - | - | - | - | - |\n| 1 | 1 | 2 | 3 | 4 |\n| 2 | 2 | 4 | 6 | 8 |\n| 3 | 3 | 6 | 9 | 12 |\n| 4 | 4 | 8 | 12 | 16 |
 
@@ -342,7 +385,7 @@ You can show code:
 ```cpp\n#include<iostream>\nusing namespace std;\nint main(){\n    cout<<"Hello world!";\n    return 0;\n}\n```
 You can also use **bold**, *italic*, ~strikethrough~, `monospace`, [linkname](https://link.com) and ## headers in markdown
 """,
-    "show_image": """You can show the user an image, if needed, using ```image\npath\n```""",
+    "show_image": """You can show the user an image, if needed, using \n```image\npath\n```\n\nYou can show the user a video, if needed, using\n```video\npath\n```""",
     "graphic": """System: You can display the graph using this structure: ```chart\n name - value\n ... \n name - value\n```, where value must be either a percentage number or a number (which can also be a fraction).
 
 """,
@@ -445,6 +488,15 @@ EXTRA_PROMPTS = [
     - show_in_settings: if the prompt should be shown in the settings
 """
 AVAILABLE_PROMPTS = [
+    {
+        "key": "assistant",
+        "setting_name": "assistant",
+        "title": _("Helpful assistant"),
+        "description": _("General purpose prompt to enhance the LLM answers and give more context"),
+        "editable": True,
+        "show_in_settings": True,
+        "default": False
+    },
     {
         "key": "console",
         "setting_name": "console",
