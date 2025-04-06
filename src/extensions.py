@@ -1,4 +1,4 @@
-import importlib 
+import importlib.util 
 import os 
 import json 
 import shutil
@@ -6,13 +6,15 @@ import sys
 from gi.repository import Gtk
 
 from .handlers import Handler
-
 from .handlers.llm import LLMHandler
 from .handlers.stt import STTHandler
 from .handlers.tts import TTSHandler
 from .handlers.rag import RAGHandler
 from .handlers.memory import MemoryHandler
 from .handlers.embeddings import EmbeddingHandler
+from .handlers.avatar import AvatarHandler
+from .handlers.smart_prompt import SmartPromptHandler
+from .handlers.translator import TranslatorHandler
 
 class NewelleExtension(Handler):
     """The base class for all extensions"""
@@ -126,10 +128,6 @@ class NewelleExtension(Handler):
 
         Returns:
             list: list of embedding handlers in this format
-            {
-                "key": "key of the handler",
-                "title": "title of the handler",
-                "description": "description of the handler",
                 "class": EmbeddingHandler - The class of the handler,
             }
         """
@@ -140,12 +138,48 @@ class NewelleExtension(Handler):
         Returns the list of RAG handlers
 
         Returns:
-            list: list of RAG handlers in this format
+            list: list of RAG handlers in this format 
             {
                 "key": "key of the handler",
                 "title": "title of the handler",
                 "description": "description of the handler",
                 "class": RAGHandler - The class of the handler,
+            }
+        """
+        return []
+    def get_translators_handlers(self) -> list[dict]:
+        """
+        Returns the list of Translators handlers
+
+        Returns:
+            list: list of Translators handlers in this format
+                "class": TranslatorHandler - The class of the handler,
+            }
+        """
+        return [] 
+
+    def get_avatar_handlers(self) -> list[dict]:
+        """
+        Returns the list of Avatar handlers
+
+        Returns:
+            list: list of Avatar handlers in this format
+            {
+                "key": "key of the handler",
+                "title": "title of the handler",
+                "description": "description of the handler",
+                "class": AvatarHandler - The class of the handler,
+            }
+        """
+        return [] 
+
+    def get_smart_prompts_handlers(self) -> list[dict]:
+        """
+        Returns the list of Smart Prompts handlers
+
+        Returns:
+            list: list of Smart Prompts handlers in this format
+                "class": SmartPromptsHandler - The class of the handler,
             }
         """
         return []
@@ -263,7 +297,7 @@ class ExtensionLoader:
         for file in os.listdir(self.extension_dir):
             if file.endswith(".py"):
                 try: 
-                    spec = importlib.util.spec_from_file_location("newelle.name", os.path.join(self.extension_dir, file))
+                    spec = importlib.util.spec_from_file_location("nyarchassistant.name", os.path.join(self.extension_dir, file))
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
 
@@ -295,7 +329,7 @@ class ExtensionLoader:
         for extension in self.extensions:
             extension.set_handlers(llm, stt, tts, secondary_llm, embedding, rag, memory)
 
-    def add_handlers(self, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAG):
+    def add_handlers(self, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAG, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS):
         """Add the handlers of each extension to the available handlers
 
         Args:
@@ -324,6 +358,16 @@ class ExtensionLoader:
             handlers = extension.get_rag_handlers()
             for handler in handlers:
                 AVAILABLE_RAG[handler["key"]] = handler
+            handler = extension.get_translators_handlers()
+            for h in handler:
+                AVAILABLE_TRANSLATORS[h["key"]] = h
+            handler = extension.get_smart_prompts_handlers()
+            for h in handler:
+                AVAILABLE_SMART_PROMPTS[h["key"]] = h
+            handler = extension.get_avatar_handlers()
+            for h in handler:
+                AVAILABLE_AVATARS[h["key"]] = h
+
 
     def add_prompts(self, PROMPTS, AVAILABLE_PROMPTS):
         """Add the prompts of each extension to the available prompts
@@ -341,7 +385,7 @@ class ExtensionLoader:
                     AVAILABLE_PROMPTS.append(prompt)
                 PROMPTS[prompt["key"]] = prompt["text"]
 
-    def remove_handlers(self, extension, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAG):
+    def remove_handlers(self, extension, AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAG, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS):
         """Remove handlers of an extension
 
         Args:
@@ -367,6 +411,15 @@ class ExtensionLoader:
         handlers = extension.get_rag_handlers()
         for handler in handlers:
             AVAILABLE_RAG.pop(handler["key"])
+        handler = extension.get_translators_handlers()
+        for h in handler:
+            AVAILABLE_TRANSLATORS.pop(h["key"])
+        handler = extension.get_smart_prompts_handlers()
+        for h in handler:
+            AVAILABLE_SMART_PROMPTS.pop(h["key"])
+        handler = extension.get_avatar_handlers()
+        for h in handler:
+            AVAILABLE_AVATARS.pop(h["key"])
 
     def remove_prompts(self, extension, PROMPTS, AVAILABLE_PROMPTS):
         """Remove prompts of an extension
@@ -399,6 +452,9 @@ class ExtensionLoader:
         Args:
             file_path: the path of the file to copy 
         """
+        print(self.extension_dir)
+        os.makedirs(os.path.join(self.extension_cache, os.path.basename(file_path)), exist_ok=True)
+        print(file_path)
         shutil.copyfile(file_path, os.path.join(self.extension_dir, os.path.basename(file_path)))
 
     def get_extension_by_id(self, id: str) -> NewelleExtension | None:
@@ -470,6 +526,17 @@ class ExtensionLoader:
         for h in extension.get_stt_handlers():
             if not self.check_handler(h, STTHandler):
                 return False
+        for h in extension.get_avatar_handlers():
+            if not self.check_handler(h, AvatarHandler):
+                return False
+        for h in extension.get_smart_prompts_handlers():
+            if not self.check_handler(h, SmartPromptHandler):
+                return False
+        for h in extension.get_translators_handlers():
+            if not self.check_handler(h, TranslatorHandler):
+                return False
+
+
         for p in extension.get_additional_prompts():
             if not self.check_prompt(p):
                 return False
