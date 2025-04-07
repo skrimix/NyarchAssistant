@@ -70,7 +70,7 @@ class AvatarHandler(Handler):
             tts: TTS handler 
             translator: Translation handler 
         """
-        frame_rate = self.get_setting("fps", False, 10)
+        frame_rate = int(self.get_setting("fps", False, 10))
         chunks = extract_expressions(text, self.get_expressions() + self.get_motions()) 
         threads = []
         results = {}
