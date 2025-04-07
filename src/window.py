@@ -1310,7 +1310,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.chat_header.set_show_end_title_buttons(False)
             header_widget = self.explorer_panel_headerbox
         else:
-            self.chat_panel_header.set_show_end_title_buttons(self.main.get_folded())
+            self.chat_panel_header.set_show_end_title_buttons(self.main.get_folded() and self.avatar_flap.get_folded())
             self.chat_header.set_show_end_title_buttons(True)
             header_widget = self.chat_header
         # Unparent the headerbox
@@ -1673,10 +1673,12 @@ class MainWindow(Gtk.ApplicationWindow):
     def handle_main_block_change(self, *data):
         if self.main.get_folded():
             self.chat_panel_header.set_show_end_title_buttons(
-                not self.main_program_block.get_reveal_flap()
+                not (self.main_program_block.get_reveal_flap() or self.avatar_flap.get_reveal_flap())
             )
             self.left_panel_back_button.set_visible(True)
+            self.chat_header.set_show_start_title_buttons(True)
         else:
+            self.chat_header.set_show_start_title_buttons(False)
             self.chat_panel_header.set_show_end_title_buttons(False)
             self.left_panel_back_button.set_visible(False)
 
