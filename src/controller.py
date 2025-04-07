@@ -30,6 +30,10 @@ from .handlers.translator import TranslatorHandler
 from .handlers.avatar import AvatarHandler
 from .handlers.smart_prompt import SmartPromptHandler
 
+if is_flatpak():
+    BASE_PATH = "/app/data"
+else:
+    BASE_PATH = "/usr/share/nyarchassistant/data"
 """
 Not yet used in the code.
 Manage Newelle Application, create handlers, check integrity, manage settings...
@@ -271,7 +275,7 @@ class NewelleSettings:
         self.profile_settings = json.loads(self.settings.get_string("profiles"))
         self.current_profile = self.settings.get_string("current-profile")
         if len(self.profile_settings) == 0 or self.current_profile not in self.profile_settings:
-            self.profile_settings[self.current_profile] = {"settings": {}, "picture": None}
+            self.profile_settings[self.current_profile] = {"settings": {}, "picture": os.path.join(BASE_PATH, 'live2d/web/arch-chan.png')}
 
         # Init variables
         self.automatic_stt_status = False

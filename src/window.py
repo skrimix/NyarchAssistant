@@ -47,11 +47,8 @@ from .handlers import ErrorSeverity
 from .controller import NewelleController, ReloadType
 from .extensions import ExtensionLoader
 
-if is_flatpak():
-    BASE_PATH = "/app/data"
-else:
-    BASE_PATH = "/usr/share/nyarchassistant/data"
-LIVE2D_VERSION = 0.4
+from .controller import BASE_PATH
+LIVE2D_VERSION = 0.5
 
 
 
