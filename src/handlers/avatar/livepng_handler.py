@@ -36,7 +36,7 @@ class LivePNGHandler(AvatarHandler):
                 "type": "range",
                 "min": 5,
                 "max": 30,
-                "default": 10.0,
+                "default": 10,
                 "round-digits": 0
             },
             {
