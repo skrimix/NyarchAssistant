@@ -120,6 +120,7 @@ class NewelleController:
         self.models_dir = os.path.join(self.config_dir, "models")
         self.extension_path = os.path.join(self.config_dir, "extensions")
         self.extensions_cache = os.path.join(self.cache_dir, "extensions_cache")
+        self.newelle_dir = os.path.join(self.config_dir, DIR_NAME)     
         print(self.pip_path, self.models_dir)
 
 
@@ -142,15 +143,17 @@ class NewelleController:
         """Create missing directories"""
         # Create directories
         if not os.path.exists(self.data_dir):
-            os.makedirs(self.data_dir)
+            os.makedirs(self.data_dir, exist_ok=True)
         if not os.path.exists(self.extension_path):
-            os.makedirs(self.extension_path)
+            os.makedirs(self.extension_path, exist_ok=True)
         if not os.path.exists(self.extensions_cache):
-            os.makedirs(self.extensions_cache)
+            os.makedirs(self.extensions_cache, exist_ok=True)
         if not os.path.exists(self.models_dir):
-            os.makedirs(self.models_dir)
+            os.makedirs(self.models_dir, exist_ok=True)
         if not os.path.exists(os.path.join(self.config_dir, "avatars")):
-            os.makedirs(os.path.join(self.config_dir, "avatars"))
+            os.makedirs(os.path.join(self.config_dir, "avatars"), exist_ok=True)
+        if not os.path.exists(self.newelle_dir):
+            os.makedirs(self.newelle_dir, exist_ok=True)
         # Fix Pip environment
         if os.path.isdir(self.pip_path):
             self.python_path.append(self.pip_path)

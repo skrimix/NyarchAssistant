@@ -1571,13 +1571,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     if os.path.normpath(self.main_path) == "~":
                         os.chdir(os.path.expanduser("~"))
-                        path = "./.var/app/moe.nyarchlinux.assistant/NyarchAssistant"
+                        path = self.controller.newelle_dir
                         if not os.path.exists(path):
                             os.makedirs(path)
                         button = Gtk.Button(css_classes=["flat"])
-                        button.set_name(".var/app/moe.nyarchlinux.assistant/NyarchAssistant")
+                        fname = "/".join(self.controller.newelle_dir.split("/")[3:])
+                        button.set_name(fname)
                         button.connect("clicked", self.open_folder)
-                        icon = File(self.main_path, ".var/app/moe.nyarchlinux.assistant/NyarchAssistant")
+                        icon = File(self.main_path, fname)
                         icon.set_css_classes(["large"])
                         icon.set_valign(Gtk.Align.END)
                         icon.set_vexpand(True)
