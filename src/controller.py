@@ -103,6 +103,7 @@ class NewelleController:
         self.handlers = HandlersManager(self.settings, self.extensionloader, self.models_dir, self.config_dir)
         self.handlers.select_handlers(self.newelle_settings)
         threading.Thread(target=self.handlers.cache_handlers).start()
+        threading.Thread(target=self.remove_cache_audio).start()
 
     def init_paths(self) -> None:
         """Define paths for the application"""
@@ -123,6 +124,14 @@ class NewelleController:
         self.newelle_dir = os.path.join(self.config_dir, DIR_NAME)     
         print(self.pip_path, self.models_dir)
 
+
+    def remove_cache_audio(self):
+        """Remove audio cache"""
+        audio_cache = self.models_dir
+        for filename in os.listdir(audio_cache):
+            if filename.endswith(".wav") or filename.endswith(".mp3"):
+                file_path = os.path.join(audio_cache, filename)
+                os.remove(file_path)
 
     def load_chats(self, chat_id):
         """Load chats"""
