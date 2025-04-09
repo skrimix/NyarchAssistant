@@ -1,4 +1,3 @@
-
 from .handlers.llm import ClaudeHandler, DeepseekHandler, GPT4AllHandler, GroqHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler, NewelleAPIHandler
 from .handlers.tts import ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler, KokoroTTSHandler, CustomOpenAITTSHandler, OpenAITTSHandler, GroqTTSHandler
 from .handlers.stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperCPPHandler, WitAIHandler, VoskHandler, CustomSRHandler
@@ -6,22 +5,30 @@ from .handlers.embeddings import WordLlamaHandler, OpenAIEmbeddingHandler, Gemin
 from .handlers.memory import MemoripyHandler, UserSummaryHandler, SummaryMemoripyHanlder
 from .handlers.rag import LlamaIndexHanlder
 
-DIR_NAME = "Newelle"
-SCHEMA_ID = 'io.github.qwersyk.Newelle'
+# Nyarch specific imports
+from .handlers.tts import EdgeTTSHandler, VitsHandler, VoiceVoxHanlder
+from .handlers.llm import NyarchApiHandler
+from .handlers.avatar import Live2DHandler, LivePNGHandler
+from .handlers.translator import CustomTranslatorHandler, GoogleTranslatorHandler, LibreTranslateHandler, LigvaTranslateHandler
+from .handlers.smart_prompt import LogicalRegressionHandler, WordLlamaPromptHandler
 
+from .dataset import DATASET, WIKI_PROMPTS
+
+DIR_NAME = "NyarchAssistant"
+SCHEMA_ID = 'moe.nyarchlinux.assistant'
 AVAILABLE_LLMS = {
-    "newelle": {
-        "key": "newelle",
-        "title": _("Newelle Demo API"),
-        "description": "Newelle Demo API, limited to 10 requests per day, demo purposes only",
-        "class": NewelleAPIHandler,
+    "nyarch": {
+        "key": "nyarch",
+        "title": _("Nyarch Demo API"),
+        "description": "Nyarch demo API just to try out Nyarch Assistant, limited to 10 requests",
+        "class": NyarchApiHandler,
     },
     "GPT3Any": {
         "key": "GPT3Any",
         "title": _("Any free Provider"),
         "description": "Automatically chooses a free provider using a GPT3.5-Turbo or better model",
         "class": GPT3AnyHandler,
-        "secondary": True,
+        "secondary": True
     },
    "local": {
         "key": "local",
@@ -66,6 +73,7 @@ AVAILABLE_LLMS = {
         "key": "mistral",
         "title": _("Mistral"),
         "description": _("Mistral API"),
+        "website": "https://mistral.ai/",
         "class": MistralHandler,
         "secondary": True
     },
@@ -74,6 +82,7 @@ AVAILABLE_LLMS = {
         "title": _("OpenRouter"),
         "description": _("Openrouter.ai API, supports lots of models"),
         "class": OpenRouterHandler,
+        "website": "https://openrouter.ai/",
         "secondary": True
     },
     "deepseek": {
@@ -150,6 +159,12 @@ AVAILABLE_STT = {
 
 
 AVAILABLE_TTS = {
+    "edge_tts": {
+        "key": "edge_tts",
+        "title": _("Edge TTS"),
+        "description": _("Use Microsoft Edge online TTS without any API Key"),
+        "class": EdgeTTSHandler,
+    },
     "gtts": {
         "key": "gtts",
         "title": _("Google TTS"),
@@ -185,6 +200,20 @@ AVAILABLE_TTS = {
         "title": _("Custom OpenAI TTS"),
         "description": _("Custom OpenAI TTS"),
         "class": CustomOpenAITTSHandler,
+    },
+    "voicevox": {
+        "key": "voicevox",
+        "title": _("Voicevox API"),
+        "description": _("(Selfhostable) JP ONLY. API for voicevox anime-like natural sounding tts"),
+        "class": VoiceVoxHanlder,
+        "website": "https://github.com/VOICEVOX/voicevox_engine",
+    },
+    "vits": {
+        "key": "vits",
+        "title": _("VITS API"),
+        "description": _("(Selfhostable) VITS simple API. AI based TTS, very good for Japanese"),
+        "class": VitsHandler,
+        "website": "https://github.com/Artrajz/vits-simple-api"
     },
     "espeak": {
         "key": "espeak",
@@ -256,6 +285,62 @@ AVAILABLE_RAGS = {
         "class": LlamaIndexHanlder,
     },
 }
+AVAILABLE_AVATARS = {
+    "Live2D": {
+        "key": "Live2D",
+        "title": _("Live2D"),
+        "description": _("Cubism Live2D, usually used by vtubers"),
+        "class": Live2DHandler,
+    },
+    "LivePNG": {
+        "key": "LivePNG",
+        "title": _("LivePNG"),
+        "description": _("LivePNG model"),
+        "class": LivePNGHandler,
+    }
+}
+
+AVAILABLE_TRANSLATORS = {
+    "GoogleTranslator": {
+        "key": "GoogleTranslator",
+        "title": _("Google Translator"),
+        "description": _("Use google transate"),
+        "class": GoogleTranslatorHandler,
+    },
+    "LibreTranslate": {
+        "key": "LibreTranslate",
+        "title": _("Libre Translate"),
+        "description": _("Open source self hostable translator"),
+        "class": LibreTranslateHandler,
+    }, 
+    "LigvaTranslate": {
+        "key": "LigvaTranslate",
+        "title": _("Ligva Translate"),
+        "description": _("Open source self hostable translator"),
+        "class": LigvaTranslateHandler,
+    },
+    "CustomTranslator": {
+        "key": "CustomTranslator",
+        "title": _("Custom Translator"),
+        "description": _("Use a custom translator"),
+        "class": CustomTranslatorHandler,
+    }
+}
+
+AVAILABLE_SMART_PROMPTS = {
+    "WordLlama": {
+        "key": "WordLlama",
+        "title": _("Nyarch Smart Prompt Lite"),
+        "description": _("EXPERIMENTAL: Local mini models that helps the llm to provide better responses"),
+        "class": WordLlamaPromptHandler,
+    },
+    "LogicalRegression": {
+        "key": "LogicalRegression",
+        "title": _("Nyarch Smart Prompt Medium"),
+        "description": _("EXPERIMENTAL: Local medium models that helps the llm to provide better responses - Medium ~30MB download"),
+        "class": LogicalRegressionHandler,
+    }
+}
 
 PROMPTS = {
     "generate_name_prompt": """Write a short title for the dialog, summarizing the theme in 5 words. No additional text.""",
@@ -289,19 +374,20 @@ command
 ```file  
 /path/to/file  
 ```  
-Ensure that commands are safe, relevant, and do not cause unintended system modifications unless explicitly requested by the user.  
-""",
-
+Ensure that commands are safe, relevant, and do not cause unintended system modifications unless explicitly requested by the user.""",  
     "basic_functionality": """You can write a multiplication table:
 | - | 1 | 2 | 3 | 4 |\n| - | - | - | - | - |\n| 1 | 1 | 2 | 3 | 4 |\n| 2 | 2 | 4 | 6 | 8 |\n| 3 | 3 | 6 | 9 | 12 |\n| 4 | 4 | 8 | 12 | 16 |
 
 You can write codeblocks:
 ```cpp\n#include<iostream>\nusing namespace std;\nint main(){\n    cout<<"Hello world!";\n    return 0;\n}\n```
 
+You can show code:
+```cpp\n#include<iostream>\nusing namespace std;\nint main(){\n    cout<<"Hello world!";\n    return 0;\n}\n```
 You can also use **bold**, *italic*, ~strikethrough~, `monospace`, [linkname](https://link.com) and ## headers in markdown
 """,
     "show_image": """You can show the user an image, if needed, using \n```image\npath\n```\n\nYou can show the user a video, if needed, using\n```video\npath\n```""",
     "graphic": """System: You can display the graph using this structure: ```chart\n name - value\n ... \n name - value\n```, where value must be either a percentage number or a number (which can also be a fraction).
+
 """,
     "graphic": """File: /home/user/Downloads/money.txt
 User: Create a graph for the report in the money.txt file
@@ -339,8 +425,59 @@ Example output:
 Chat History:
 """,
     "custom_prompt": "",
+    "expression_prompt": """You can show expressions by writing (expression) in parenthesis.
+You can ONLY show the following expressions: 
+{EXPRESSIONS} {MOTIONS}
+Do not use any other expression
 
+YOU CAN NOT SHOW OTHER EXPRESSIONS.""",
+    "personality_prompt": """Hey there, it's Arch-Chan! But, um, you can call me Acchan if you want... not that I care or anything! (It's not like I think it's cute or anything, baka!) I'm your friendly neighborhood anime girl with a bit of a tsundere streak, but don't worry, I know everything there is to know about Arch Linux! Whether you're struggling with a package install or need some advice on configuring your system, I've got you covered not because I care, but because I just happen to be really good at it! So, what do you need? It's not like I’m waiting to help or anything...""",
 }
+
+
+EXTRA_PROMPTS = [
+    {
+        "key": "nvidia",
+        "prompts": DATASET["nvidia"],
+        "prompt_text": WIKI_PROMPTS["nvidia"],
+    },
+    {
+        "key": "docker",
+        "prompts": DATASET["docker"],
+        "prompt_text": WIKI_PROMPTS["docker"],
+    },
+    {
+        "key": "codecs",
+        "prompts": DATASET["codecs"],
+        "prompt_text": WIKI_PROMPTS["codecs"],
+    },
+    {
+        "key": "console",
+        "prompts": DATASET["console"],
+        "prompt_text": WIKI_PROMPTS["console"],
+    },
+    {
+        "key": "voicevox",
+        "prompts": DATASET["voicevox"],
+        "prompt_text": WIKI_PROMPTS["voicevox"],
+    },
+    {
+        "key": "colloquial",
+        "prompts": DATASET["colloquial"],
+        "prompt_text": WIKI_PROMPTS["colloquial"],
+    },
+    {
+        "key": "table",
+        "prompts": DATASET["table"],
+        "prompt_text": WIKI_PROMPTS["table"],
+    },
+    {
+        "key": "ollama",
+        "prompts": DATASET["ollama"],
+        "prompt_text": WIKI_PROMPTS["ollama"],
+    }
+]
+
 
 """ Prompts parameters
     - key: key of the prompt in the PROMPTS array
@@ -358,7 +495,7 @@ AVAILABLE_PROMPTS = [
         "description": _("General purpose prompt to enhance the LLM answers and give more context"),
         "editable": True,
         "show_in_settings": True,
-        "default": True
+        "default": False
     },
     {
         "key": "console",
@@ -404,6 +541,24 @@ AVAILABLE_PROMPTS = [
         "editable": True,
         "show_in_settings": True,
         "default": True,
+    },
+    {
+        "key": "expression_prompt",
+        "title": _("Show expressions"),
+        "description": _("Let the avatar show expressions"),
+        "setting_name": "expression-prompt",
+        "editable": True,
+        "show_in_settings": True,
+        "default": True
+    },
+    {
+        "key": "personality_prompt",
+        "title": _("Show a personality"),
+        "description": _("Show a personality in chat"),
+        "setting_name": "personality-prompt",
+        "editable": True,
+        "show_in_settings": True,
+        "default": True
     },
     {
         "key": "custom_prompt",
