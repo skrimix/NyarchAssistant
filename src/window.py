@@ -869,20 +869,22 @@ class MainWindow(Gtk.ApplicationWindow):
         return widget
 
     def load_avatar(self):
+        print("call")
         if self.controller.newelle_settings.avatar_enabled:
+            print("true")
             # If the avatar is enabled, check if it requires reloading 
             if not hasattr(self, "avatar_handler"):
                 self.avatar_handler = None
             old_avatar = self.avatar_handler
-            selected_key = self.settings.get_string("avatar-model")
             self.avatar_handler = self.controller.handlers.avatar
             # If it does not require reloading, then just return
+            self.flap_button_avatar.set_visible(True)
             if old_avatar is not None and not old_avatar.requires_reloading(self.avatar_handler):
                 self.avatar_handler = old_avatar
+                self.controller.handlers.avatar = old_avatar
                 return
             # If it requires reloading, reload the old avatar
             self.unload_avatar(old_avatar)
-            self.flap_button_avatar.set_visible(True)
             if self.avatar_handler is not None:   
                 self.avatar_widget = self.avatar_handler.create_gtk_widget()
                 self.boxw.append(self.avatar_widget)
