@@ -105,7 +105,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.chat_block = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL, hexpand=True, css_classes=["view"]
         )
-        self.chat_header = Adw.HeaderBar(css_classes=["flat", "view"], show_end_title_buttons=False, show_start_title_buttons=False)
+        self.chat_header = Adw.HeaderBar(css_classes=["flat", "view"], show_start_title_buttons=False, show_end_title_buttons=True)
         self.chat_header.set_title_widget(
             Gtk.Label(label=_("Chat"), css_classes=["title"])
         )
@@ -1565,9 +1565,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
                     flow_box = Gtk.FlowBox(vexpand=True)
                     flow_box.set_valign(Gtk.Align.START)
-
-                    if os.path.normpath(self.main_path) == "~":
+                    if os.path.normpath(self.main_path) == "~" or os.path.normpath(self.main_path) == os.path.expanduser("~"):
                         os.chdir(os.path.expanduser("~"))
+
                         path = self.controller.newelle_dir
                         if not os.path.exists(path):
                             os.makedirs(path)
@@ -1681,6 +1681,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.chat_header.set_show_start_title_buttons(False)
             self.chat_panel_header.set_show_end_title_buttons(False)
             self.left_panel_back_button.set_visible(False)
+            self.chat_header.set_show_start_title_buttons(False)
 
     # Chat management
     def continue_message(self, button):
@@ -2638,7 +2639,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     elif code_language == "latex":
                         try:
                             box.append(
-                                DisplayLatex(chunk.text, 100, self.controller.cache_dir)
+                                DisplayLatex(chunk.text, 16, self.controller.cache_dir)
                             )
                         except Exception as e:
                             print(e)
@@ -2677,7 +2678,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 elif chunk.type == "latex" or chunk.type == "latex_inline":
                     try:
                         box.append(
-                            DisplayLatex(chunk.text, 100, self.controller.cache_dir)
+                            DisplayLatex(chunk.text, 16, self.controller.cache_dir)
                         )
                     except Exception:
                         box.append(CopyBox(chunk.text, "latex", parent=self))
