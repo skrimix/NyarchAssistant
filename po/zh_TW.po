@@ -19,232 +19,230 @@ msgstr ""
 
 #: src/constants.py:22
 msgid "Nyarch Demo API"
-msgstr ""
+msgstr "Nyarch 測試用 API"
 
 #: src/constants.py:28
 msgid "Any free Provider"
-msgstr ""
+msgstr "其他免費線上供應者"
 
 #: src/constants.py:35
 msgid "Local Model"
-msgstr ""
+msgstr "本地模型"
 
 #: src/constants.py:36
 msgid ""
 "NO GPU SUPPORT, USE OLLAMA INSTEAD. Run a LLM model locally, more privacy "
 "but slower"
-msgstr ""
+msgstr "不支援顯卡加速，僅有「Ollama 模型」選項支援。不過選擇此選項能保有更多隱私"
 
 #: src/constants.py:41
 msgid "Ollama Instance"
-msgstr ""
+msgstr "Ollama 模型"
 
 #: src/constants.py:42
 msgid "Easily run multiple LLM models on your own hardware"
-msgstr ""
+msgstr "讓同時在硬體上執行多個模型更加容易"
 
 #: src/constants.py:48
 msgid "Groq"
-msgstr ""
+msgstr "Groq"
 
 #: src/constants.py:55 src/constants.py:253
 msgid "Google Gemini API"
-msgstr ""
+msgstr "Google Gemini API"
 
 #: src/constants.py:61 src/constants.py:247 src/constants.py:248
 msgid "OpenAI API"
-msgstr ""
+msgstr "OpenAI API"
 
 #: src/constants.py:62
 msgid "OpenAI API. Custom endpoints supported. Use this for custom providers"
-msgstr ""
+msgstr "支援自訂 API 端點。"
 
 #: src/constants.py:67
 msgid "Anthropic Claude"
-msgstr ""
+msgstr "Anthropic Claude"
 
 #: src/constants.py:68
 msgid ""
 "Official APIs for Anthropic Claude's models, with image and file support, "
 "requires an API key"
-msgstr ""
+msgstr "Anthropic Claude 的官方 API，支援圖形與檔案上傳。需要 API 權杖"
 
 #: src/constants.py:74
 msgid "Mistral"
-msgstr ""
+msgstr "Mistral"
 
 #: src/constants.py:75
 msgid "Mistral API"
-msgstr ""
+msgstr "Mistral API"
 
 #: src/constants.py:82
 msgid "OpenRouter"
-msgstr ""
+msgstr "OpenRouter"
 
 #: src/constants.py:83
 msgid "Openrouter.ai API, supports lots of models"
-msgstr ""
+msgstr "支援廣泛種類的模型"
 
 #: src/constants.py:90
 msgid "Deepseek"
-msgstr ""
+msgstr "Deepseek"
 
 #: src/constants.py:91
 msgid "Deepseek API, strongest open source models"
-msgstr ""
+msgstr "擁有最強大的開源模型"
 
 #: src/constants.py:97 src/constants.py:226
-#, fuzzy
 msgid "Custom Command"
 msgstr "自動執行的指令"
 
 #: src/constants.py:98
 msgid "Use the output of a custom command"
-msgstr ""
+msgstr "從自訂指令中使用"
 
 #: src/constants.py:107
 msgid "CMU Sphinx"
-msgstr ""
+msgstr "CMU Sphinx"
 
 #: src/constants.py:108
 msgid "Works offline. Only English supported"
-msgstr ""
+msgstr "可離線執行，僅支援英文"
 
 #: src/constants.py:114
 msgid "Whisper C++"
-msgstr ""
+msgstr "Whisper C++"
 
 #: src/constants.py:115
 msgid "Works offline. Optimized Whisper impelementation written in C++"
-msgstr ""
+msgstr "可離線執行。此為使用 C++ 改良過的 Whisper 模型"
 
 #: src/constants.py:121
 msgid "Google Speech Recognition"
-msgstr ""
+msgstr "Google 語音辨識"
 
 #: src/constants.py:122 src/constants.py:128
 msgid "Google Speech Recognition online"
-msgstr ""
+msgstr "Google 線上語音辨識"
 
 #: src/constants.py:127
 msgid "Groq Speech Recognition"
-msgstr ""
+msgstr "Groq 語音辨識"
 
 #: src/constants.py:133
 msgid "Wit AI"
-msgstr ""
+msgstr "Wit AI"
 
 #: src/constants.py:134
 msgid "wit.ai speech recognition free API (language chosen on the website)"
-msgstr ""
+msgstr "免費線上語音辨識 API（請在網站上選擇語言）"
 
 #: src/constants.py:140
 msgid "Vosk API"
-msgstr ""
+msgstr "Vosk API"
 
 #: src/constants.py:141
 msgid "Works Offline"
-msgstr ""
+msgstr "可離線執行"
 
 #: src/constants.py:147
 msgid "Whisper API"
-msgstr ""
+msgstr "Whisper API"
 
 #: src/constants.py:148
 msgid "Uses openai whisper api"
-msgstr ""
+msgstr "使用 OpenAI Whisper API"
 
 #: src/constants.py:154
-#, fuzzy
 msgid "Custom command"
 msgstr "自動執行的指令"
 
 #: src/constants.py:155
 msgid "Runs a custom command"
-msgstr ""
+msgstr "此可執行自訂指令"
 
 #: src/constants.py:164
 msgid "Edge TTS"
-msgstr ""
+msgstr "微軟 Edge 文本轉語音"
 
 #: src/constants.py:165
 msgid "Use Microsoft Edge online TTS without any API Key"
-msgstr ""
+msgstr "不須 API 權杖"
 
 #: src/constants.py:170
 msgid "Google TTS"
-msgstr ""
+msgstr "Google 文本轉語音"
 
 #: src/constants.py:171
 msgid "Google's text to speech"
-msgstr ""
+msgstr "Google 的文本轉語音"
 
 #: src/constants.py:176
 msgid "Kokoro TTS"
-msgstr ""
+msgstr "Kokoro 文本轉語音"
 
 #: src/constants.py:177
 msgid ""
 "Lightweight and fast open source TTS engine. ~3GB dependencies, 400MB model"
-msgstr ""
+msgstr "輕量且快速的開源文本轉語音。～3GB 依賴，400MB 模型"
 
 #: src/constants.py:182
 msgid "ElevenLabs TTS"
-msgstr ""
+msgstr "ElevenLabs 文本轉語音"
 
 #: src/constants.py:183
 msgid "Natural sounding TTS"
-msgstr ""
+msgstr "自然、多樣的聲線"
 
 #: src/constants.py:188 src/constants.py:189
 msgid "OpenAI TTS"
-msgstr ""
+msgstr "OpenAI 文本轉語音"
 
 #: src/constants.py:194
 msgid "Groq TTS"
-msgstr ""
+msgstr "Groq 文本轉語音"
 
 #: src/constants.py:195
 msgid "Groq TTS API"
-msgstr ""
+msgstr "Groq 文本轉語音 API"
 
 #: src/constants.py:200 src/constants.py:201
 msgid "Custom OpenAI TTS"
-msgstr ""
+msgstr "自訂 OpenAI 文本轉語音"
 
 #: src/constants.py:206
 msgid "Voicevox API"
-msgstr ""
+msgstr "Voicevox API"
 
 #: src/constants.py:207
 msgid ""
 "(Selfhostable) JP ONLY. API for voicevox anime-like natural sounding tts"
-msgstr ""
+msgstr "可自架，僅支援日文。Voicevox 上有收藏各種動漫角色和 Vocaloid 的聲音"
 
 #: src/constants.py:213
 msgid "VITS API"
-msgstr ""
+msgstr "VITS API"
 
 #: src/constants.py:214
 msgid "(Selfhostable) VITS simple API. AI based TTS, very good for Japanese"
-msgstr ""
+msgstr "可自架。基於人工智慧的文本轉語音，擅長於日文"
 
 #: src/constants.py:220
 msgid "Espeak TTS"
-msgstr ""
+msgstr "Espeak 文本轉語音"
 
 #: src/constants.py:221
 msgid "Offline TTS"
-msgstr ""
+msgstr "離線文本轉語音"
 
 #: src/constants.py:227
 #, python-brace-format
 msgid "Use a custom command as TTS, {0} will be replaced with the text"
-msgstr ""
+msgstr "使用自訂指令當作文本轉語音工具，{0} 將會被取代為需處理的文字"
 
 #: src/constants.py:235
 msgid "WordLlama"
-msgstr ""
+msgstr "WordLlama"
 
 #: src/constants.py:236
 msgid ""
@@ -1331,7 +1329,7 @@ msgstr ""
 
 #: src/ui/settings.py:267
 msgid "Automatically Generate Chat Names"
-msgstr ""
+msgstr "自動生成聊天室名稱"
 
 #: src/ui/settings.py:267
 msgid "Generate chat names automatically after the first two messages"
@@ -1347,7 +1345,7 @@ msgstr "建議訊息的顯示數量"
 
 #: src/ui/settings.py:280
 msgid "Username"
-msgstr ""
+msgstr "使用者名稱"
 
 #: src/ui/settings.py:280
 #, python-brace-format
@@ -1490,20 +1488,20 @@ msgstr ""
 
 #: src/ui/shortcuts.py:18
 msgid "Start recording"
-msgstr ""
+msgstr "開始錄影"
 
 #: src/ui/shortcuts.py:19
 #, fuzzy
 msgid "Stop TTS"
-msgstr " 停止"
+msgstr " 停止文本轉語音"
 
 #: src/ui/shortcuts.py:20
 msgid "Zoom in"
-msgstr ""
+msgstr "放大"
 
 #: src/ui/shortcuts.py:21
 msgid "Zoom out"
-msgstr ""
+msgstr "縮小"
 
 #: src/ui/thread_editing.py:6 src/window.py:99
 msgid "Thread editing"
@@ -1519,7 +1517,7 @@ msgstr "執行緒序號："
 
 #: src/ui/widgets/profilerow.py:25
 msgid "Select profile"
-msgstr ""
+msgstr "選擇設定檔"
 
 #: src/window.py:101
 msgid "Settings"
@@ -1563,27 +1561,27 @@ msgstr " 重新生成"
 
 #: src/window.py:432
 msgid "Send a message..."
-msgstr ""
+msgstr "傳送訊息......"
 
 #: src/window.py:490
 msgid "Provider Errror"
-msgstr ""
+msgstr "供給者錯誤"
 
 #: src/window.py:758
 msgid "This provider does not have a model list"
-msgstr ""
+msgstr "此供給者沒有模型清單"
 
 #: src/window.py:763
 msgid " Models"
-msgstr ""
+msgstr " 個模型"
 
 #: src/window.py:766
 msgid "Search Models..."
-msgstr ""
+msgstr "搜尋模型......"
 
 #: src/window.py:1008
 msgid "Create new profile"
-msgstr ""
+msgstr "建立新設定檔"
 
 #: src/window.py:1134
 msgid "Could not recognize your voice"
@@ -1638,12 +1636,10 @@ msgid "You can't edit a message while the program is running."
 msgstr "在執行完成前無法編輯訊息"
 
 #: src/window.py:2920
-#, fuzzy
 msgid "Prompt content"
-msgstr "提示控制"
+msgstr "提示內容"
 
 #: src/window.py:3176
-#, fuzzy
 msgid ""
 "The neural network has access to your computer and any data in this chat and "
 "can run commands, be careful, we are not responsible for the neural network. "
@@ -1651,7 +1647,6 @@ msgid ""
 msgstr "注意：此人工智慧模型有權取用電腦中的資料我們對這些模型不承擔任何責任"
 
 #: src/window.py:3205
-#, fuzzy
 msgid ""
 "The neural network has access to any data in this chat, be careful, we are "
 "not responsible for the neural network. Do not share any sensitive "
