@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Newelle 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 15:42+0800\n"
+"POT-Creation-Date: 2025-04-10 22:09+0800\n"
 "PO-Revision-Date: 2025-03-26 19:30\n"
 "Last-Translator: Oliver Tzeng（曾嘉禾）<olivertzeng@proton.me>\n"
 "Language-Team: l10n-tw\n"
@@ -33,7 +33,8 @@ msgstr "本地模型"
 msgid ""
 "NO GPU SUPPORT, USE OLLAMA INSTEAD. Run a LLM model locally, more privacy "
 "but slower"
-msgstr "不支援顯卡加速，僅有「Ollama 模型」選項支援。不過選擇此選項能保有更多隱私"
+msgstr ""
+"不支援顯卡加速，僅有「Ollama 模型」選項支援。不過選擇此選項能保有更多隱私"
 
 #: src/constants.py:41
 msgid "Ollama Instance"
@@ -281,8 +282,8 @@ msgid ""
 "retrivial, memory decay, concept extraction and other advanced techniques. "
 "Does 1 llm call per message."
 msgstr ""
-"使用前後文記憶處理其他聊天歷史的內容，包括取得、壓縮、記憶損失、以及概念分析等技術。"
-"每次訊息將消耗一次 LLM 呼叫"
+"使用前後文記憶處理其他聊天歷史的內容，包括取得、壓縮、記憶損失、以及概念分析"
+"等技術。每次訊息將消耗一次 LLM 呼叫"
 
 #: src/constants.py:274
 msgid "User Summary + Memoripy"
@@ -495,7 +496,7 @@ msgstr "選擇模型的風格"
 #: src/handlers/embeddings/ollama_handler.py:32
 #: src/handlers/embeddings/openai_handler.py:38
 #: src/handlers/llm/ollama_handler.py:149 src/handlers/llm/openai_handler.py:78
-#: src/handlers/stt/openaisr_handler.py:10
+#: src/handlers/stt/openaisr_handler.py:11
 msgid "API Endpoint"
 msgstr "API 端點"
 
@@ -514,7 +515,8 @@ msgstr "自動開啟 Ollama"
 msgid ""
 "Automatically run ollama serve in background when needed if it's not "
 "running. You can kill it with killall ollama"
-msgstr "若尚未執行將自動啟動 Ollama（ollama serve）。執行 killall ollama 以停止"
+msgstr ""
+"若尚未執行將自動啟動 Ollama（ollama serve）。執行 killall ollama 以停止"
 
 #: src/handlers/embeddings/ollama_handler.py:34
 #: src/handlers/llm/ollama_handler.py:151
@@ -546,7 +548,7 @@ msgstr "Ollama 模型名稱"
 #: src/handlers/llm/claude_handler.py:84 src/handlers/llm/openai_handler.py:75
 #: src/handlers/stt/googlesr_handler.py:13
 #: src/handlers/stt/groqsr_handler.py:13
-#: src/handlers/stt/openaisr_handler.py:17 src/handlers/stt/witai_handler.py:12
+#: src/handlers/stt/openaisr_handler.py:18 src/handlers/stt/witai_handler.py:12
 #: src/handlers/tts/custom_openai_tts.py:18
 #: src/handlers/tts/elevenlabs_handler.py:9
 #: src/handlers/tts/groq_tts_handler.py:32
@@ -646,8 +648,8 @@ msgid ""
 "suggestions to generate. Must return a JSON array containing the suggestions "
 "as strings"
 msgstr ""
-"{0} 參數會被以 JSON 格式儲存的聊天紀錄取代，{1} 包含系統提示，{2}"
-"則包含需要生成的數量。必須傳回以建議（字串）組成的 JSON 陣列"
+"{0} 參數會被以 JSON 格式儲存的聊天紀錄取代，{1} 包含系統提示，{2}則包含需要生"
+"成的數量。必須傳回以建議（字串）組成的 JSON 陣列"
 
 #: src/handlers/llm/gemini_handler.py:92
 msgid "API Key (required)"
@@ -757,140 +759,143 @@ msgid ""
 "Add any model to this list by putting name:size\n"
 "Or any gguf from hf with hf.co/username/model"
 msgstr ""
+"在此以「模型名稱:大小」的格式新增其他模型\n"
+"或是從 HuggingFace（hf.co/username/model）的任何 gguf"
 
 #: src/handlers/llm/openai_handler.py:84
 msgid "Include parameters like Max Tokens, Top-P, Temperature, etc."
-msgstr ""
+msgstr "包含 Token 限制、Top-P、溫度等參數"
 
 #: src/handlers/llm/openai_handler.py:87
 msgid "Name of the LLM Model to use"
-msgstr ""
+msgstr "使用的大型語言模型"
 
 #: src/handlers/llm/openai_handler.py:106
 msgid "max Tokens"
-msgstr ""
+msgstr "Token 限制"
 
 #: src/handlers/llm/openai_handler.py:106
 msgid "Max tokens of the generated text"
-msgstr ""
+msgstr "使用的最多 Token 數量"
 
 #: src/handlers/llm/openai_handler.py:107
 msgid "Top-P"
-msgstr ""
+msgstr "Top-P"
 
 #: src/handlers/llm/openai_handler.py:107
 msgid "An alternative to sampling with temperature, called nucleus sampling"
-msgstr ""
+msgstr "一種調整隨機性的替代的技術"
 
 #: src/handlers/llm/openai_handler.py:108
 msgid "Temperature"
-msgstr ""
+msgstr "溫度"
 
 #: src/handlers/llm/openai_handler.py:108
 msgid ""
 "What sampling temperature to use. Higher values will make the output more "
 "random"
-msgstr ""
+msgstr "溫度越高隨機性越高"
 
 #: src/handlers/llm/openai_handler.py:109
 msgid "Frequency Penalty"
-msgstr ""
+msgstr "重複懲罰"
 
 #: src/handlers/llm/openai_handler.py:109
 msgid ""
 "Number between -2.0 and 2.0. Positive values decrease the model's likelihood "
 "to repeat the same line verbatim"
-msgstr ""
+msgstr "數值介於±2.0。數值越大將減少輸出重複率"
 
 #: src/handlers/llm/openai_handler.py:110
 msgid "Presence Penalty"
-msgstr ""
+msgstr "存在懲罰"
 
 #: src/handlers/llm/openai_handler.py:110
 msgid ""
 "Number between -2.0 and 2.0. Positive values decrease the model's likelihood "
 "to talk about new topics"
-msgstr ""
+msgstr "數值介於±2.0。數值越大將讓模型搬出新話題的機率"
 
 #: src/handlers/rag/rag_handler.py:41
 msgid "Index your documents"
-msgstr ""
+msgstr "將檔案編入索引"
 
 #: src/handlers/rag/rag_handler.py:42
 msgid ""
 "Index all the documents in your document folder. You have to run this "
 "operation every time you edit/create a document, change document analyzer or "
 "change embedding model"
-msgstr ""
+msgstr "將文件資料夾內的所有檔案編入索引。您必須於每次有檔案變更、改變文件分析緝或嵌入模行時使用"
 
 #: src/handlers/smart_prompt/smart_prompt.py:95 src/smart_prompt.py:95
 msgid "Model Dimension"
-msgstr ""
+msgstr "模型範圍"
 
 #: src/handlers/smart_prompt/smart_prompt.py:96 src/smart_prompt.py:96
 msgid "Use bigger models for bigger accuracy less than 100MB"
-msgstr ""
+msgstr "用較大的模型以在 100MB 內生成更精確的輸出"
 
 #: src/handlers/stt/custom_handler.py:13
 #: src/handlers/translator/customtr_handler.py:17
 #: src/handlers/tts/custom_handler.py:22 src/translator.py:67
 msgid "Command to execute"
-msgstr ""
+msgstr "執行的指令"
 
 #: src/handlers/stt/custom_handler.py:14 src/handlers/tts/custom_handler.py:23
 #, python-brace-format
 msgid "{0} will be replaced with the model fullpath"
-msgstr ""
+msgstr "{0} 參數會被模型的絕對路徑取代"
 
 #: src/handlers/stt/googlesr_handler.py:14
 msgid "API Key for Google SR, write 'default' to use the default one"
-msgstr ""
+msgstr "Google SR 的 API 金鑰，設定「default」將使用預設金鑰"
 
 #: src/handlers/stt/googlesr_handler.py:20
 #: src/handlers/stt/groqsr_handler.py:28
-#: src/handlers/stt/openaisr_handler.py:31
+#: src/handlers/stt/openaisr_handler.py:32
 msgid "Language"
-msgstr ""
+msgstr "語言"
 
 #: src/handlers/stt/googlesr_handler.py:21
 msgid "The language of the text to recgnize in IETF"
-msgstr ""
+msgstr "IETF 的辨識語言"
 
 #: src/handlers/stt/groqsr_handler.py:14
 msgid "API Key for Groq SR, write 'default' to use the default one"
-msgstr ""
+msgstr "Groq SR 的 API 金鑰，設定「default」將使用預設金鑰"
 
 #: src/handlers/stt/groqsr_handler.py:20
 msgid "Groq Model"
-msgstr ""
+msgstr "Groq 模型"
 
 #: src/handlers/stt/groqsr_handler.py:21
 msgid "Name of the Groq Model"
-msgstr ""
+msgstr "Groq 模型名稱"
 
 #: src/handlers/stt/groqsr_handler.py:29
 msgid ""
 "Specify the language for transcription. Use ISO 639-1 language codes (e.g. "
 "\"en\" for English, \"fr\" for French, etc.). "
-msgstr ""
+msgstr "選擇紀錄的語言。使用 ISO 639-1 語言碼（例如「en」英文，「fr」法文等）"
 
-#: src/handlers/stt/openaisr_handler.py:11
+#: src/handlers/stt/openaisr_handler.py:12
 msgid "Endpoint for openai requests"
 msgstr ""
 
-#: src/handlers/stt/openaisr_handler.py:18
-msgid "API Key for OpanAI"
-msgstr ""
-
-#: src/handlers/stt/openaisr_handler.py:24
-msgid "Whisper Model"
-msgstr ""
+#: src/handlers/stt/openaisr_handler.py:19
+#, fuzzy
+msgid "API Key for OpenAI"
+msgstr "OpenAI 的 API 金鑰"
 
 #: src/handlers/stt/openaisr_handler.py:25
+msgid "Whisper Model"
+msgstr "Whisper 模型"
+
+#: src/handlers/stt/openaisr_handler.py:26
 msgid "Name of the OpenAI model"
 msgstr ""
 
-#: src/handlers/stt/openaisr_handler.py:32
+#: src/handlers/stt/openaisr_handler.py:34
 msgid ""
 "Optional: Specify the language for transcription. Use ISO 639-1 language "
 "codes (e.g. \"en\" for English, \"fr\" for French, etc.). "

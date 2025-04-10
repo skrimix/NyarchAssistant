@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nyarchassistant 0.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-09 15:42+0800\n"
+"POT-Creation-Date: 2025-04-10 22:09+0800\n"
 "PO-Revision-Date: 2023-07-10 09:54+0200\n"
 "Last-Translator: Yehor Qwersyk <qsk@gmx.at>\n"
 "Language-Team: German\n"
@@ -496,7 +496,7 @@ msgstr ""
 #: src/handlers/embeddings/ollama_handler.py:32
 #: src/handlers/embeddings/openai_handler.py:38
 #: src/handlers/llm/ollama_handler.py:149 src/handlers/llm/openai_handler.py:78
-#: src/handlers/stt/openaisr_handler.py:10
+#: src/handlers/stt/openaisr_handler.py:11
 msgid "API Endpoint"
 msgstr ""
 
@@ -547,7 +547,7 @@ msgstr ""
 #: src/handlers/llm/claude_handler.py:84 src/handlers/llm/openai_handler.py:75
 #: src/handlers/stt/googlesr_handler.py:13
 #: src/handlers/stt/groqsr_handler.py:13
-#: src/handlers/stt/openaisr_handler.py:17 src/handlers/stt/witai_handler.py:12
+#: src/handlers/stt/openaisr_handler.py:18 src/handlers/stt/witai_handler.py:12
 #: src/handlers/tts/custom_openai_tts.py:18
 #: src/handlers/tts/elevenlabs_handler.py:9
 #: src/handlers/tts/groq_tts_handler.py:32
@@ -847,7 +847,7 @@ msgstr ""
 
 #: src/handlers/stt/googlesr_handler.py:20
 #: src/handlers/stt/groqsr_handler.py:28
-#: src/handlers/stt/openaisr_handler.py:31
+#: src/handlers/stt/openaisr_handler.py:32
 msgid "Language"
 msgstr ""
 
@@ -873,23 +873,23 @@ msgid ""
 "\"en\" for English, \"fr\" for French, etc.). "
 msgstr ""
 
-#: src/handlers/stt/openaisr_handler.py:11
+#: src/handlers/stt/openaisr_handler.py:12
 msgid "Endpoint for openai requests"
 msgstr ""
 
-#: src/handlers/stt/openaisr_handler.py:18
-msgid "API Key for OpanAI"
-msgstr ""
-
-#: src/handlers/stt/openaisr_handler.py:24
-msgid "Whisper Model"
+#: src/handlers/stt/openaisr_handler.py:19
+msgid "API Key for OpenAI"
 msgstr ""
 
 #: src/handlers/stt/openaisr_handler.py:25
+msgid "Whisper Model"
+msgstr ""
+
+#: src/handlers/stt/openaisr_handler.py:26
 msgid "Name of the OpenAI model"
 msgstr ""
 
-#: src/handlers/stt/openaisr_handler.py:32
+#: src/handlers/stt/openaisr_handler.py:34
 msgid ""
 "Optional: Specify the language for transcription. Use ISO 639-1 language "
 "codes (e.g. \"en\" for English, \"fr\" for French, etc.). "
