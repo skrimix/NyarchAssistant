@@ -248,32 +248,32 @@ msgstr "WordLlama"
 msgid ""
 "Light local embedding model based on llama. Works offline, very low "
 "resources usage"
-msgstr ""
+msgstr "基於 llama 的輕量級模型。可離線使用，資源消耗極低。"
 
 #: src/constants.py:241
 msgid "Ollama Embedding"
-msgstr ""
+msgstr "Ollama 嵌入"
 
 #: src/constants.py:242
 msgid ""
 "Use Ollama models for Embedding. Works offline, very low resources usage"
-msgstr ""
+msgstr "使用 Ollama 模型嵌入內容"
 
 #: src/constants.py:254
 msgid "Use Google Gemini API to get embeddings"
-msgstr ""
+msgstr "使用 Google Gemini API 取得嵌入內容"
 
 #: src/constants.py:262
 msgid "User Summary"
-msgstr ""
+msgstr "聊天歷史大意"
 
 #: src/constants.py:263
 msgid "Generate a summary of the user's conversation"
-msgstr ""
+msgstr "從對話內容中生成大意"
 
 #: src/constants.py:268
 msgid "Memoripy"
-msgstr ""
+msgstr "Memoripy"
 
 #: src/constants.py:269
 msgid ""
@@ -281,96 +281,98 @@ msgid ""
 "retrivial, memory decay, concept extraction and other advanced techniques. "
 "Does 1 llm call per message."
 msgstr ""
+"使用前後文記憶處理其他聊天歷史的內容，包括取得、壓縮、記憶損失、以及概念分析等技術。"
+"每次訊息將消耗一次 LLM 呼叫"
 
 #: src/constants.py:274
 msgid "User Summary + Memoripy"
-msgstr ""
+msgstr "聊天歷史大意＋Memoripy"
 
 #: src/constants.py:275
 msgid "Use both technologies for long term memory"
-msgstr ""
+msgstr "同時使用聊天歷史大意以及 Memoripy"
 
 #: src/constants.py:283
 msgid "Document reader"
-msgstr ""
+msgstr "文件閱讀器"
 
 #: src/constants.py:284
 msgid ""
 "Classic RAG approach - chunk documents and embed them, then compare them to "
 "the query and return the most relevant documents"
-msgstr ""
+msgstr "傳統 RAG — 將檔案縮減並嵌入，最後與序列比對，輸出最相關的檔案"
 
 #: src/constants.py:291
 msgid "Live2D"
-msgstr ""
+msgstr "Live2D"
 
 #: src/constants.py:292
 msgid "Cubism Live2D, usually used by vtubers"
-msgstr ""
+msgstr "Cubism Live2D，大多數 VTuber 用的影像技術"
 
 #: src/constants.py:297
 msgid "LivePNG"
-msgstr ""
+msgstr "LivePNG"
 
 #: src/constants.py:298
 msgid "LivePNG model"
-msgstr ""
+msgstr "Live2D 但顯示靜圖"
 
 #: src/constants.py:306
 msgid "Google Translator"
-msgstr ""
+msgstr "Google 翻譯"
 
 #: src/constants.py:307
 msgid "Use google transate"
-msgstr ""
+msgstr "使用 Google 翻譯"
 
 #: src/constants.py:312
 msgid "Libre Translate"
-msgstr ""
+msgstr "Libre 翻譯"
 
 #: src/constants.py:313 src/constants.py:319
 msgid "Open source self hostable translator"
-msgstr ""
+msgstr "可自架的開源翻譯"
 
 #: src/constants.py:318
 msgid "Ligva Translate"
-msgstr ""
+msgstr "Ligva 翻譯"
 
 #: src/constants.py:324
 msgid "Custom Translator"
-msgstr ""
+msgstr "自訂翻譯"
 
 #: src/constants.py:325
 msgid "Use a custom translator"
-msgstr ""
+msgstr "使用自訂的翻譯"
 
 #: src/constants.py:333
 msgid "Nyarch Smart Prompt Lite"
-msgstr ""
+msgstr "Nyarch 智慧提示輕量版"
 
 #: src/constants.py:334
 msgid ""
 "EXPERIMENTAL: Local mini models that helps the llm to provide better "
 "responses"
-msgstr ""
+msgstr "實驗性：本地輔助模型，專門提升回覆的準確度"
 
 #: src/constants.py:339
 msgid "Nyarch Smart Prompt Medium"
-msgstr ""
+msgstr "Nyarch 智慧提示"
 
 #: src/constants.py:340
 msgid ""
 "EXPERIMENTAL: Local medium models that helps the llm to provide better "
 "responses - Medium ~30MB download"
-msgstr ""
+msgstr "實驗性：本地輔助模型，專門提升回覆的準確度（約佔 30MB）"
 
 #: src/constants.py:494
 msgid "Helpful assistant"
-msgstr ""
+msgstr "模型最佳化"
 
 #: src/constants.py:495
 msgid "General purpose prompt to enhance the LLM answers and give more context"
-msgstr ""
+msgstr "讓模型能提供更準確的回應以及提供更多前後文"
 
 #: src/constants.py:503
 msgid "Console access"
@@ -382,11 +384,11 @@ msgstr "模型將有權使用電腦上的終端機"
 
 #: src/constants.py:511
 msgid "Current directory"
-msgstr ""
+msgstr "目前所在資料夾"
 
 #: src/constants.py:512
 msgid "What is the current directory"
-msgstr ""
+msgstr "目前我們在哪個資料夾"
 
 #: src/constants.py:520
 msgid "Basic functionality"
@@ -414,7 +416,7 @@ msgstr "模型將會生成圖片"
 
 #: src/constants.py:547
 msgid "Show expressions"
-msgstr ""
+msgstr "顯示表現（expressions）"
 
 #: src/constants.py:548
 msgid "Let the avatar show expressions"
