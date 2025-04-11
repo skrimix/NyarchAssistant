@@ -17,13 +17,18 @@
 ![screenshot](https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1b.png#gh-dark-mode-only)
 
 # Features
-- **Your dream waifu, at your command**: Choose from a vast library of TTS voices and Live2D or LivePNG models to create the perfect virtual companion.
-
-- **Terminal Command Execution**: Execute terminal commands directly through the AI.
-
-- **Advanced Customization**: Tailor the application with a wide range of settings.
-
-- **Flexible Model Support**: Choose from multiple AI models to fit your specific needs.
+- <img src="https://nyarchlinux.moe/waifu.webp" width="20px"/> **Your waifu at your command**: Chat with your waifu using a Live2D or LivePNG model with expression and motion support
+- 👤 **Harem Support**: Switch between waifus on the go
+- 🎨 **Advanced Customization**: Tailor the application with a wide range of settings
+- 🚀 **Flexible Model Support**: Choose from mutliple AI models and providers to fit your specific needs.
+- 💻 **Terminal Command Exection**: Execute commands suggested by the AI on the fly
+- 🧩 **Extensions**: Add your own functionalities and models to Newelle
+- 🗣 **Voice support**: Chat hands free with your waifu, supporting many Speech To Text and TTS models, with translation option
+- 🧠 **Long Term Memory**: Remember conversations from previous chats
+- 💼 **Chat with documents**: Chat with your own documents
+- 📁 **Builtin File Manager**: Manage your files with the help of AI
+- 📝 **Rich Formatting**: Support for Markdown and LaTeX 
+- ✏️ **Chat editing**: Edit or remove any message and manage your prompts easily
 
 ![screenshot](https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/3w.png#gh-light-mode-only)
 ![screenshot](https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/3b.png#gh-dark-mode-only)
@@ -46,7 +51,7 @@ A lightweight version of Nyarch Assistant that can be triggered via keyboard sho
 To configure the mini window launch (example using Ctrl+Space), set the following command in your system keyboard settings:
 
 ```bash
-/bin/bash -c 'flatpak run --command=gsettings moe.nyarchlinux.assistant set io.github.qwersyk.Newelle startup-mode "mini" && flatpak run moe.nyarchlinux.assistant'
+/bin/bash -c 'flatpak run --command=gsettings moe.nyarchlinux.assistant set moe.nyarchlinux.assistant startup-mode "mini" && flatpak run moe.nyarchlinux.assistant'
 ```
 
 #### 2. Enable Window Centering
