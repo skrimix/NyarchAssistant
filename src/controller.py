@@ -483,7 +483,7 @@ class HandlersManager:
             self.secondary_llm.load_model(None)
         self.embedding.load_model()
         if self.settings.get_boolean("rag-on"):
-            self.rag.load()
+            GLib.timeout_add(2000, lambda : threading.Thread(target=self.rag.load).start())
 
     def install_missing_handlers(self):
         """Install selected handlers that are not installed. Assumes that select_handlers has been called"""

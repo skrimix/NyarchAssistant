@@ -104,6 +104,8 @@ class Live2DHandler(AvatarHandler):
                 ExtraSettings.ButtonSetting("no_entry", "You need to reload the model first", "Close and reopen the settings after changing a model in order to use the expression manager", lambda x: open_website("https://wiki.nyarchlinux.moe/nyarchasssistant",), "Nyarch Wiki")
             ]
         for expression in li:
+            if type(expression) is not str:
+                continue
             r.append(
                 ExtraSettings.EntrySetting(
                     "Expression " + expression,

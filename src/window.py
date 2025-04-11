@@ -68,6 +68,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Init controller
         self.controller = NewelleController(sys.path)
         self.controller.ui_init()
+        self.path = self.controller.config_dir
         ReplaceHelper.set_controller(self.controller)
         # Set basic vars
         self.chats = self.controller.chats
@@ -871,9 +872,7 @@ class MainWindow(Gtk.ApplicationWindow):
         return widget
 
     def load_avatar(self):
-        print("call")
         if self.controller.newelle_settings.avatar_enabled:
-            print("true")
             # If the avatar is enabled, check if it requires reloading 
             if not hasattr(self, "avatar_handler"):
                 self.avatar_handler = None
