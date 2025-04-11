@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-11 09:36+0800\n"
+"POT-Creation-Date: 2025-04-11 09:38+0800\n"
 "PO-Revision-Date: 2023-08-14 13:03+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
@@ -439,7 +439,7 @@ msgstr ""
 msgid "Add your own custom prompt"
 msgstr ""
 
-#: src/controller.py:147 src/window.py:1854
+#: src/controller.py:147 src/window.py:1856
 msgid "Chat "
 msgstr "Gesprek "
 
@@ -1581,68 +1581,68 @@ msgstr ""
 msgid "Search Models..."
 msgstr ""
 
-#: src/window.py:1008
+#: src/window.py:1010
 msgid "Create new profile"
 msgstr ""
 
-#: src/window.py:1134
+#: src/window.py:1136
 msgid "Could not recognize your voice"
 msgstr ""
 
-#: src/window.py:1196
+#: src/window.py:1198
 msgid "Attach file"
 msgstr ""
 
-#: src/window.py:1445 src/window.py:1670
+#: src/window.py:1447 src/window.py:1672
 msgid "File not found"
 msgstr "Het bestand is niet aangetroffen"
 
-#: src/window.py:1463
+#: src/window.py:1465
 msgid "The file cannot be sent until the program is finished"
 msgstr "Dit bestand kan pas worden verstuurd als de toepassing klaar is"
 
-#: src/window.py:1485
+#: src/window.py:1487
 msgid "The file is not recognized"
 msgstr "Dit bestand wordt niet herkend"
 
-#: src/window.py:1551
+#: src/window.py:1553
 msgid "Folder is Empty"
 msgstr "De map is leeg"
 
-#: src/window.py:1691
+#: src/window.py:1693
 msgid "You can no longer continue the message."
 msgstr "U kunt dit bericht niet hervatten."
 
-#: src/window.py:1716
+#: src/window.py:1718
 msgid "You can no longer regenerate the message."
 msgstr "U kunt dit bericht niet opnieuw aanmaken."
 
-#: src/window.py:1824
+#: src/window.py:1826
 msgid "Chat is empty"
 msgstr "Het gesprek is blanco"
 
-#: src/window.py:1894
+#: src/window.py:1896
 msgid "Chat is cleared"
 msgstr "Het gesprek is gewist"
 
-#: src/window.py:1919
+#: src/window.py:1921
 msgid "The message was canceled and deleted from history"
 msgstr "Het bericht is afgebroken en uit de geschiedenis gewist"
 
-#: src/window.py:1963
+#: src/window.py:1965
 msgid "The message cannot be sent until the program is finished"
 msgstr "Dit bericht kan pas worden verstuurd als de toepassing klaar is"
 
-#: src/window.py:2796
+#: src/window.py:2798
 msgid "You can't edit a message while the program is running."
 msgstr "U kunt geen berichten bewerken terwĳl de toepassing nog draait."
 
-#: src/window.py:2920
+#: src/window.py:2922
 #, fuzzy
 msgid "Prompt content"
 msgstr "Opdrachtbeheer"
 
-#: src/window.py:3176
+#: src/window.py:3178
 #, fuzzy
 msgid ""
 "The neural network has access to your computer and any data in this chat and "
@@ -1652,7 +1652,7 @@ msgstr ""
 "Let op: het neurale netwerk heeft toegang tot uw computer. Wees terughoudend "
 "hiermee - wĳ zĳn niet verantwoordelĳk voor dit netwerk."
 
-#: src/window.py:3205
+#: src/window.py:3207
 #, fuzzy
 msgid ""
 "The neural network has access to any data in this chat, be careful, we are "
@@ -1662,15 +1662,15 @@ msgstr ""
 "Let op: het neurale netwerk heeft toegang tot uw computer. Wees terughoudend "
 "hiermee - wĳ zĳn niet verantwoordelĳk voor dit netwerk."
 
-#: src/window.py:3252
+#: src/window.py:3254
 msgid "Wrong folder path"
 msgstr "De maplocatie is onjuist"
 
-#: src/window.py:3285
+#: src/window.py:3287
 msgid "Thread has not been completed, thread number: "
 msgstr "Het proces is niet afgerond. Procesnummer: "
 
-#: src/window.py:3294
+#: src/window.py:3296
 msgid "Failed to open the folder"
 msgstr "De map kan niet worden geopend"
 
