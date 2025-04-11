@@ -1427,43 +1427,43 @@ msgstr "檔案資料夾"
 msgid ""
 "Put the documents you want to query in your document folder. The document "
 "analyzer will find relevant information in them if this option is enabled"
-msgstr ""
+msgstr "檔案分析器將從資料夾內提取資訊"
 
 #: src/ui/settings.py:347
 msgid "Put all the documents you want to index in this folder"
-msgstr ""
+msgstr "將欲索引的檔案放置此資料夾內。"
 
 #: src/ui/settings.py:381
 msgid "Silence threshold"
-msgstr ""
+msgstr "靜音門檻"
 
 #: src/ui/settings.py:381
 msgid ""
 "Silence threshold in seconds, percentage of the volume to be considered "
 "silence"
-msgstr ""
+msgstr "靜音門檻以秒為單位，當音量為 0 也視為靜音"
 
 #: src/ui/settings.py:394
 msgid "Silence time"
-msgstr ""
+msgstr "靜音時間"
 
 #: src/ui/settings.py:394
 msgid "Silence time in seconds before recording stops automatically"
-msgstr ""
+msgstr "靜音時間以秒為單位，當靜音時間達到此秒數將自動停止錄音"
 
 #: src/ui/settings.py:964
 msgid "Not enough permissions"
-msgstr ""
+msgstr "權限不足"
 
 #: src/ui/settings.py:968
 msgid ""
 "Nyarch Assistant does not have enough permissions to run commands on your "
 "system, please run the following command"
-msgstr ""
+msgstr "Nyarch Assistant 沒有足夠權限在系統內執行指令，請執行此指令"
 
 #: src/ui/settings.py:969
 msgid "Understood"
-msgstr ""
+msgstr "確認"
 
 #: src/ui/shortcuts.py:6
 msgid "Help"
@@ -1487,11 +1487,11 @@ msgstr "新分頁"
 
 #: src/ui/shortcuts.py:16
 msgid "Paste Image"
-msgstr ""
+msgstr "貼上圖片"
 
 #: src/ui/shortcuts.py:17
 msgid "Focus message box"
-msgstr ""
+msgstr "專注訊息欄"
 
 #: src/ui/shortcuts.py:18
 msgid "Start recording"
@@ -1592,11 +1592,11 @@ msgstr "建立新設定檔"
 
 #: src/window.py:1134
 msgid "Could not recognize your voice"
-msgstr ""
+msgstr "無法辨識聲音"
 
 #: src/window.py:1196
 msgid "Attach file"
-msgstr ""
+msgstr "嵌入檔案"
 
 #: src/window.py:1445 src/window.py:1670
 msgid "File not found"
