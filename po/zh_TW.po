@@ -880,7 +880,7 @@ msgstr "選擇紀錄的語言。使用 ISO 639-1 語言碼（例如「en」英�
 
 #: src/handlers/stt/openaisr_handler.py:12
 msgid "Endpoint for openai requests"
-msgstr ""
+msgstr "OpenAI 的端點網址"
 
 #: src/handlers/stt/openaisr_handler.py:19
 #, fuzzy
@@ -893,7 +893,7 @@ msgstr "Whisper 模型"
 
 #: src/handlers/stt/openaisr_handler.py:26
 msgid "Name of the OpenAI model"
-msgstr ""
+msgstr "OpenAI 的模型名稱"
 
 #: src/handlers/stt/openaisr_handler.py:34
 msgid ""
@@ -903,37 +903,37 @@ msgstr ""
 
 #: src/handlers/stt/sphinx_handler.py:19
 msgid "Could not understand the audio"
-msgstr ""
+msgstr "無法理解語音"
 
 #: src/handlers/stt/vosk_handler.py:17
 msgid "Model Path"
-msgstr ""
+msgstr "模型路徑"
 
 #: src/handlers/stt/vosk_handler.py:18
 msgid "Absolute path to the VOSK model (unzipped)"
-msgstr ""
+msgstr "VOSK 模型的絕對路徑（已解壓縮）"
 
 #: src/handlers/stt/whisper_handler.py:16
 #: src/handlers/stt/whispercpp_handler.py:40
 msgid "Name of the Whisper model"
-msgstr ""
+msgstr "Whisper 模型的名稱"
 
 #: src/handlers/stt/witai_handler.py:13
 msgid "Server Access Token for wit.ai"
-msgstr ""
+msgstr "wit.ai 的伺服器存取權杖"
 
 #: src/handlers/translator/customtr_handler.py:18 src/translator.py:68
 #, python-brace-format
 msgid "{0} will be replaced with the text to translate"
-msgstr ""
+msgstr "{0} 參數會被需要翻譯的文字取代"
 
 #: src/handlers/tts/custom_openai_tts.py:17
 msgid "Endpoint"
-msgstr ""
+msgstr "端點"
 
 #: src/handlers/tts/custom_openai_tts.py:17
 msgid "Custom endpoint of the service to use"
-msgstr ""
+msgstr "使用的自訂端點"
 
 #: src/handlers/tts/custom_openai_tts.py:19
 #: src/handlers/tts/elevenlabs_handler.py:16
@@ -941,61 +941,61 @@ msgstr ""
 #: src/handlers/tts/openai_tts_handler.py:19 src/handlers/tts/tts.py:37
 #: src/ui/settings.py:132
 msgid "Voice"
-msgstr ""
+msgstr "聲音"
 
 #: src/handlers/tts/custom_openai_tts.py:19
 #: src/handlers/tts/groq_tts_handler.py:33
 #: src/handlers/tts/openai_tts_handler.py:19
 msgid "The voice to use"
-msgstr ""
+msgstr "使用的聲音"
 
 #: src/handlers/tts/custom_openai_tts.py:21
 #: src/handlers/tts/openai_tts_handler.py:21
 msgid "Instructions"
-msgstr ""
+msgstr "使用說明"
 
 #: src/handlers/tts/custom_openai_tts.py:21
 #: src/handlers/tts/openai_tts_handler.py:21
 msgid ""
 "Instructions for the voice generation. Leave it blank to avoid this field"
-msgstr ""
+msgstr "聲音生成的步驟，留空以忽略此欄。"
 
 #: src/handlers/tts/elevenlabs_handler.py:10
 msgid "API Key for ElevenLabs"
-msgstr ""
+msgstr "ElevenLabs 的 API 金鑰"
 
 #: src/handlers/tts/elevenlabs_handler.py:17
 msgid "Voice ID to use"
-msgstr ""
+msgstr "使用的 Voice ID"
 
 #: src/handlers/tts/elevenlabs_handler.py:31
 msgid "Stability"
-msgstr ""
+msgstr "穩定度"
 
 #: src/handlers/tts/elevenlabs_handler.py:32
 msgid "stability of the voice"
-msgstr ""
+msgstr "聲音的穩定度"
 
 #: src/handlers/tts/elevenlabs_handler.py:41
 msgid "Similarity boost"
-msgstr ""
+msgstr "提升聲線相似度"
 
 #: src/handlers/tts/elevenlabs_handler.py:42
 msgid "Boosts overall voice clarity and speaker similarity"
-msgstr ""
+msgstr "提升聲線的相似度以及清晰度"
 
 #: src/handlers/tts/elevenlabs_handler.py:51
 msgid "Style exaggeration"
-msgstr ""
+msgstr "加強語調"
 
 #: src/handlers/tts/elevenlabs_handler.py:52
 msgid ""
 "High values are reccomended if the style of the speech must be exaggerated"
-msgstr ""
+msgstr "數值越高將越加強語調"
 
 #: src/handlers/tts/tts.py:38
 msgid "Choose the preferred voice"
-msgstr ""
+msgstr "選擇聲音"
 
 #: src/main.py:184
 msgid "Terminal threads are still running in the background"
@@ -1032,12 +1032,11 @@ msgstr "擴充功能"
 
 #: src/ui/extension.py:86
 msgid "User guide to Extensions"
-msgstr ""
+msgstr "擴充功能的使用說明"
 
 #: src/ui/extension.py:89
-#, fuzzy
 msgid "Download new Extensions"
-msgstr "選擇擴充功能"
+msgstr "下載擴充功能"
 
 #: src/ui/extension.py:92
 msgid "Choose an extension"
@@ -1045,73 +1044,74 @@ msgstr "選擇擴充功能"
 
 #: src/ui/mini_window.py:9
 msgid "Newelle"
-msgstr ""
+msgstr "Newelle"
 
 #: src/ui/mini_window.py:20
 msgid "Chat is opened in mini window"
-msgstr ""
+msgstr "已在新視窗開啟聊天室"
 
 #: src/ui/presentation.py:93
 msgid "Welcome to Nyarch Assistant!"
-msgstr ""
+msgstr "歡迎來到 Nyarch Assistant！"
 
 #: src/ui/presentation.py:94
 msgid "Your ultimate AI Waifu assistant."
-msgstr ""
+msgstr "您的 AI 二次元老婆都在這裡"
 
 #: src/ui/presentation.py:98
 msgid "Github Page"
-msgstr ""
+msgstr "原始碼（GitHub）"
 
 #: src/ui/presentation.py:105
 msgid "Choose your favourite AI Language Model"
-msgstr ""
+msgstr "選擇您最喜歡的人工智慧模型"
 
 #: src/ui/presentation.py:106
 msgid ""
 "Nyarch Assistant can be used with mutiple models and providers!\n"
 "<b>Note: It is strongly suggested to read the Guide to LLM page</b>"
 msgstr ""
+"Nyarch Assistant 支援許多不同模型以及線上服務！\n"
+"<b>提醒：建議詳閱「大型語言模型 101」頁面"
 
 #: src/ui/presentation.py:110
 msgid "Guide to LLM"
-msgstr ""
+msgstr "大型語言模型 101"
 
 #: src/ui/presentation.py:117
 msgid "Chat with your documents"
-msgstr ""
+msgstr "與檔案互動"
 
 #: src/ui/presentation.py:118
 msgid ""
 "Nyarch Assistant can retrieve relevant information from documents you send "
 "in the chat or from your own files! Information relevant to your query will "
 "be sent to the LLM."
-msgstr ""
+msgstr "Nyarch Assistant 可以擷取檔案的重要資訊並傳送給模型分析。"
 
 #: src/ui/presentation.py:124
 msgid "Choose your favourite Voice configuration"
-msgstr ""
+msgstr "選擇語音設定"
 
 #: src/ui/presentation.py:125
 msgid ""
 "You can speak to Nyarch Assistant! Use any TTS/STT provider in any language, "
 "with translation support!"
-msgstr ""
+msgstr "您可以與 Nyarch Assistant 語音對話！文本轉語音、語音辨識、翻譯等功能樣樣齊全！"
 
 #: src/ui/presentation.py:132
 msgid ""
 "You can extend Nyarch Assistant's functionalities using extensions! They are "
 "easy to make and to install!"
-msgstr ""
+msgstr "您可以輕鬆的安裝擴充功能！"
 
 #: src/ui/presentation.py:136
-#, fuzzy
 msgid "Download extensions"
-msgstr "新增擴充功能"
+msgstr "下載擴充功能"
 
 #: src/ui/presentation.py:143
 msgid "Pay attention!"
-msgstr ""
+msgstr "請注意！"
 
 #: src/ui/presentation.py:144
 msgid ""
@@ -1122,87 +1122,89 @@ msgid ""
 " <b>Pay attention on what you run! Commands generated might harm your system!"
 "</b>"
 msgstr ""
+"Nyarch Assistnat 可以執行指令！您可開啟「指令虛擬化」設定防止指令內容於沙盒外執行進而破壞系統\n\n"
+" <b>請隨時注意執行的指令內容！某些指令將破壞系統！</b>"
 
 #: src/ui/presentation.py:152
 msgid "Permission Error"
-msgstr ""
+msgstr "權限錯誤"
 
 #: src/ui/presentation.py:153
 msgid ""
 "nyarchassistant does not have enough permissions to run commands on your "
 "system."
-msgstr ""
+msgstr "Nyarch Assistant 沒有足夠權限在系統內執行指令"
 
 #: src/ui/presentation.py:164
 msgid "Begin using the app"
-msgstr ""
+msgstr "開始使用應用程式"
 
 #: src/ui/presentation.py:169
 msgid "Start chatting"
-msgstr ""
+msgstr "開始聊天"
 
 #: src/ui/profile.py:60
 msgid "The settings of the current profile will be copied into the new one"
-msgstr ""
+msgstr "目前的設定將複製到新的設定檔"
 
 #: src/ui/profile.py:88
 msgid "Set profile picture"
-msgstr ""
+msgstr "設定頭像"
 
 #: src/ui/settings.py:58
 msgid "General"
-msgstr ""
+msgstr "一般"
 
 #: src/ui/settings.py:59
 msgid "LLM"
-msgstr ""
+msgstr "大型語言模型"
 
 #: src/ui/settings.py:60
 msgid "Prompts"
-msgstr ""
+msgstr "提示文字"
 
 #: src/ui/settings.py:61
 msgid "Memory"
-msgstr ""
+msgstr "記憶"
 
 #: src/ui/settings.py:62 src/ui/settings.py:170
 msgid "Avatar"
-msgstr ""
+msgstr "虛擬夥伴"
 
 #: src/ui/settings.py:66
 msgid "Language Model"
-msgstr ""
+msgstr "語言模型"
 
 #: src/ui/settings.py:76 src/ui/settings.py:97
 msgid "Other LLMs"
-msgstr ""
+msgstr "其他大型語言模型"
 
 #: src/ui/settings.py:76 src/ui/settings.py:97
 msgid "Other available LLM providers"
-msgstr ""
+msgstr "其他提供大型語言模型的服務"
 
 #: src/ui/settings.py:87
 msgid "Advanced LLM Settings"
-msgstr ""
+msgstr "更多設定"
 
 #: src/ui/settings.py:91
 msgid "Secondary Language Model"
-msgstr ""
+msgstr "輔助語言模型"
 
 #: src/ui/settings.py:91
 msgid ""
 "Model used for secondary tasks, like offer, chat name and memory generation"
-msgstr ""
+msgstr "專門執行第二類工作：例如聊天室名稱生成以及記憶生成"
 
 #: src/ui/settings.py:108
 msgid "Embedding Model"
-msgstr ""
+msgstr "嵌入模型"
 
 #: src/ui/settings.py:108
 msgid ""
 "Embedding is used to trasform text into vectors. Used by Long Term Memory "
 "and RAG. Changing it might require you to re-index documents or reset memory."
-msgstr ""
+msgstr "專門將文字轉成向量以提供給 RAG 與長期記憶所使用的模型。改變此設定後請重整索引與清除記憶。"
 
 #: src/ui/settings.py:119
 msgid "Long Term Memory"
@@ -1210,15 +1212,15 @@ msgstr "長期記憶"
 
 #: src/ui/settings.py:119
 msgid "Keep memory of old conversations"
-msgstr ""
+msgstr "將舊聊天紀錄內容形成記憶"
 
 #: src/ui/settings.py:136
 msgid "Text To Speech Program"
-msgstr ""
+msgstr "語音轉文本程式"
 
 #: src/ui/settings.py:136
 msgid "Choose which text to speech to use"
-msgstr ""
+msgstr "選擇語音轉文本的程式"
 
 #: src/ui/settings.py:149
 msgid "Translator program"
@@ -1308,29 +1310,29 @@ msgstr "顯示隱藏檔"
 
 #: src/ui/settings.py:249
 msgid "Remove thinking from history"
-msgstr ""
+msgstr "將思考內容從歷史移除"
 
 #: src/ui/settings.py:249
 msgid ""
 "Do not send old thinking blocks for reasoning models in order to reduce "
 "token usage"
-msgstr ""
+msgstr "將推論模型的思考內容從歷史中移除以節省 Token 消耗"
 
 #: src/ui/settings.py:255
 msgid "Display LaTex"
-msgstr ""
+msgstr "顯示 LaTeX"
 
 #: src/ui/settings.py:255
 msgid "Display LaTex formulas in chat"
-msgstr ""
+msgstr "在聊天室內顯示 LaTeX 數學式"
 
 #: src/ui/settings.py:261
 msgid "Reverse Chat Order"
-msgstr ""
+msgstr "反向聊天室"
 
 #: src/ui/settings.py:261
 msgid "Show most recent chats on top in chat list (change chat to apply)"
-msgstr ""
+msgstr "將最新的訊息至頂"
 
 #: src/ui/settings.py:267
 msgid "Automatically Generate Chat Names"
@@ -1338,7 +1340,7 @@ msgstr "自動生成聊天室名稱"
 
 #: src/ui/settings.py:267
 msgid "Generate chat names automatically after the first two messages"
-msgstr ""
+msgstr "生成第一則訊息後自動生成聊天室名稱"
 
 #: src/ui/settings.py:273
 msgid "Number of offers"
@@ -1358,7 +1360,7 @@ msgid ""
 "Change the label that appears before your message\n"
 "This information is not sent to the LLM by default\n"
 "You can add it to a prompt using the {USER} variable"
-msgstr ""
+msgstr "改變聊天室內的使用者名稱，預設不會將此資訊傳送給"
 
 #: src/ui/settings.py:287
 msgid "Neural Network Control"
@@ -1374,11 +1376,11 @@ msgstr "在模擬器中執行指令"
 
 #: src/ui/settings.py:303
 msgid "External Terminal"
-msgstr ""
+msgstr "外部終端機"
 
 #: src/ui/settings.py:303
 msgid "Choose the external terminal where to run the console commands"
-msgstr ""
+msgstr "選擇執行指令的外部終端機"
 
 #: src/ui/settings.py:312
 msgid "Program memory"
@@ -1390,36 +1392,36 @@ msgstr "模型將會記得多久的聊天紀錄"
 
 #: src/ui/settings.py:326
 msgid "Document Sources (RAG)"
-msgstr ""
+msgstr "檔案來源（RAG）"
 
 #: src/ui/settings.py:326
 msgid "Include content from your documents in the responses"
-msgstr ""
+msgstr "在回應中包含檔案內容"
 
 #: src/ui/settings.py:327
 msgid "Document Analyzer"
-msgstr ""
+msgstr "檔案分析器"
 
 #: src/ui/settings.py:327
 msgid ""
 "The document analyzer uses multiple techniques to extract relevant "
 "information about your documents"
-msgstr ""
+msgstr "使用不同技術提取各個檔案的相關內容"
 
 #: src/ui/settings.py:338
 msgid "Read documents if unsupported"
-msgstr ""
+msgstr "不支援時閱讀檔案"
 
 #: src/ui/settings.py:338
 msgid ""
 "If the LLM does not support reading documents, relevant information about "
 "documents sent in the chat will be given to the LLM using your Document "
 "Analyzer."
-msgstr ""
+msgstr "如果模型不支援閱讀文件將會利用檔案分析器傳送檔案相關資訊給模型"
 
 #: src/ui/settings.py:344
 msgid "Document Folder"
-msgstr ""
+msgstr "檔案資料夾"
 
 #: src/ui/settings.py:344
 msgid ""
