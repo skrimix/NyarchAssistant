@@ -175,6 +175,9 @@ class MyApp(Adw.Application):
         if hasattr(self,"mini_win"):
             self.mini_win.close()
         if all(element.poll() is not None for element in self.win.streams):
+            settings = Gio.Settings.new('moe.nyarchlinux.assistant')
+            settings.set_int("window-width", self.win.get_width())
+            settings.set_int("window-height", self.win.get_height())
             if self.win.avatar_handler is not None:
                 self.win.avatar_handler.destroy()
             return False
