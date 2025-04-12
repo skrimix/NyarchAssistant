@@ -910,10 +910,16 @@ class MainWindow(Gtk.ApplicationWindow):
     # UI Functions
     def show_presentation_window(self):
         """Show the window for the initial program presentation on first start"""
-        self.presentation_dialog = PresentationWindow(
-            "presentation", self.settings, self
-        )
-        self.presentation_dialog.show()
+        def idle_show():
+            self.presentation_dialog = PresentationWindow(
+                "presentation", self.settings, self
+            )
+            self.presentation_dialog.show()
+        def wait_handlers():
+            self.controller.handlers.handlers_ready.acquire()
+            self.controller.handlers.handlers_ready.release()
+            GLib.idle_add(idle_show)
+        threading.Thread(target=wait_handlers).start()
 
     def mute_tts(self, button: Gtk.Button):
         """Mute the TTS"""

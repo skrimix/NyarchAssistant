@@ -95,7 +95,6 @@ class NewelleController:
     def __init__(self, python_path) -> None:
         self.settings = Gio.Settings.new(SCHEMA_ID)
         self.python_path = python_path
-    
     def ui_init(self):
         """Init necessary variables for the UI and load models and handlers"""
         self.init_paths()
@@ -422,6 +421,9 @@ class HandlersManager:
         self.directory = models_path
         self.config_dir = config_dir
         self.handlers =  {} 
+        self.handlers_enabled = {}
+        self.handlers_ready = threading.Semaphore(1)
+        self.handlers_ready.acquire()
 
     def fix_handlers_integrity(self, newelle_settings: NewelleSettings):
         """Select available handlers if not available handlers in settings
@@ -526,7 +528,8 @@ class HandlersManager:
             self.handlers[(key, self.convert_constants(AVAILABLE_TRANSLATORS))] = self.get_object(AVAILABLE_TRANSLATORS, key)
         for key in AVAILABLE_SMART_PROMPTS:
             self.handlers[(key, self.convert_constants(AVAILABLE_SMART_PROMPTS))] = self.get_object(AVAILABLE_SMART_PROMPTS, key)
-    
+        self.handlers_ready.release()
+
     def convert_constants(self, constants: str | dict[str, Any]) -> (str | dict):
         """Get an handler instance for the specified handler key
 

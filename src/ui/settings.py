@@ -52,7 +52,6 @@ class Settings(Adw.PreferencesWindow):
         self.prompts_settings = self.controller.newelle_settings.prompts_settings
         self.prompts = self.controller.newelle_settings.prompts
         self.sandbox = can_escape_sandbox()
-       
         self.handlers = self.controller.handlers
         # Page building
         self.general_page = Adw.PreferencesPage(icon_name="settings-symbolic", title=_("General"))
