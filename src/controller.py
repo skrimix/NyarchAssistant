@@ -569,7 +569,6 @@ class HandlersManager:
             self.handlers[(key, self.convert_constants(AVAILABLE_EMBEDDINGS), False)] = self.get_object(AVAILABLE_EMBEDDINGS, key)
         for key in AVAILABLE_WEBSEARCH:
             self.handlers[(key, self.convert_constants(AVAILABLE_WEBSEARCH), False)] = self.get_object(AVAILABLE_WEBSEARCH, key)
-        self.handlers_cached.release()
         # Nyarch Hanlders
         for key in AVAILABLE_AVATARS:
             self.handlers[(key, self.convert_constants(AVAILABLE_AVATARS))] = self.get_object(AVAILABLE_AVATARS, key)
@@ -577,7 +576,7 @@ class HandlersManager:
             self.handlers[(key, self.convert_constants(AVAILABLE_TRANSLATORS))] = self.get_object(AVAILABLE_TRANSLATORS, key)
         for key in AVAILABLE_SMART_PROMPTS:
             self.handlers[(key, self.convert_constants(AVAILABLE_SMART_PROMPTS))] = self.get_object(AVAILABLE_SMART_PROMPTS, key)
-        self.handlers_ready.release()
+        self.handlers_cached.release()
 
     def convert_constants(self, constants: str | dict[str, Any]) -> (str | dict):
         """Get an handler instance for the specified handler key

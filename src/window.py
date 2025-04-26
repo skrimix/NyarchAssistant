@@ -978,8 +978,8 @@ class MainWindow(Gtk.ApplicationWindow):
             )
             self.presentation_dialog.show()
         def wait_handlers():
-            self.controller.handlers.handlers_ready.acquire()
-            self.controller.handlers.handlers_ready.release()
+            self.controller.handlers.handlers_cached.acquire()
+            self.controller.handlers.handlers_cached.release()
             GLib.idle_add(idle_show)
         threading.Thread(target=wait_handlers).start()
 
