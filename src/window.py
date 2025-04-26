@@ -487,11 +487,10 @@ class MainWindow(Gtk.ApplicationWindow):
             self.first_start()
         else:
             threading.Thread(target=self.check_version).start()
-        GLib.timeout_add(10, build_model_popup)
         self.controller.handlers.set_error_func(self.handle_error)
         GLib.timeout_add(10, build_model_popup)
         self.first_load = False
-        self.load_avatar()
+        GLib.idle_add(self.load_avatar)
 
     def show_placeholder(self):
         self.history_block.set_visible_child_name("placeholder")
@@ -556,6 +555,7 @@ class MainWindow(Gtk.ApplicationWindow):
         threading.Thread(target=self.install_live2d).start()
 
     def check_version(self):
+        print("ae")
         try:
             live2d_version = open(os.path.join(self.controller.config_dir, "avatars/live2d/web/VERSION"), "r").read()
             live2d_version = float(live2d_version)
@@ -567,7 +567,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def install_live2d(self):
         try:
-            os.makedirs(os.path.join(self.controller.config_dir, "avatars/live2d"), exist_ok=True)
+            os.makedirs(os.path.join(self.controller.config_dir, "avatars/live2d/web"), exist_ok=True)
             os.makedirs(os.path.expanduser("~/.cache/wordllama/tokenizers"), exist_ok=True)
         except Exception as e:
             print(e)

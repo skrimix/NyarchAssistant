@@ -13,6 +13,9 @@ class NyarchApiHandler(OpenAIHandler):
         self.set_setting("advanced_params", False)
         self.set_setting("api", "nya")
 
+    def get_models_list(self):
+        return []
+
     def get_models(self):
         pass
     
