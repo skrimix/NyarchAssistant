@@ -60,14 +60,18 @@ class TTSHandler(Handler):
     def play_audio(self, message):
         """Play an audio from the given message"""
         # Generate random name
-        timestamp = str(int(time.time()))
-        random_part = str(os.urandom(8).hex())
-        file_name = f"{timestamp}_{random_part}.mp3"
+        file_name = self.get_tempname("wav")
         path = os.path.join(self.path, file_name)
         self.save_audio(message, path)
         self.playsound(path)
         os.remove(path)
-
+    
+    def get_tempname(self, extension: str) -> str:
+        timestamp = str(int(time.time()))
+        random_part = str(os.urandom(8).hex())
+        file_name = f"{timestamp}_{random_part}." + extension
+        return file_name
+    
     def connect(self, signal: str, callback: Callable):
         if signal == "start":
             self.on_start = callback
@@ -75,11 +79,29 @@ class TTSHandler(Handler):
             self.on_stop = callback
 
     def playsound(self, path):
-        """Play an audio from the given path"""
+        """Play an audio from the given path, handling incorrect file extensions"""
+        import mimetypes
         self.stop()
         self._play_lock.acquire()
         self.on_start()
-        mixer.music.load(path)
+        
+        # Try to detect actual file type if extension might be incorrect
+        mime_type, _ = mimetypes.guess_type(path)
+        if mime_type != 'audio/mpeg' and path.lower().endswith('.wav'):
+            try:
+                mixer.music.load(path)
+            except Exception:
+                # Retry with forced mp3 extension if it fails
+                with open(path, 'rb') as f:
+                    data = f.read()
+                import tempfile
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as tmp:
+                    tmp.write(data)
+                    tmp_path = tmp.name
+                mixer.music.load(tmp_path)
+        else:
+            mixer.music.load(path)
+
         mixer.music.play()
         while mixer.music.get_busy():
             time.sleep(0.1)
