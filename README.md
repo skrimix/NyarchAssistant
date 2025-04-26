@@ -20,12 +20,15 @@
 - <img src="https://nyarchlinux.moe/waifu.webp" width="20px"/> **Your waifu at your command**: Chat with your waifu using a Live2D or LivePNG model with expression and motion support
 - 👤 **Harem Support**: Switch between waifus on the go
 - 🎨 **Advanced Customization**: Tailor the application with a wide range of settings
-- 🚀 **Flexible Model Support**: Choose from mutliple AI models and providers to fit your specific needs.
+- 🚀 **Flexible Model Support**: Choose from mutliple AI models and providers to fit your specific needs
 - 💻 **Terminal Command Exection**: Execute commands suggested by the AI on the fly
 - 🧩 **Extensions**: Add your own functionalities and models to Newelle
 - 🗣 **Voice support**: Chat hands free with your waifu, supporting many Speech To Text and TTS models, with translation option
 - 🧠 **Long Term Memory**: Remember conversations from previous chats
 - 💼 **Chat with documents**: Chat with your own documents
+- 🔎 **Web Search**: Provide reliable answers using Web Search
+- 🌐 **Website Reading**: Ask any information about any website by writing #https://.. question
+- 👤 **Profile Manager**: Create settings profiles and switch between them on the go
 - 📁 **Builtin File Manager**: Manage your files with the help of AI
 - 📝 **Rich Formatting**: Support for Markdown and LaTeX 
 - ✏️ **Chat editing**: Edit or remove any message and manage your prompts easily

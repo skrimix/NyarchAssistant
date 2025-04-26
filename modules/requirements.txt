@@ -1,9 +1,7 @@
 requests
 pillow
 requests-toolbelt
-curl_cffi
-gpt4all
-gtts
+gtts #optional
 expandvars
 pyaudio
 speechrecognition
@@ -14,3 +12,10 @@ wordllama
 edge-tts
 scikit-learn
 pygame
+tiktoken
+newspaper3k
+lxml
+lxml_html_clean
+pylatexenc
+matplotlib
+gpt4all # Optional

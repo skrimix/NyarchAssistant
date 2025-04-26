@@ -35,6 +35,12 @@ nyarchassistant_sources = [
   'dataset.py',
 ]
 
+integrations_sources = [
+  'integrations/__init__.py',
+  'integrations/website_reader.py',
+  'integrations/websearch.py',
+]
+
 ui_sources = [
   'ui/__init__.py',
   'ui/profile.py',
@@ -58,6 +64,11 @@ widgets_sources = [
   'ui/widgets/latex.py',
   'ui/widgets/terminal_dialog.py',
   'ui/widgets/markuptextview.py',
+  'ui/widgets/website.py',
+  'ui/widgets/websearch.py',
+  'ui/widgets/thinking.py',
+  'ui/widgets/documents_reader.py',
+  'ui/widgets/tipscarousel.py',
 ]
 
 handler_sources = [
@@ -138,6 +149,14 @@ rag_sources = [
   'handlers/rag/llamaindex_handler.py',
 ]
 
+websearch_sources = [  
+  'handlers/websearch/__init__.py',
+  'handlers/websearch/websearch.py',
+  'handlers/websearch/searxng.py',
+  'handlers/websearch/duckduckgo_handler.py',
+  'handlers/websearch/tavily.py',
+]
+
 utility_sources = [
   'utility/__init__.py',
   'utility/media.py',
@@ -183,6 +202,10 @@ install_data(stt_sources, install_dir: moduledir / 'handlers' / 'stt')
 install_data(memory_sources, install_dir: moduledir / 'handlers' / 'memory')
 install_data(rag_sources, install_dir: moduledir / 'handlers' / 'rag')
 install_data(embedding_sources, install_dir: moduledir / 'handlers' / 'embeddings')
+install_data(websearch_sources, install_dir: moduledir / 'handlers' / 'websearch')
+install_data(utility_sources, install_dir: moduledir / 'utility')
+install_data(integrations_sources, install_dir: moduledir / 'integrations')
+
 install_data(translator_sources, install_dir: moduledir / 'handlers' / 'translator')
 install_data(avatar_sources, install_dir: moduledir / 'handlers' / 'avatar')
 install_data(smart_prompts_sources, install_dir: moduledir / 'handlers' / 'smart_prompt')

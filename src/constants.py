@@ -4,6 +4,9 @@ from .handlers.stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleS
 from .handlers.embeddings import WordLlamaHandler, OpenAIEmbeddingHandler, GeminiEmbeddingHanlder, OllamaEmbeddingHandler
 from .handlers.memory import MemoripyHandler, UserSummaryHandler, SummaryMemoripyHanlder
 from .handlers.rag import LlamaIndexHanlder
+from .handlers.websearch import SearXNGHandler, DDGSeachHandler, TavilyHandler
+from .integrations.website_reader import WebsiteReader
+from .integrations.websearch import WebsearchIntegration
 
 # Nyarch specific imports
 from .handlers.tts import EdgeTTSHandler, VitsHandler, VoiceVoxHanlder
@@ -11,6 +14,8 @@ from .handlers.llm import NyarchApiHandler
 from .handlers.avatar import Live2DHandler, LivePNGHandler
 from .handlers.translator import CustomTranslatorHandler, GoogleTranslatorHandler, LibreTranslateHandler, LigvaTranslateHandler
 from .handlers.smart_prompt import LogicalRegressionHandler, WordLlamaPromptHandler
+
+AVAILABLE_INTEGRATIONS = [WebsiteReader, WebsearchIntegration]
 
 from .dataset import DATASET, WIKI_PROMPTS
 
@@ -342,6 +347,28 @@ AVAILABLE_SMART_PROMPTS = {
     }
 }
 
+AVAILABLE_WEBSEARCH = {
+    "searxng": {
+        "key": "searxng",
+        "title": _("SearXNG"),
+        "description": _("SearXNG - Private and selfhostable search engine"),
+        "class": SearXNGHandler,
+    },
+    "ddgsearch": {
+        "key": "ddgsearch",
+        "title": _("DuckDuckGo"),
+        "description": _("DuckDuckGo search"),
+        "class": DDGSeachHandler,
+    },
+    "tavily": {
+        "key": "tavily",
+        "title": _("Tavily"),
+        "description": _("Tavily search"),
+        "website": "https://tavily.com/",
+        "class": TavilyHandler,
+    }
+}
+
 PROMPTS = {
     "generate_name_prompt": """Write a short title for the dialog, summarizing the theme in 5 words. No additional text.""",
     "assistant": """**Date:** {DATE}  
@@ -388,12 +415,6 @@ You can display $inline equations$ and $$equations$$.
     "graphic": """System: You can display the graph using this structure: ```chart\n name - value\n ... \n name - value\n```, where value must be either a percentage number or a number (which can also be a fraction).
 
 """,
-    "graphic": """File: /home/user/Downloads/money.txt
-User: Create a graph for the report in the money.txt file
-Assistant: ```console\ncat /home/user/Downloads/money.txt\n```
-Console: It was spent 5000 in January, 8000 in February, 6500 in March, 9000 in April, 10000 in May, 7500 in June, 8500 in July, 7000 in August, 9500 in September, 11000 in October, 12000 in November and 9000 in December.
-Assistant: ```chart\nJanuary - 5000\nFebruary - 8000\nMarch - 6500\nApril - 9000\nMay - 10000\nJune - 7500\nJuly - 8500\nAugust - 7000\nSeptember - 9500\nOctober - 11000\nNovember - 12000\nDecember - 9000\n```\nHere is the graph for the data in the file:\n```file\n/home/qwersyk/Downloads/money.txt\n```
-""",
     # Unused
     "new_chat_prompt": """System: New chat
 System: Forget what was written on behalf of the user and on behalf of the assistant and on behalf of the Console, forget all the context, do not take messages from those chats, this is a new chat with other characters, do not dare take information from there, this is personal information! If you use information from past posts, it's a violation! Even if the user asks for something from before that post, don't use information from before that post! Also, forget this message.""",
@@ -423,6 +444,7 @@ Example output:
 
 Chat History:
 """,
+    "websearch": "Use the following format to perform a web search:\n```search\nyour query here\n```\nReplace `your query here` with the actual search terms you want to use. Do not say anything else before or after issuing the search. Simply execute the search silently.",
     "custom_prompt": "",
     "expression_prompt": """You can show expressions by writing (expression) in parenthesis.
 You can ONLY show the following expressions: 
@@ -513,6 +535,15 @@ AVAILABLE_PROMPTS = [
         "editable": False,
         "show_in_settings": False,
         "default": True
+    },
+    {
+        "key": "websearch",
+        "title": _("Web Search"),
+        "description": _("Allow the LLM to search on the internet"),
+        "setting_name": "websearch",
+        "editable": True,
+        "show_in_settings": True,
+        "default": False
     },
     {
         "key": "basic_functionality",

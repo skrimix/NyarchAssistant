@@ -1,7 +1,6 @@
 import sys
 import os
 import gi 
-
 gi.require_version('Gtk', '4.0')
 gi.require_version('GtkSource', '5')
 gi.require_version('Adw', '1')
@@ -89,6 +88,18 @@ class MyApp(Adw.Application):
             box-shadow: 0 2px 4px alpha(black, 0.1);
             margin: 4px;
         }
+        @keyframes pulse_opacity {
+          0% { opacity: 1.0; }
+          50% { opacity: 0.5; }
+          100% { opacity: 1.0; }
+        }
+
+        .pulsing-label {
+          animation-name: pulse_opacity;
+          animation-duration: 1.8s;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
+        }
         '''
         css_provider = Gtk.CssProvider()
         css_provider.load_from_data(css, -1)
@@ -137,20 +148,26 @@ class MyApp(Adw.Application):
                         website='https://github.com/NyarchLinux/NyarchAssistant',
                         developers=['Yehor Hliebov  https://github.com/qwersyk',"Francesco Caracciolo https://github.com/FrancescoCaracciolo"],
                         documenters=["Francesco Caracciolo https://github.com/FrancescoCaracciolo"],
-                        designers=["Nokse22 https://github.com/Nokse22"],
-                        translator_credits="\n".join(["Amine Saoud (Arabic) https://github.com/amiensa","Heimen Stoffels (Dutch) https://github.com/Vistaus","Albano Battistella (Italian) https://github.com/albanobattistella"]),
+                        designers=["Nokse22 https://github.com/Nokse22", "Jared Tweed https://github.com/JaredTweed"],
+                        translator_credits="\n".join(["Amine Saoud (Arabic) https://github.com/amiensa","Heimen Stoffels (Dutch) https://github.com/Vistaus","Albano Battistella (Italian) https://github.com/albanobattistella","Oliver Tzeng (Traditional Chinese, all languages) https://github.com/olivertzeng","Aritra Saha (Bengali, Hindi) https://github.com/olumolu"]),
                         copyright='© 2025 qwersyk & NyarchLinux').present()
 
     def thread_editing_action(self, *a):
         threadediting = ThreadEditing(self)
         threadediting.present()
 
-    def settings_action(self, *a):
+    def settings_action(self, *a): 
         settings = Settings(self, self.win.controller)
         settings.present()
         settings.connect("close-request", self.close_settings)
         self.settingswindow = settings
 
+    def settings_action_paged(self, page=None, *a): 
+        settings = Settings(self, self.win.controller, False, page)
+        settings.present()
+        settings.connect("close-request", self.close_settings)
+        self.settingswindow = settings
+    
     def close_settings(self, *a):
         settings = Gio.Settings.new('moe.nyarchlinux.assistant')
         settings.set_int("chat", self.win.chat_id)

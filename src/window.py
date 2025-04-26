@@ -13,9 +13,9 @@ import posixpath
 import json 
 import base64
 import copy
+import random
 
 from gi.repository import Gtk, Adw, Pango, Gio, Gdk, GObject, GLib, GdkPixbuf
-
 
 from .ui.settings import Settings
 
@@ -23,12 +23,12 @@ from .utility.message_chunk import get_message_chunks
 
 from .ui.profile import ProfileDialog
 from .ui.presentation import PresentationWindow
-from .ui.widgets import File, CopyBox, BarChartBox, MarkupTextView
+from .ui.widgets import File, CopyBox, BarChartBox, MarkupTextView, DocumentReaderWidget, TipsCarousel
 from .ui import apply_css_to_widget
-from .ui.widgets import MultilineEntry, ProfileRow, DisplayLatex, InlineLatex
-from .constants import AVAILABLE_LLMS
+from .ui.widgets import MultilineEntry, ProfileRow, DisplayLatex, InlineLatex, ThinkingWidget
+from .constants import AVAILABLE_LLMS, SCHEMA_ID
 
-from .utility.system import get_spawn_command
+from .utility.system import get_spawn_command, open_website
 from .utility.strings import (
     convert_think_codeblocks,
     get_edited_messages,
@@ -71,8 +71,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.path = self.controller.config_dir
         ReplaceHelper.set_controller(self.controller)
         # Set basic vars
+        self.path = self.controller.config_dir
         self.chats = self.controller.chats
         self.chat = self.controller.chat
+        self.chat_documents_index = {}
         self.settings = self.controller.settings
         self.set_default_size(self.settings.get_int("window-width"), self.settings.get_int("window-height"))
         self.extensionloader = self.controller.extensionloader
@@ -217,11 +219,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.chat_scroll.add_controller(drop_target)
         self.chat_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self.chat_scroll_window.append(self.chat_list_block)
-        self.notification_block = Adw.ToastOverlay()
-        self.notification_block.set_child(self.chat_scroll)
-
-        self.secondary_message_chat_block.append(self.notification_block)
-
+        self.history_block = Gtk.Stack(transition_type=Gtk.StackTransitionType.SLIDE_UP, transition_duration=500)
+        # Chat Offers
         self.offers_entry_block = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
             spacing=6,
@@ -240,9 +239,16 @@ class MainWindow(Gtk.ApplicationWindow):
             margin_bottom=6,
         )
         self.chat_scroll_window.append(self.chat_controls_entry_block)
-
         self.message_suggestion_buttons_array = []
-
+        self.message_suggestion_buttons_array_placeholder = []
+        self.notification_block = Adw.ToastOverlay() 
+        self.history_block.add_named(self.chat_scroll, "history")
+        self.build_placeholder()
+        self.history_block.add_named(self.empty_chat_placeholder, "placeholder")
+        self.notification_block.set_child(self.history_block)
+        self.history_block.set_visible_child_name("history")
+        self.secondary_message_chat_block.append(self.notification_block)
+        
         # Stop chat button
         self.chat_stop_button = Gtk.Button(css_classes=["flat"])
         icon = Gtk.Image.new_from_gicon(Gio.ThemedIcon(name="media-playback-stop"))
@@ -477,14 +483,54 @@ class MainWindow(Gtk.ApplicationWindow):
         GLib.idle_add(self.update_history)
         GLib.idle_add(self.show_chat)
         if not self.settings.get_boolean("welcome-screen-shown"):
-            GLib.idle_add(self.show_presentation_window)
+            threading.Thread(target=self.show_presentation_window).start()
             self.first_start()
         else:
             threading.Thread(target=self.check_version).start()
         self.controller.handlers.set_error_func(self.handle_error)
         GLib.timeout_add(10, build_model_popup)
         self.first_load = False
-        self.load_avatar()
+        GLib.idle_add(self.load_avatar)
+
+    def show_placeholder(self):
+        self.history_block.set_visible_child_name("placeholder")
+        self.tips_section.shuffle_tips()
+
+    def hide_placeholder(self):
+        self.history_block.set_visible_child_name("history")
+    
+    def build_placeholder(self):
+        tips = [
+            {"title": _("Ask about a website"), "subtitle": _("Write #https://website.com in chat to ask information about a website"), "on_click": lambda : self.send_bot_response(Gtk.Button(label="#https://github.com/qwersyk/Newelle\nWhat is Newelle?"))},
+            {"title": _("Check out our Extensions!"), "subtitle": _("We have a lot of extensions for different things. Check it out!"), "on_click": lambda: self.app.extension_action()},
+            {"title": _("Chat with documents!"), "subtitle": _("Add your documents to your documents folder and chat using the information contained in them!"), "on_click": lambda : self.app.settings_action_paged("Memory")},
+            {"title": _("Surf the web!"), "subtitle": _("Enable web search to allow the LLM to surf the web and provide up to date answers"), "on_click": lambda : self.app.settings_action_paged("Memory")},
+            {"title": _("Mini Window"), "subtitle": _("Ask questions on the fly using the mini window mode"), "on_click": lambda : open_website("https://github.com/qwersyk/Newelle/?tab=readme-ov-file#mini-window-mode")},
+            {"title": _("Text to Speech"), "subtitle": _("Newelle supports text-to-speech! Enable it in the settings"), "on_click": lambda : self.app.settings_action_paged("General")},
+            {"title": _("Keyboard Shortcuts"), "subtitle": _("Control Newelle using Keyboard Shortcuts"), "on_click": lambda : self.app.on_shortcuts_action()},
+            {"title": _("Prompt Control"), "subtitle": _("Newelle gives you 100% prompt control. Tune your prompts for your use."), "on_click": lambda : self.app.settings_action_paged("Prompts")},
+            {"title": _("Thread Editing"), "subtitle": _("Check the programs and processes you run from Newelle"), "on_click": lambda : self.app.thread_editing_action()},
+        ]
+        self.empty_chat_placeholder = Gtk.Box(hexpand=True, vexpand=True, orientation=Gtk.Orientation.VERTICAL)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER, spacing=20, vexpand=True)    
+        application_logo = Gtk.Image(icon_name=SCHEMA_ID)
+        application_logo.set_pixel_size(128)
+        box.append(application_logo)
+        title_label = Gtk.Label(label=_("New Chat"), css_classes=["title-1"])
+        box.append(title_label)
+        self.tips_section = TipsCarousel(tips, 5)
+        box.append(self.tips_section)
+        self.empty_chat_placeholder.append(box)
+        # Placeholder offers 
+        self.offers_entry_block_placeholder = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=6,
+            valign=Gtk.Align.END,
+            halign=Gtk.Align.CENTER,
+            margin_bottom=6,
+        )
+        self.offers_entry_block_placeholder.set_size_request(-1, 36*self.offers)
+        self.empty_chat_placeholder.append(self.offers_entry_block_placeholder)
 
     def handle_error(self, message: str, error: ErrorSeverity):
         if error == ErrorSeverity.ERROR:
@@ -509,6 +555,7 @@ class MainWindow(Gtk.ApplicationWindow):
         threading.Thread(target=self.install_live2d).start()
 
     def check_version(self):
+        print("ae")
         try:
             live2d_version = open(os.path.join(self.controller.config_dir, "avatars/live2d/web/VERSION"), "r").read()
             live2d_version = float(live2d_version)
@@ -520,7 +567,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def install_live2d(self):
         try:
-            os.makedirs(os.path.join(self.controller.config_dir, "avatars/live2d"), exist_ok=True)
+            os.makedirs(os.path.join(self.controller.config_dir, "avatars/live2d/web"), exist_ok=True)
             os.makedirs(os.path.expanduser("~/.cache/wordllama/tokenizers"), exist_ok=True)
         except Exception as e:
             print(e)
@@ -542,11 +589,12 @@ class MainWindow(Gtk.ApplicationWindow):
             css_classes=["flat"], icon_name="controls-big"
         )
         self.quick_toggles_popover = Gtk.Popover()
-        entries = [  # Your provided list
-            {"setting_name": "rag-on", "title": "Local Documents"},
-            {"setting_name": "memory-on", "title": "Long Term Memory"},
-            {"setting_name": "tts-on", "title": "TTS"},
-            {"setting_name": "virtualization", "title": "Command virutalization"},
+        entries = [  
+            {"setting_name": "rag-on", "title": _("Local Documents")},
+            {"setting_name": "memory-on", "title": _("Long Term Memory")},
+            {"setting_name": "tts-on", "title": _("TTS")},
+            {"setting_name": "virtualization", "title": _("Command virutalization")},
+            {"setting_name": "websearch-on", "title": _("Web search")},
         ]
 
         container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -586,21 +634,29 @@ class MainWindow(Gtk.ApplicationWindow):
     def build_offers(self):
         """Build offers buttons, called by update_settings to update the number of buttons"""
         for text in range(self.offers):
-            button = Gtk.Button(css_classes=["flat"], margin_start=6, margin_end=6)
-            label = Gtk.Label(label=str(text), wrap=True, wrap_mode=Pango.WrapMode.CHAR)
-            button.set_child(label)
-            button.connect("clicked", self.send_bot_response)
-            button.set_visible(False)
+            def create_button():
+                button = Gtk.Button(css_classes=["flat"], margin_start=6, margin_end=6)
+                label = Gtk.Label(label=str(text), wrap=True, wrap_mode=Pango.WrapMode.CHAR, ellipsize=Pango.EllipsizeMode.END)
+                button.set_child(label)
+                button.connect("clicked", self.send_bot_response)
+                button.set_visible(False)
+                return button
+            button = create_button()
+            button_placeholder = create_button()
             self.offers_entry_block.append(button)
             self.message_suggestion_buttons_array.append(button)
+            self.offers_entry_block_placeholder.append(button_placeholder)
+            self.message_suggestion_buttons_array_placeholder.append(button_placeholder)
 
     def update_toggles(self, *_):
         """Update the quick toggles"""
-        self.controller.update_settings()
+        reloads = self.controller.update_settings()
         self.tts_enabled = self.controller.newelle_settings.tts_enabled
         self.rag_on = self.controller.newelle_settings.rag_on
         self.memory_on = self.controller.newelle_settings.memory_on
         self.virtualization = self.controller.newelle_settings.virtualization
+        if ReloadType.WEBSEARCH in reloads:
+            self.model_popup_settings.build_prompts_settings()
 
     def quick_settings_update(self):
         """Update settings from the quick settings"""
@@ -618,7 +674,10 @@ class MainWindow(Gtk.ApplicationWindow):
         """Update settings, run every time the program is started or settings dialog closed"""
         reloads = self.controller.update_settings()
         if self.first_load:
-            threading.Thread(target=self.controller.handlers.load_handlers).start()
+            # Load handlers with a timeout in order to not freeze the program
+            def load_handlers_async():
+                threading.Thread(target=self.controller.handlers.load_handlers).start()
+            GLib.timeout_add(1000, load_handlers_async)
         # Basic settings
         self.offers = self.controller.newelle_settings.offers
         self.current_profile = self.controller.newelle_settings.current_profile
@@ -627,6 +686,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.rag_on = self.controller.newelle_settings.rag_on
         self.tts_enabled = self.controller.newelle_settings.tts_enabled
         self.virtualization = self.controller.newelle_settings.virtualization
+        self.prompts = self.controller.newelle_settings.prompts
         self.translation_enabled = self.controller.newelle_settings.translation_enabled
         # Handlers
         self.tts = self.controller.handlers.tts
@@ -643,6 +703,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.show_chat()
         if ReloadType.RELOAD_CHAT_LIST in reloads:
             self.update_history()
+        if ReloadType.OFFERS in reloads:
+            self.build_offers()
+
         # Setup TTS
         self.tts.connect(
             "start", lambda: GLib.idle_add(self.mute_tts_button.set_visible, True)
@@ -658,7 +721,6 @@ class MainWindow(Gtk.ApplicationWindow):
     def reload_buttons(self):
         """Reload offers and buttons on LLM change"""
         if not self.first_load:
-            self.build_offers()
             if (
                 not self.model.supports_vision()
                 and not self.model.supports_video_vision()
@@ -709,7 +771,7 @@ class MainWindow(Gtk.ApplicationWindow):
         settings = Settings(self.app, self.controller, headless=True)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         stack = Adw.ViewStack()
-
+        self.model_popup_settings = settings
         # Add the model selection page
         model_page = self.scrollable(self.build_model_selection())
         self.model_page = model_page
@@ -916,8 +978,8 @@ class MainWindow(Gtk.ApplicationWindow):
             )
             self.presentation_dialog.show()
         def wait_handlers():
-            self.controller.handlers.handlers_ready.acquire()
-            self.controller.handlers.handlers_ready.release()
+            self.controller.handlers.handlers_cached.acquire()
+            self.controller.handlers.handlers_cached.release()
             GLib.idle_add(idle_show)
         threading.Thread(target=wait_handlers).start()
 
@@ -1170,13 +1232,18 @@ class MainWindow(Gtk.ApplicationWindow):
     def attach_file(self, button):
         """Show attach file dialog to add a file"""
         filters = Gio.ListStore.new(Gtk.FileFilter)
-
+        image_patterns = ["*.png", "*.jpg", "*.jpeg", "*.webp"]
+        video_patterns = ["*.mp4"]
+        file_patterns = self.model.get_supported_files()
+        rag_patterns = self.rag_handler.get_supported_files() if self.rag_handler is not None else []
+        supported_patterns = []
+            
         image_filter = Gtk.FileFilter(
-            name="Images", patterns=["*.png", "*.jpg", "*.jpeg", "*.webp"]
+            name=_("Images"), patterns=image_patterns
         )
-        video_filter = Gtk.FileFilter(name="Video", patterns=["*.mp4"])
+        video_filter = Gtk.FileFilter(name="Video", patterns=video_patterns)
         file_filter = Gtk.FileFilter(
-            name="Supported Files", patterns=self.model.get_supported_files()
+            name=_("LLM Supported Files"), patterns=file_patterns
         )
         second_file_filter = None
         if (
@@ -1184,23 +1251,33 @@ class MainWindow(Gtk.ApplicationWindow):
             and self.controller.newelle_settings.rag_on_documents
         ):
             second_file_filter = Gtk.FileFilter(
-                name="RAG Supported files",
+                name=_("RAG Supported files"),
                 patterns=self.rag_handler.get_supported_files(),
             )
+            supported_patterns += rag_patterns
         default_filter = None
+        
         if second_file_filter is not None:
             filters.append(second_file_filter)
-            default_filter = video_filter
         if self.model.supports_video_vision():
             filters.append(video_filter)
-            default_filter = video_filter
+            supported_patterns += video_patterns
         if len(self.model.get_supported_files()) > 0:
             filters.append(file_filter)
-            default_filter = file_filter
+            supported_patterns += file_patterns
         if self.model.supports_vision():
+            supported_patterns += image_patterns
             filters.append(image_filter)
-            default_filter = image_filter
-
+        default_filter = Gtk.FileFilter(
+            name=_("Supported Files"),
+            patterns=supported_patterns
+        )
+        all_files_filter = Gtk.FileFilter(
+            name=_("All Files"),
+            patterns=["*"],
+        )
+        filters.append(default_filter)
+        filters.append(all_files_filter)
         dialog = Gtk.FileDialog(
             title=_("Attach file"),
             modal=True,
@@ -1841,7 +1918,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.secondary_model.set_history(
                 [], self.get_history(self.chats[int(button.get_name())]["chat"])
             )
-            print("Generating")
             name = self.secondary_model.generate_chat_name(
                 self.prompts["generate_name_prompt"]
             )
@@ -1933,7 +2009,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def update_button_text(self):
         """Update clear chat, regenerate message and continue buttons, add offers"""
-        for btn in self.message_suggestion_buttons_array:
+        for btn in self.message_suggestion_buttons_array + self.message_suggestion_buttons_array_placeholder:
             btn.set_visible(False)
         self.button_clear.set_visible(False)
         self.button_continue.set_visible(False)
@@ -1952,7 +2028,7 @@ class MainWindow(Gtk.ApplicationWindow):
             # Generate suggestions in another thread and then add them to the UI
             threading.Thread(target=self.generate_suggestions).start()
         else:
-            for btn in self.message_suggestion_buttons_array:
+            for btn in self.message_suggestion_buttons_array + self.message_suggestion_buttons_array_placeholder:
                 btn.set_visible(False)
             self.button_clear.set_visible(False)
             self.button_continue.set_visible(False)
@@ -2015,7 +2091,7 @@ class MainWindow(Gtk.ApplicationWindow):
         """
         self.send_button_start_spinner()
         text = button.get_child().get_label()
-        self.chat.append({"User": "User", "Message": " " + text})
+        self.chat.append({"User": "User", "Message": text})
         self.show_message(text, id_message=len(self.chat) - 1, is_user=True)
         threading.Thread(target=self.send_message).start()
 
@@ -2040,6 +2116,11 @@ class MainWindow(Gtk.ApplicationWindow):
                 btn = self.message_suggestion_buttons_array[i]
                 btn.get_child().set_label(message)
                 btn.set_visible(True)
+                # Placeholder buttons 
+                btn_placeholder = self.message_suggestion_buttons_array_placeholder[i]
+                btn_placeholder.get_child().set_label(message)
+                btn_placeholder.set_visible(True)
+
                 GLib.idle_add(self.scrolled_chat)
             i += 1
         self.chat_stop_button.set_visible(False)
@@ -2068,6 +2149,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 continue
             if self.controller.newelle_settings.remove_thinking:
                 msg["Message"] = remove_thinking_blocks(msg["Message"])
+            if msg["User"] == "File" or msg["User"] == "Folder":
+                msg["Message"] = f"```{msg['User'].lower()}\n{msg['Message'].strip()}\n```"
+                msg["User"] = "User"
             history.append(msg)
             count -= 1
         return history
@@ -2088,12 +2172,25 @@ class MainWindow(Gtk.ApplicationWindow):
         ):
             documents = extract_supported_files(
                 self.get_history(include_last_message=True),
-                self.rag_handler.get_supported_files(),
+                self.rag_handler.get_supported_files_reading(),
+                self.model.get_supported_files()
             )
             if len(documents) > 0:
-                r += self.rag_handler.query_document(
-                    self.chat[-1]["Message"], documents
-                )
+                existing_index = self.chat_documents_index.get(self.chat_id, None)
+                if existing_index is None:
+                    GLib.idle_add(self.add_reading_widget, documents)
+                    existing_index = self.rag_handler.build_index(documents)
+                    self.chat_documents_index[self.chat_id] = existing_index
+                else:
+                    GLib.idle_add(self.add_reading_widget,documents)
+                    existing_index.update_index(documents)
+                if existing_index.get_index_size() > self.controller.newelle_settings.rag_limit: 
+                    r += existing_index.query(
+                        self.chat[-1]["Message"]
+                    )
+                else:
+                    r += existing_index.get_all_contexts()
+                GLib.idle_add(self.remove_reading_widget)
         return r
 
     def update_memory(self, bot_response):
@@ -2105,6 +2202,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def send_message(self, manual=True):
         """Send a message in the chat and get bot answer, handle TTS etc"""
+        GLib.idle_add(self.hide_placeholder)
         if manual:
             self.auto_run_times = 0
         self.stream_number_variable += 1
@@ -2117,6 +2215,14 @@ class MainWindow(Gtk.ApplicationWindow):
         for prompt in self.controller.newelle_settings.bot_prompts:
             prompts.append(replace_variables(prompt))
 
+        # Start creating the message
+        if self.model.stream_enabled():
+            self.streamed_message = ""
+            self.curr_label = ""
+            self.streaming_label = None
+            self.last_update = time.time()
+            self.stream_thinking = False
+            GLib.idle_add(self.create_streaming_message_label)
         # Append memory
         if (
             self.memory_on
@@ -2139,7 +2245,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Let extensions preprocess the history
         old_history = copy.deepcopy(history)
         old_user_prompt = self.chat[-1]["Message"]
-
+        self.chat, prompts = self.controller.integrationsloader.preprocess_history(self.chat, prompts)
         self.chat, prompts = self.extensionloader.preprocess_history(self.chat, prompts)
         if len(self.chat) == 0:
             GLib.idle_add(self.remove_send_button_spinner)
@@ -2151,11 +2257,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.model.set_history(prompts, history)
         try:
             if self.model.stream_enabled():
-                self.streamed_message = ""
-                self.curr_label = ""
-                GLib.idle_add(self.create_streaming_message_label)
-                self.streaming_label = None
-                self.last_update = time.time()
                 message_label = self.model.send_message_stream(
                     self,
                     self.chat[-1]["Message"],
@@ -2182,6 +2283,7 @@ class MainWindow(Gtk.ApplicationWindow):
             GLib.timeout_add(250, remove_streaming_box)
             return
         if self.stream_number_variable == stream_number_variable:
+            history, message_label = self.controller.integrationsloader.postprocess_history(self.chat, message_label)
             history, message_label = self.extensionloader.postprocess_history(
                 self.chat, message_label
             )
@@ -2236,9 +2338,23 @@ class MainWindow(Gtk.ApplicationWindow):
                 if self.controller.newelle_settings.automatic_stt:
                     threading.Thread(target=restart_recording).start()
 
+    def add_reading_widget(self, documents):
+        d = [document.replace("file:", "") for document in documents if document.startswith("file:")]
+        documents = d
+        if self.model.stream_enabled():
+            self.reading = DocumentReaderWidget()
+            for document in documents:
+                self.reading.add_document(document)
+            self.streaming_box.append(self.reading)
+
+    def remove_reading_widget(self):
+        if hasattr(self, "reading"):
+            self.streaming_box.remove(self.reading)
+
     def create_streaming_message_label(self):
         """Create a label for message streaming"""
         # Create a scrolledwindow for the text view
+        self.streaming_message_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         scrolled_window = Gtk.ScrolledWindow(
             margin_top=10, margin_start=10, margin_bottom=10, margin_end=10
         )
@@ -2270,7 +2386,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 tag, text_buffer.get_start_iter(), text_buffer.get_end_iter()
             )
         # Create the message label
-        self.streaming_box = self.add_message("Assistant", scrolled_window)
+        self.streaming_message_box.append(scrolled_window)
+        self.streaming_box = self.add_message("Assistant", self.streaming_message_box)
         self.streaming_box.set_overflow(Gtk.Overflow.VISIBLE)
 
     def update_message(self, message, stream_number_variable):
@@ -2283,6 +2400,30 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.stream_number_variable != stream_number_variable:
             return
         self.streamed_message = message
+        if self.streamed_message.startswith("<think>") and not self.stream_thinking:
+            self.stream_thinking = True
+            text = self.streamed_message.split("</think>")
+            thinking = text[0].replace("<think>", "")
+            message = text[1] if len(text) > 1 else ""
+            self.streaming_thought = thinking
+            print("th:" + thinking)
+            print(self.streaming_label)
+            def idle():
+                self.thinking_box = ThinkingWidget() 
+                self.streaming_message_box.prepend(self.thinking_box)
+                self.thinking_box.start_thinking(thinking)
+            GLib.idle_add(idle)
+        elif self.stream_thinking:
+
+            t = time.time()
+            if t - self.last_update < 0.05:
+                return
+            self.last_update = t
+            text = self.streamed_message.split("</think>")
+            thinking = text[0].replace("<think>", "")
+            message = text[1] if len(text) > 1 else ""
+            added_thinking = message[len(self.streaming_thought) :]
+            self.thinking_box.append_thinking(added_thinking)
         if self.streaming_label is not None:
             # Find the differences between the messages
             added_message = message[len(self.curr_label) :]
@@ -2356,6 +2497,10 @@ class MainWindow(Gtk.ApplicationWindow):
                         ),
                     )
             self.check_streams["chat"] = False
+        if len(self.chat) == 0:
+            self.show_placeholder()
+        else:
+            self.hide_placeholder()
         GLib.idle_add(self.scrolled_chat)
         GLib.idle_add(self.update_button_text)
 
@@ -2433,30 +2578,58 @@ class MainWindow(Gtk.ApplicationWindow):
             for chunk in chunks:
                 if chunk.type == "codeblock":
                     code_language = chunk.lang
-                    if code_language in self.extensionloader.codeblocks and not is_user:
+                    # Join extensions and integrations codeblocks
+                    codeblocks = {**self.extensionloader.codeblocks, **self.controller.integrationsloader.codeblocks}
+                    if code_language in codeblocks:
                         value = chunk.text
-                        extension = self.extensionloader.codeblocks[code_language]
+                        extension = codeblocks[code_language]
+
                         try:
-                            widget = extension.get_gtk_widget(value, code_language)
-                            if widget is not None:
-                                box.append(widget)
+                            # Check if the extension widget is available
+                            if restore:
+                                widget = extension.restore_gtk_widget(value, code_language)
                             else:
+                                widget = extension.get_gtk_widget(value, code_language)
+                            if widget is not None:
+                                # Add the widget to the message
+                                box.append(widget)
+                            if widget is None or extension.provides_both_widget_and_anser(value, code_language):
+                                if widget is not None:
+                                    # If the answer is provided, the apply_async function 
+                                    # Should only do something on error\
+                                    # The widget must be edited by the extension
+                                    def apply_sync(code):    
+                                        if not code[0]:
+                                            self.add_message("Error", code[1])
+                                else:
+                                    # In case only the answer is provided, the apply_async function
+                                    # Also return a text expander with the code
+                                    text_expander = Gtk.Expander(
+                                        label=code_language,
+                                        css_classes=["toolbar", "osd"],
+                                        margin_top=10,
+                                        margin_start=10,
+                                        margin_bottom=10,
+                                        margin_end=10,
+                                    )
+                                    text_expander.set_expanded(False)
+                                    box.append(text_expander)
+                                    def apply_sync(code):
+                                        text_expander.set_child(
+                                            Gtk.Label(
+                                                wrap=True,
+                                                wrap_mode=Pango.WrapMode.WORD_CHAR,
+                                                label=chunk.text + "\n" + str(code[1]),
+                                                selectable=True,
+                                            )
+                                        ) 
+                                # Add message to history
                                 editable = False
                                 if id_message == -1:
                                     id_message = len(self.chat) - 1
                                 id_message += 1
                                 has_terminal_command = True
-                                text_expander = Gtk.Expander(
-                                    label=code_language,
-                                    css_classes=["toolbar", "osd"],
-                                    margin_top=10,
-                                    margin_start=10,
-                                    margin_bottom=10,
-                                    margin_end=10,
-                                )
-                                text_expander.set_expanded(False)
                                 reply_from_the_console = None
-
                                 if (
                                     self.chat[min(id_message, len(self.chat) - 1)][
                                         "User"
@@ -2466,8 +2639,9 @@ class MainWindow(Gtk.ApplicationWindow):
                                     reply_from_the_console = self.chat[
                                         min(id_message, len(self.chat) - 1)
                                     ]["Message"]
-
-                                def getresponse():
+                                
+                                # Get the response async
+                                def get_response(apply_sync):
                                     if not restore:
                                         response = extension.get_answer(
                                             value, code_language
@@ -2478,48 +2652,25 @@ class MainWindow(Gtk.ApplicationWindow):
                                             code = (False, "Error:")
                                     else:
                                         code = (True, reply_from_the_console)
-
-                                    # Apply the changes on the main thread
-                                    # Avoid crashes
-                                    def apply_sync():
-                                        text_expander.set_child(
-                                            Gtk.Label(
-                                                wrap=True,
-                                                wrap_mode=Pango.WrapMode.WORD_CHAR,
-                                                label=chunk.text + "\n" + str(code[1]),
-                                                selectable=True,
-                                            )
-                                        )
-
-                                        if not code[0]:
-                                            self.add_message("Error", text_expander)
-
                                     self.chat.append(
                                         {
                                             "User": "Console",
                                             "Message": " " + str(code[1]),
                                         }
                                     )
-                                    GLib.idle_add(apply_sync)
+                                    GLib.idle_add(apply_sync, code)
 
-                                box.append(text_expander)
-                                t = threading.Thread(target=getresponse)
+                                t = threading.Thread(target=get_response, args=(apply_sync,))
                                 t.start()
                                 running_threads.append(t)
                         except Exception as e:
                             print("Extension error " + extension.id + ": " + str(e))
                             box.append(CopyBox(chunk.text, code_language, parent=self))
                     elif code_language == "think":
+                        think = ThinkingWidget()
+                        think.set_thinking(chunk.text)
                         box.append(
-                            Gtk.Expander(
-                                label="think",
-                                child=Gtk.Label(label=chunk.text, wrap=True),
-                                css_classes=["toolbar", "osd"],
-                                margin_top=10,
-                                margin_start=10,
-                                margin_bottom=10,
-                                margin_end=10,
-                            )
+                            think
                         )
                     elif code_language == "image":
                         for i in chunk.text.split("\n"):
@@ -2636,7 +2787,10 @@ class MainWindow(Gtk.ApplicationWindow):
                                 value = "".join(
                                     filter(lambda x: x.isdigit() or x == ".", parts[1])
                                 )
-                                result[key] = float(value)
+                                try:
+                                    result[key] = float(value)
+                                except Exception as e:
+                                    result[key] = 0
                             else:
                                 box.append(
                                     CopyBox(chunk.text, code_language, parent=self)
@@ -2670,7 +2824,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     label.set_opacity(0)
                     overlay.set_child(label)
                     # Create the textview
-                    textview = MarkupTextView(None)
+                    textview = MarkupTextView()
                     textview.set_valign(Gtk.Align.START)
                     textview.set_hexpand(True)
                     overlay.add_overlay(textview)
@@ -2710,16 +2864,10 @@ class MainWindow(Gtk.ApplicationWindow):
                     except Exception:
                         box.append(CopyBox(chunk.text, "latex", parent=self))
                 elif chunk.type == "thinking":
+                    think = ThinkingWidget()
+                    think.set_thinking(chunk.text)
                     box.append(
-                        Gtk.Expander(
-                            label="think",
-                            child=Gtk.Label(label=chunk.text, wrap=True),
-                            css_classes=["toolbar", "osd"],
-                            margin_top=10,
-                            margin_start=10,
-                            margin_bottom=10,
-                            margin_end=10,
-                        )
+                        think
                     )
                 elif chunk.type == "text":
                     label = markwon_to_pango(chunk.text)
