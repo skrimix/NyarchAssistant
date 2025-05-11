@@ -65,6 +65,19 @@ gsettings set org.gnome.mutter center-new-windows true
 ```
 
 # Installation
+Nyarch Assistant can be installed on **any Linux distribution** supporting Flatpak. If you are not on Arch, it is suggested to disable Smart Prompts since they might give information specific for Arch Linux.
+
+**Normal Install**
+1. Download the latest Flatpak bundle from [Github Releases](https://github.com/NyarchLinux/NyarchAssistant/releases)
+2. Install it opening the file (if you have a software store supporting flatpak installed), or use `flatpak install nyarchassistant.flatpak`
+
+**One command Install**
+(Assumes to have flatpak with flathub)
+```bash
+cd /tmp
+wget https://github.com/nyarchlinux/nyarchassistant/releases/latest/download/nyarchassistant.flatpak
+flatpak install nyarchassistant.flatpak
+```
 
 ![builder](https://raw.githubusercontent.com/qwersyk/Assets/main/builder.svg#gh-light-mode-only)
 ![builder](https://raw.githubusercontent.com/qwersyk/Assets/main/builder-dark.svg#gh-dark-mode-only)
