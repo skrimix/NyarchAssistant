@@ -610,13 +610,18 @@ SETTINGS_GROUPS = {
         },
         "TTS": {
             "title": _("TTS"),
-            "settings": ["tts-on", "tts", "tts-voice"],
+            "settings": ["tts-on", "tts", "tts-voice", "translator", "translator-settings", "translator-on"],
             "description": _("Text to Speech settings"),
         },
         "STT": {
             "title": _("STT"),
             "settings": ["stt-engine", "stt-settings","automatic-stt", "stt-silence-detection-threshold", "stt-silence-detection-duration"],
             "description": _("Speech to Text settings"),
+        },
+        "avatar": {
+            "title": _("Avatar"),
+            "settings": ["avatar-on", "avatar-model", "avatars"],
+            "description": _("Avatar settings"),
         },
         "Embedding": {
             "title": _("Embedding"),
@@ -655,7 +660,7 @@ SETTINGS_GROUPS = {
         },
         "prompts": {
                 "title": _("Prompts"),
-                "settings": ["prompts-settings", "custom-extra-prompt", "custom-prompts"],
+                "settings": ["prompts-settings", "custom-extra-prompt", "custom-prompts", "smart-prompt", "smart-prompt-settings", "smart-prompt-on"],
                 "description": _("Prompts settings, custom extra prompt, custom prompts..."),
         }
 
