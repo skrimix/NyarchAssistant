@@ -9,7 +9,8 @@ class GoogleTranslatorHandler(TranslatorHandler):
         return find_module("googletranslate") is not None
 
     def install (self):
-        install_module("git+https://github.com/ultrafunkamsterdam/googletranslate", os.path.join(self.path, "pip"))
+        install_module("git+https://github.com/ultrafunkamsterdam/googletranslate", self.pip_path)
+        self.settings_update()
 
     def get_extra_settings(self) -> list:
         return [
