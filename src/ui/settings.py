@@ -394,6 +394,7 @@ class Settings(Adw.PreferencesWindow):
         document_folder.add_row(folder)
         
         self.rag_handler = self.get_object(AVAILABLE_RAGS, selected) 
+        self.rag_handler.set_handlers(self.handlers.llm, self.handlers.embedding)
         self.rag_index = self.create_extra_setting(self.rag_handler.get_index_row(), self.rag_handler, AVAILABLE_RAGS) 
         document_folder.add_row(self.rag_index)
         self.document_folder = document_folder
@@ -403,6 +404,7 @@ class Settings(Adw.PreferencesWindow):
     
     def update_rag_index(self):
         self.rag_handler = self.get_object(AVAILABLE_RAGS, self.settings.get_string("rag-model"))
+        self.rag_handler.set_handlers(self.handlers.llm, self.handlers.embedding)
         self.document_folder.remove(self.rag_index)
         self.rag_index = self.create_extra_setting(self.rag_handler.get_index_row(), self.rag_handler, AVAILABLE_RAGS)
         self.document_folder.add_row(self.rag_index)
