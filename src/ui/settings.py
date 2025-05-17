@@ -86,7 +86,7 @@ class Settings(Adw.PreferencesWindow):
         # Create row
         secondary_LLM_enabled = Gtk.Switch(valign=Gtk.Align.CENTER)
         self.settings.bind("secondary-llm-on", secondary_LLM_enabled, 'active', Gio.SettingsBindFlags.DEFAULT)
-        secondary_LLM = Adw.ExpanderRow(title=_('Secondary Language Model'), subtitle=_("Model used for secondary tasks, like offer, chat name and memory generation"))
+        secondary_LLM = Adw.ExpanderRow(title=_('Secondary Language Model'), subtitle=_("Model used for secondary tasks, like offers, chat name and memory generation"))
         secondary_LLM.add_action(secondary_LLM_enabled)
         # Add LLMs
         self.MemoryPage.add(self.SECONDARY_LLM)

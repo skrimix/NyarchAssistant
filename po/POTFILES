@@ -1,8 +1,13 @@
 src/__init__.py
 src/constants.py
 src/controller.py
+src/dataset.py
 src/extensions.py
 src/handlers/__init__.py
+src/handlers/avatar/__init__.py
+src/handlers/avatar/avatar.py
+src/handlers/avatar/live2d_handler.py
+src/handlers/avatar/livepng_handler.py
 src/handlers/embeddings/__init__.py
 src/handlers/embeddings/embedding.py
 src/handlers/embeddings/gemini_handler.py
@@ -23,6 +28,7 @@ src/handlers/llm/groq_handler.py
 src/handlers/llm/llm.py
 src/handlers/llm/mistral_handler.py
 src/handlers/llm/newelle_handler.py
+src/handlers/llm/nyarch_handler.py
 src/handlers/llm/ollama_handler.py
 src/handlers/llm/openai_handler.py
 src/handlers/llm/openrouter_handler.py
@@ -34,6 +40,8 @@ src/handlers/memory/user_summary_handler.py
 src/handlers/rag/__init__.py
 src/handlers/rag/llamaindex_handler.py
 src/handlers/rag/rag_handler.py
+src/handlers/smart_prompt/__init__.py
+src/handlers/smart_prompt/smart_prompt.py
 src/handlers/stt/__init__.py
 src/handlers/stt/custom_handler.py
 src/handlers/stt/googlesr_handler.py
@@ -45,9 +53,16 @@ src/handlers/stt/vosk_handler.py
 src/handlers/stt/whisper_handler.py
 src/handlers/stt/whispercpp_handler.py
 src/handlers/stt/witai_handler.py
+src/handlers/translator/__init__.py
+src/handlers/translator/customtr_handler.py
+src/handlers/translator/googletr_handler.py
+src/handlers/translator/libretranslate_handler.py
+src/handlers/translator/ligva_handler.py
+src/handlers/translator/translator.py
 src/handlers/tts/__init__.py
 src/handlers/tts/custom_handler.py
 src/handlers/tts/custom_openai_tts.py
+src/handlers/tts/edge_handler.py
 src/handlers/tts/elevenlabs_handler.py
 src/handlers/tts/espeak_handler.py
 src/handlers/tts/groq_tts_handler.py
@@ -55,6 +70,8 @@ src/handlers/tts/gtts_handler.py
 src/handlers/tts/kokoro_handler.py
 src/handlers/tts/openai_tts_handler.py
 src/handlers/tts/tts.py
+src/handlers/tts/vits_handler.py
+src/handlers/tts/voicevox_handler.py
 src/handlers/websearch/__init__.py
 src/handlers/websearch/duckduckgo_handler.py
 src/handlers/websearch/searxng.py
@@ -64,6 +81,8 @@ src/integrations/__init__.py
 src/integrations/websearch.py
 src/integrations/website_reader.py
 src/main.py
+src/smart_prompt.py
+src/translator.py
 src/ui/__init__.py
 src/ui/extension.py
 src/ui/mini_window.py
@@ -90,6 +109,7 @@ src/ui/widgets/websearch.py
 src/ui/widgets/website.py
 src/utility/__init__.py
 src/utility/audio_recorder.py
+src/utility/force_sync.py
 src/utility/media.py
 src/utility/message_chunk.py
 src/utility/pip.py

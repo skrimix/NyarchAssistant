@@ -22,7 +22,7 @@ class G4FHandler(LLMHandler):
            return False
            from g4f.version import utils       
            if utils.current_version != self.version:
-                print(f"Newelle requires g4f=={self.version}, found {utils.current_version}")
+                print(f"Nyarch Assistant requires g4f=={self.version}, found {utils.current_version}")
                 return False
            return True
         return False
