@@ -294,7 +294,7 @@ AVAILABLE_AVATARS = {
     "Live2D": {
         "key": "Live2D",
         "title": _("Live2D"),
-        "description": _("Cubism Live2D, usually used by vtubers"),
+        "description": _("Cubism Live2D, usually used by VTubers"),
         "class": Live2DHandler,
     },
     "LivePNG": {
@@ -309,7 +309,7 @@ AVAILABLE_TRANSLATORS = {
     "GoogleTranslator": {
         "key": "GoogleTranslator",
         "title": _("Google Translator"),
-        "description": _("Use google transate"),
+        "description": _("Use Google transate"),
         "class": GoogleTranslatorHandler,
     },
     "LibreTranslate": {
