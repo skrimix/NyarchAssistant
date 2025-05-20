@@ -1,7 +1,8 @@
-fd -e py >po/POTFILES
-xgettext -o po/nyarchassistant.pot $(fd -e py)
+fd -t f -e py src | xargs rg -l "_\(|N\(_" >po/POTFILES
+fd -t f '.*\.xml$|.*\.in$' data >>po/POTFILES
+xgettext -o po/newelle.pot $(cat po/POTFILES)
 cd po
 for file in $(fd -e po); do
-	msgmerge -U "$file" nyarchassistant.pot
+	msgmerge -U "$file" newelle.pot
 done
 rm -f *~

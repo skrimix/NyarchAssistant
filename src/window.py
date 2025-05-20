@@ -36,6 +36,7 @@ from .utility.strings import (
     remove_markdown,
     remove_thinking_blocks,
     simple_markdown_to_pango,
+    remove_emoji,
 )
 from .utility.replacehelper import replace_variables, ReplaceHelper
 from .utility.profile_settings import get_settings_dict, get_settings_dict_by_groups, restore_settings_from_dict, restore_settings_from_dict_by_groups
@@ -2322,6 +2323,7 @@ class MainWindow(Gtk.ApplicationWindow):
             message = re.sub(r"```.*?```", "", message_label, flags=re.DOTALL)
             message = re.sub(r'\*.*?\*', '', message)
             message = remove_markdown(message)
+            message = remove_emoji(message)
             # Remove text in *text*
             if not(not message.strip() or message.isspace() or all(char == '\n' for char in message)):
                 # Translate the message
