@@ -43,7 +43,7 @@ let
   ];
 in
   stdenv.mkDerivation rec {
-    pname = "newelle";
+    pname = "nyarchassistant";
     version = "0.9.6";
 
     format = "other";
@@ -83,9 +83,9 @@ in
      '';
 
     meta = with lib; {
-      homepage = "https://github.com/qwersyk/Newelle";
-      description = "Newelle - Your Ultimate Virtual Assistant ";
-      mainProgram = "newelle";
+      homepage = "https://github.com/NyarchLinux/NyarchAssistant";
+      description = "Nyarch Assistant - Your ultimate Waifu AI Assistant ";
+      mainProgram = "nyarchassistant";
       license = licenses.gpl3;
       platforms = platforms.unix;
     };
