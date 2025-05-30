@@ -231,6 +231,10 @@ class OpenAIHandler(LLMHandler):
                         full_message += "<think>"
                     is_reasoning = True
                     full_message += chunk.choices[0].delta.reasoning
+                    if len(full_message) - len(prev_message) > 1:
+                        args = (full_message.strip(), ) + tuple(extra_args)
+                        on_update(*args)
+                        prev_message = full_message
             return full_message.strip()
         except Exception as e:
             raise e

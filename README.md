@@ -30,7 +30,7 @@
 - 🌐 **Website Reading**: Ask any information about any website by writing #https://.. question
 - 👤 **Profile Manager**: Create settings profiles and switch between them on the go
 - 📁 **Builtin File Manager**: Manage your files with the help of AI
-- 📝 **Rich Formatting**: Support for Markdown and LaTeX 
+- 📝 **Rich Formatting**: Support for Markdown and LaTeX
 - ✏️ **Chat editing**: Edit or remove any message and manage your prompts easily
 
 ![screenshot](https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/3w.png#gh-light-mode-only)

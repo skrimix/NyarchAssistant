@@ -1027,6 +1027,17 @@ class MainWindow(Gtk.ApplicationWindow):
         self.refresh_profiles_box()
         self.update_settings()
 
+    def edit_profile(self, profile_name):
+        """Edit a profile
+
+        Args:
+            profile_name (): name of the profile to edit
+        """
+        dialog = ProfileDialog(self, self.profile_settings, profile_name=profile_name)
+        dialog.present()
+        self.refresh_profiles_box()
+        self.update_settings()
+
     def get_profiles_box(self):
         """Create and build the profile selection dialog"""
         box = Gtk.Box()
@@ -1066,9 +1077,11 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.profile_settings[profile]["picture"],
                 self.current_profile == profile,
                 allow_delete=profile != "Assistant" and profile != self.current_profile,
+                allow_edit=profile != "Assistant"
             )
             profiles.append(account_row)
             account_row.set_on_forget(self.delete_profile)
+            account_row.set_on_edit(self.edit_profile)
         # Separator
         separator = Gtk.Separator(
             sensitive=False, can_focus=False, can_target=False, focus_on_click=False
@@ -1129,7 +1142,6 @@ class MainWindow(Gtk.ApplicationWindow):
             return
         print(f"Switching profile to {profile}")
         groups = self.profile_settings[self.current_profile].get("settings_groups", [])
-        print(groups)
         old_settings = get_settings_dict_by_groups(self.settings, groups, SETTINGS_GROUPS, ["current-profile", "profiles"] )
         self.profile_settings = json.loads(self.settings.get_string("profiles"))
         self.profile_settings[self.current_profile]["settings"] = old_settings
@@ -1142,6 +1154,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.focus_input()
         self.update_settings()
 
+        self.refresh_profiles_box()
+
+    def reload_profiles(self):
+        """Reload the profiles"""
+        self.focus_input()
         self.refresh_profiles_box()
 
     # Voice Recording
@@ -2879,6 +2896,8 @@ class MainWindow(Gtk.ApplicationWindow):
                         think
                     )
                 elif chunk.type == "text":
+                    if chunk.text == ".":
+                        continue
                     label = markwon_to_pango(chunk.text)
                     box.append(
                         Gtk.Label(
@@ -3114,7 +3133,7 @@ class MainWindow(Gtk.ApplicationWindow):
         scroll.set_child(label)
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         content.append(
-            Adw.HeaderBar(css_classes=["flat"], show_start_title_buttons=False)
+            Adw.HeaderBar(css_classes=["flat"], show_start_title_buttons=True)
         )
         content.append(scroll)
         dialog.set_child(content)
