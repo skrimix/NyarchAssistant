@@ -21,6 +21,7 @@ from .utility.system import is_flatpak
 from .utility.pip import install_module
 from .utility.profile_settings import get_settings_dict_by_groups
 from .constants import AVAILABLE_INTEGRATIONS, AVAILABLE_WEBSEARCH, DIR_NAME, SCHEMA_ID, PROMPTS, AVAILABLE_STT, AVAILABLE_TTS, AVAILABLE_LLMS, AVAILABLE_RAGS, AVAILABLE_PROMPTS, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, SETTINGS_GROUPS
+from .constants import AVAILABLE_SMART_PROMPTS, AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS
 import threading
 import pickle
 import json
