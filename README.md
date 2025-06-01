@@ -1,45 +1,29 @@
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/qwersyk/Newelle/master/data/icons/hicolor/scalable/apps/io.github.qwersyk.Newelle.svg" alt="Newelle" width="192" height="192"/>
+  <img src="https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/data/icons/hicolor/scalable/apps/moe.nyarchlinux.assistant.svg" alt="nyarchassistant" width="192" height="192"/>
   <br>
-  Newelle - Your Ultimate Virtual Assistant
+  Nyarch Assistant - Your ultimate Waifu AI Assistant
 </h1>
 <p align="center">
-  <a href="https://flathub.org/apps/details/io.github.qwersyk.Newelle">
-      <picture>
-        <source srcset="https://dl.flathub.org/assets/badges/flathub-badge-i-en.svg" media="(prefers-color-scheme: light)">
-        <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/flathub-badge-dark.svg" media="(prefers-color-scheme: dark)">
-        <img width="200" alt="Download on Flathub" src="https://dl.flathub.org/assets/badges/flathub-badge-i-en.svg"/>
-      </picture>
-    </a>
-    <a href="https://github.com/topics/newelle-extension">
-      <picture>
-        <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/newelle-extension.svg" media="(prefers-color-scheme: light)">
-        <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/newelle-extension-dark.svg" media="(prefers-color-scheme: dark)">
-        <img width="200" alt="Download on Flathub" src="https://raw.githubusercontent.com/qwersyk/Assets/main/newelle-extension.svg"/>
-      </picture>
-    </a>
-    <a href="https://github.com/qwersyk/Newelle/wiki">
-      <picture>
-        <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/newelle-wiki.svg" media="(prefers-color-scheme: light)">
-        <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/newelle-wiki-dark.svg" media="(prefers-color-scheme: dark)">
-        <img width="200" alt="Wiki for Newelle" src="https://raw.githubusercontent.com/qwersyk/Assets/main/newelle-wiki.svg"/>
-      </picture>
-    </a>
-    <br>
+  <a href="https://github.com/topics/newelle-extension">
+    <img width="200" alt="Newelle Extensions" src="https://raw.githubusercontent.com/qwersyk/Assets/main/newelle-extension.svg"/>
+  </a>
+  <a href="https://github.com/qwersyk/Newelle/wiki">
+    <img width="200" alt="Wiki for Nyarch Assistant" src="https://raw.githubusercontent.com/qwersyk/Assets/main/newelle-wiki.svg"/>
+  </a>
+  <br>
 </p>
-<picture>
-  <source srcset="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/1w.png" media="(prefers-color-scheme: light)">
-  <source srcset="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/1b.png" media="(prefers-color-scheme: dark)">
-  <img src="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/1w.png" alt="screenshot">
-</picture>
+
+![screenshot](https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1w.png#gh-light-mode-only)
+![screenshot](https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1b.png#gh-dark-mode-only)
 
 # Features
-
+- <img src="https://nyarchlinux.moe/waifu.webp" width="20px"/> **Your waifu at your command**: Chat with your waifu using a Live2D or LivePNG model with expression and motion support
+- 👤 **Harem Support**: Switch between waifus on the go
 - 🎨 **Advanced Customization**: Tailor the application with a wide range of settings
 - 🚀 **Flexible Model Support**: Choose from mutliple AI models and providers to fit your specific needs
 - 💻 **Terminal Command Exection**: Execute commands suggested by the AI on the fly
 - 🧩 **Extensions**: Add your own functionalities and models to Newelle
-- 🗣 **Voice support**: Chat hands free with Newelle, supporting many Speech To Text and TTS models
+- 🗣 **Voice support**: Chat hands free with your waifu, supporting many Speech To Text and TTS models, with translation option
 - 🧠 **Long Term Memory**: Remember conversations from previous chats
 - 💼 **Chat with documents**: Chat with your own documents
 - 🔎 **Web Search**: Provide reliable answers using Web Search
@@ -49,27 +33,20 @@
 - 📝 **Rich Formatting**: Support for Markdown and LaTeX
 - ✏️ **Chat editing**: Edit or remove any message and manage your prompts easily
 
-<picture>
-  <source srcset="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/3w.png" media="(prefers-color-scheme: light)">
-  <source srcset="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/3b.png" media="(prefers-color-scheme: dark)">
-  <img src="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/3w.png" alt="screenshot">
-</picture>
+![screenshot](https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/3w.png#gh-light-mode-only)
+![screenshot](https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/3b.png#gh-dark-mode-only)
 
 # Extensions
 
-Newelle supports extensions to enhance its functionality. You can either
-use [existing extensions](https://github.com/topics/newelle-extension) or create your own to add new features to the
-application.
+Nyarch Assistant supports extensions to enhance its functionality. You can either use [existing extensions](https://github.com/topics/newelle-extension) or create your own to add new features to the application.
 
-<picture>
-  <source srcset="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/2w.png" media="(prefers-color-scheme: light)">
-  <source srcset="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/2b.png" media="(prefers-color-scheme: dark)">
-  <img src="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/2w.png" alt="screenshot">
-</picture>
+
+![screenshot](https://raw.githubusercontent.com/qwersyk/newelle/master/screenshots/2w.png#gh-light-mode-only)
+![screenshot](https://raw.githubusercontent.com/qwersyk/newelle/master/screenshots/2b.png#gh-dark-mode-only)
 
 ## Mini Window Mode
 
-A lightweight version of Newelle that can be triggered via keyboard shortcuts.
+A lightweight version of Nyarch Assistant that can be triggered via keyboard shortcuts.
 
 ### Configuration
 
@@ -77,7 +54,7 @@ A lightweight version of Newelle that can be triggered via keyboard shortcuts.
 To configure the mini window launch (example using Ctrl+Space), set the following command in your system keyboard settings:
 
 ```bash
-/bin/bash -c 'flatpak run --command=gsettings io.github.qwersyk.Newelle set io.github.qwersyk.Newelle startup-mode "mini" && flatpak run io.github.qwersyk.Newelle'
+/bin/bash -c 'flatpak run --command=gsettings moe.nyarchlinux.assistant set moe.nyarchlinux.assistant startup-mode "mini" && flatpak run moe.nyarchlinux.assistant'
 ```
 
 #### 2. Enable Window Centering
@@ -87,120 +64,42 @@ For GNOME desktop environment users, you may need to enable automatic window cen
 gsettings set org.gnome.mutter center-new-windows true
 ```
 
-<picture>
-  <source srcset="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/4w.png" media="(prefers-color-scheme: light)">
-  <source srcset="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/4b.png" media="(prefers-color-scheme: dark)">
-  <img src="https://raw.githubusercontent.com/qwersyk/Newelle/master/screenshots/4w.png" alt="screenshot">
-</picture>
-
 # Installation
+Nyarch Assistant can be installed on **any Linux distribution** supporting Flatpak. If you are not on Arch, it is suggested to disable Smart Prompts since they might give information specific for Arch Linux.
 
-<a href="https://github.com/qwersyk/Newelle/archive/refs/heads/master.zip">
-  <picture>
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/builder.svg" media="(prefers-color-scheme: light)">
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/builder-dark.svg" media="(prefers-color-scheme: dark)">
-    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/builder.svg" alt="builder">
-  </picture>
-</a>
-There are two ways of doing this
+**Normal Install**
+1. Download the latest Flatpak bundle from [Github Releases](https://github.com/NyarchLinux/NyarchAssistant/releases)
+2. Install it opening the file (if you have a software store supporting flatpak installed), or use `flatpak install nyarchassistant.flatpak`
 
-  * `install.sh`
-    1. Install the latest Gnome SDK
-    2. Run `sh install.sh`
-    3. Profit!
-  * Gnome Builder
-    1. Install GNOME Builder on your system.
-    2. Clone the Newelle repository from GitHub.
-    3. Open the project in GNOME Builder and compile it.
-    4. Once compiled, you can run the program from the compiled executable.
+**One command Install**
+(Assumes to have flatpak with flathub)
+```bash
+cd /tmp
+wget https://github.com/nyarchlinux/nyarchassistant/releases/latest/download/nyarchassistant.flatpak
+flatpak install nyarchassistant.flatpak
+```
 
-<a href="https://nixos.org">
-  <picture>
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/nix.svg" media="(prefers-color-scheme: light)">
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/nix-dark.svg" media="(prefers-color-scheme: dark)">
-    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/nix.svg" alt="builder">
-  </picture>
-</a>
+![builder](https://raw.githubusercontent.com/qwersyk/Assets/main/builder.svg#gh-light-mode-only)
+![builder](https://raw.githubusercontent.com/qwersyk/Assets/main/builder-dark.svg#gh-dark-mode-only)
 
-Run without installing:
+1. Install GNOME Builder on your system.
+2. Clone the nyarchassistant repository from GitHub.
+3. Open the project in GNOME Builder and compile it.
+4. Once compiled, you can run the program from the compiled executable.
 
-1. run `nix run github:qwersyk/Newelle`
+![beta](https://raw.githubusercontent.com/qwersyk/Assets/main/beta.svg#gh-light-mode-only)
+![beta](https://raw.githubusercontent.com/qwersyk/Assets/main/beta-dark.svg#gh-dark-mode-only)
 
-For development:
-
-2. Clone the Newelle repository from GitHub.
-3. In terminal change dir to repository
-4. run `nix run .` to start the program or run `nix develop .` to start a developer shell;
-
-<a href="https://github.com/qwersyk/Newelle/actions">
-  <picture>
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/beta.svg" media="(prefers-color-scheme: light)">
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/beta-dark.svg" media="(prefers-color-scheme: dark)">
-    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/beta.svg" alt="beta">
-  </picture>
-</a>
-
-> [!WARNING]
-> Localizations will not work on these builds! If you want your language to work, go to the
-> "Builder" section instead
-1. Download the latest release from the [Github Actions](https://github.com/qwersyk/Newelle/actions)
+1. Download the latest release from the [Github Actions](https://github.com/nyarchlinux/nyarchassistant/actions)
 2. Extract the downloaded package.
 3. Install a flatpak package.
 
-<a href="https://flathub.org/apps/io.github.qwersyk.Newelle">
-  <picture>
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/flathub.svg" media="(prefers-color-scheme: light)">
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/flathub-dark.svg" media="(prefers-color-scheme: dark)">
-    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/flathub.svg" alt="flathub">
-  </picture>
-</a>
-
-1. Ensure you have Flatpak installed on your system.
-2. Install Newelle by executing: `flatpak install flathub io.github.qwersyk.Newelle`
-
 # Permission
 
-> [!IMPORTANT]
-> The Flathub version of Newelle is restricted to the `.var/app/io.github.qwersyk.Newelle` folder and operates within a
-> Flatpak virtualized environment, limiting its capabilities.
-
 To extend functionality, you can either temporarily grant access with:
-```flatpak run --talk-name=org.freedesktop.Flatpak --filesystem=home io.github.qwersyk.Newelle```
+```flatpak run --talk-name=org.freedesktop.Flatpak --filesystem=home moe.nyarchlinux.assistant```
 or adjust settings permanently using Flatseal:
-
-- Open Flatseal, find "Newelle," enable "All user files" and "Session Bus," and add `org.freedesktop.Flatpak` to run
-  outside the sandbox.
+- Open Flatseal, find "nyarchassistant," enable "All user files" and "Session Bus," and add `org.freedesktop.Flatpak` to run outside the sandbox.
 
 > [!WARNING]
-> Be cautious when enabling these options. They reduce security by exposing your data and terminal. Avoid sharing
-> personal information, and understand that we can't guarantee the privacy of your chat data or prevent potential risks
-> from proprietary models.
-
-# Alternative Versions
-
-<a href="https://github.com/qwersyk/Newelle/tree/aarch64">
-  <picture>
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/aarch64.svg" media="(prefers-color-scheme: light)">
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/aarch64-dark.svg" media="(prefers-color-scheme: dark)">
-    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/aarch64.svg" alt="aarch64">
-  </picture>
-</a>
-
-
-**[Newelle Lite](https://github.com/qwersyk/Newelle/tree/aarch64)** - Your Virtual Assistant for aarch64
-
-<a href="https://github.com/NyarchLinux/NyarchAssistant">
-  <picture>
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/nyarch.svg" media="(prefers-color-scheme: light)">
-    <source srcset="https://raw.githubusercontent.com/qwersyk/Assets/main/nyarch-dark.svg" media="(prefers-color-scheme: dark)">
-    <img src="https://raw.githubusercontent.com/qwersyk/Assets/main/nyarch.svg" alt="nyarch">
-  </picture>
-</a>
-
-**[Nyarch Assistant](https://github.com/NyarchLinux/NyarchAssistant)** - Your ultimate Waifu AI Assistant
-
-<picture>
-  <source srcset="https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1w.png" media="(prefers-color-scheme: light)">
-  <source srcset="https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1b.png" media="(prefers-color-scheme: dark)">
-  <img src="https://raw.githubusercontent.com/NyarchLinux/NyarchAssistant/refs/heads/master/screenshots/1w.png" alt="screenshot">
-</picture>
+> Be cautious when enabling these options. They reduce security by exposing your data and terminal. Avoid sharing personal information, and understand that we can't guarantee the privacy of your chat data or prevent potential risks from proprietary models.

@@ -7,11 +7,12 @@ from .system import is_wayland
 class ReplaceHelper:
     DISTRO = None
     controller = None
+    AVATAR_HANDLER = None
 
     @staticmethod
     def set_controller(controller):
         ReplaceHelper.controller = controller
-
+ 
     @staticmethod
     def get_distribution() -> str:
         """
@@ -59,6 +60,30 @@ class ReplaceHelper:
         if ReplaceHelper.controller is None:
             return "User"
         return ReplaceHelper.controller.newelle_settings.username
+   
+    @staticmethod
+    def set_handler(handler):
+        ReplaceHelper.AVATAR_HANDLER = handler
+
+    @staticmethod
+    def get_expressions() -> str:
+        if ReplaceHelper.AVATAR_HANDLER is None:
+            return ""
+        result = ""
+        for expression in ReplaceHelper.AVATAR_HANDLER.get_expressions():
+            if expression is not None:
+                result += " (" + expression + ")"
+        return result
+
+    @staticmethod
+    def get_motions() -> str:
+        if ReplaceHelper.AVATAR_HANDLER is None:
+            return ""
+        result = ""
+        for motion in ReplaceHelper.AVATAR_HANDLER.get_motions():
+            if motion is not None:
+                result += " (" + motion + ")"
+        return result
 
 def replace_variables(text: str) -> str:
     """
@@ -87,4 +112,8 @@ def replace_variables(text: str) -> str:
         text = text.replace("{USER}", ReplaceHelper.get_user())
     if "{DISPLAY}" in text:
         text = text.replace("{DISPLAY}", ReplaceHelper.gisplay_server())
+    if "{EXPRESSIONS}" in text:
+        text = text.replace("{EXPRESSIONS}", ReplaceHelper.get_expressions())
+    if "{MOTIONS}" in text:
+        text = text.replace("{MOTIONS}", ReplaceHelper.get_motions())
     return text
