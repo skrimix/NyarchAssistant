@@ -294,7 +294,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.flap_button_avatar.connect('clicked', self.on_avatar_button_toggled)
         self.avatar_flap.connect("notify::reveal-flap", self.handle_second_block_change)
         self.headerbox.append(self.flap_button_avatar)
-        self.set_child(self.avatar_flap)
+        self.set_content(self.avatar_flap)
         self.avatar_flap.set_reveal_flap(False)
         # End Live2d
         self.status = True
@@ -513,7 +513,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.canvas_box.append(self.canvas_tab_bar)
         self.canvas_box.append(self.canvas_overview)
         self.add_explorer_tab(None, self.main_path)
-        self.set_content(self.main_program_block)
+        #self.set_content(self.main_program_block)
         bin = Adw.BreakpointBin(child=self.main, width_request=300, height_request=300)
         breakpoint = Adw.Breakpoint(condition=Adw.BreakpointCondition.new_length(Adw.BreakpointConditionLengthType.MAX_WIDTH, 900, Adw.LengthUnit.PX))
         breakpoint.add_setter(self.main, "collapsed", True)

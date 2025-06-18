@@ -53,6 +53,7 @@
       "modules/python3-newspaper3k.json",
       "modules/live2d.json",
       "modules/python3-scikit-learn.json",
+      "modules/python3-markdownify.json",
       "modules/smart-prompts.json",
       {
             "name" : "nyarchassistant",
