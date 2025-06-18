@@ -1,18 +1,28 @@
 import threading
 import subprocess
 import os
+import tempfile
+import socket
 from gi.repository import GLib, Gtk, GtkSource, Gio, Pango, Gdk
+
+from ...utility.message_chunk import get_message_chunks
 from ...utility.system import get_spawn_command 
 from ...utility.strings import add_S_to_sudo, quote_string
 from .terminal_dialog import TerminalDialog
 
 class CopyBox(Gtk.Box):
-    def __init__(self, txt, lang, parent = None,id_message=-1):
+    def __init__(self, txt, lang, parent = None,id_message=-1, id_codeblock=-1, allow_edit=False, color_scheme=None):
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=10, margin_top=10, margin_start=10,
                          margin_bottom=10, margin_end=10, css_classes=["osd", "toolbar", "code"])
+        if color_scheme is None and hasattr(parent, "controller"):
+            self.color_scheme = parent.controller.newelle_settings.editor_color_scheme
+        else:
+            self.color_scheme = color_scheme if color_scheme is not None else "Adwaita-dark"
         self.txt = txt
+        self.parent = parent
         longest_line = max(txt.splitlines(), key=len)
         self.id_message = id_message
+        self.id_codeblock = id_codeblock
         box = Gtk.Box(halign=Gtk.Align.END)
 
         icon = Gtk.Image.new_from_gicon(Gio.ThemedIcon(name="edit-copy-symbolic"))
@@ -21,8 +31,16 @@ class CopyBox(Gtk.Box):
         self.copy_button.set_child(icon)
         self.copy_button.connect("clicked", self.copy_button_clicked)
 
-        self.sourceview = GtkSource.View(width_request=10*len(longest_line))
+        self.sourceview = GtkSource.View(width_request=12*len(longest_line), monospace=True)
         self.scroll = Gtk.ScrolledWindow(propagate_natural_width=True, hscrollbar_policy=Gtk.PolicyType.AUTOMATIC, vscrollbar_policy=Gtk.PolicyType.NEVER, hexpand=True)
+
+        if allow_edit:
+            self.edit_button = Gtk.Button(halign=Gtk.Align.END, margin_end=10, css_classes=["flat"])
+            icon = Gtk.Image.new_from_gicon(Gio.ThemedIcon(name="document-edit-symbolic"))
+            icon.set_icon_size(Gtk.IconSize.INHERIT)
+            self.edit_button.set_child(icon)
+            self.edit_button.connect("clicked", self.edit_button_clicked)
+            box.append(self.edit_button)
 
         self.buffer = GtkSource.Buffer()
         self.buffer.set_text(txt, -1)
@@ -37,15 +55,16 @@ class CopyBox(Gtk.Box):
         for rep in replace_lang:
             if display_lang in rep[0]:
                 display_lang = rep[1]
-
+        self.lang = display_lang
         manager = GtkSource.LanguageManager.new()
         language = manager.get_language(display_lang)
         self.buffer.set_language(language)
 
         style_scheme_manager = GtkSource.StyleSchemeManager.new()
-        style_scheme = style_scheme_manager.get_scheme('Adwaita-dark')
+        style_scheme = style_scheme_manager.get_scheme(self.color_scheme)
         self.buffer.set_style_scheme(style_scheme)
 
+        runnable_languages = ["python", "python3", "html", "css", "js", "javascript"]
         self.sourceview.set_buffer(self.buffer)
         self.sourceview.set_vexpand(True)
         self.sourceview.set_vexpand(True)
@@ -70,12 +89,12 @@ class CopyBox(Gtk.Box):
         self.scroll.set_child(self.sourceview)
         self.append(self.scroll)
         main.append(box)
-        if lang == "python" or lang == "python3" and parent is not None:
+        if lang in runnable_languages and parent is not None:
             icon = Gtk.Image.new_from_gicon(Gio.ThemedIcon(name="media-playback-start-symbolic"))
             icon.set_icon_size(Gtk.IconSize.INHERIT)
             self.run_button = Gtk.Button(halign=Gtk.Align.END, margin_end=10, css_classes=["flat"])
             self.run_button.set_child(icon)
-            self.run_button.connect("clicked", self.run_code, "python")
+            self.run_button.connect("clicked", self.run_code, lang)
             self.parent = parent
 
             self.text_expander = Gtk.Expander(
@@ -194,8 +213,46 @@ class CopyBox(Gtk.Box):
     def run_code(self, widget, language, mutlithreading=False):
         if mutlithreading:
             if language.lower() in ["python", "python3", "py"]:
-                code = self.parent.execute_terminal_command(["python3 -c {}".format(quote_string(self.txt))])
+                code = self.parent.execute_terminal_command("python3 -c {}".format(quote_string(self.txt)))
+            elif language.lower() in ["html", "css", "js", "javascript"]:
+                codeblocks = self.get_codeblocks()
+                files = {
+                    "html": None,
+                    "css": None,
+                    "js": None
+                }
+                for codeblock in codeblocks:
+                    if codeblock.lang.lower() == "html":
+                        files["html"] = codeblock.text
+                    elif codeblock.lang.lower() == "css":
+                        files["css"] = codeblock.text
+                    elif codeblock.lang.lower() in ["js", "javascript"]:
+                        files["js"] = codeblock.text
 
+                # Create a random directory in the cache directory
+                cache_dir = self.parent.controller.cache_dir
+                temp_dir = tempfile.mkdtemp(dir=cache_dir)
+
+                # Write the code to temporary files in the random directory
+                with open(os.path.join(temp_dir, "index.html"), "w") as f:
+                    f.write(files["html"] or "")
+                with open(os.path.join(temp_dir, "style.css"), "w") as f:
+                    f.write(files["css"] or "")
+                with open(os.path.join(temp_dir, "script.js"), "w") as f:
+                    f.write(files["js"] or "")
+
+                # Start a simple HTTP server in the random directory on a random available port
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.bind(("", 0))
+                    _, port = s.getsockname()
+
+                command = "cd {} && python3 -m http.server {}".format(quote_string(temp_dir), port)
+                def open_browser_later():
+                    if self.parent is not None:
+                        self.parent.ui_controller.new_browser_tab("http://localhost:{}".format(port), new=False)
+                        return GLib.SOURCE_REMOVE
+                GLib.timeout_add(100, open_browser_later)
+                code = self.parent.execute_terminal_command(command)
             else:
                 code = "ae"
             self.set_output(code[1])
@@ -212,4 +269,13 @@ class CopyBox(Gtk.Box):
             widget.set_child(icon)
             widget.set_sensitive(False)
             threading.Thread(target=self.run_code, args=[widget,language, True]).start()
-             
+            
+    def edit_button_clicked(self, button):
+        if self.parent is not None:
+            self.parent.add_editor_tab_inline(self.id_message, self.id_codeblock, self.txt, self.lang)
+    
+    def get_codeblocks(self):
+        chunks = get_message_chunks(self.parent.chat[self.id_message]["Message"])
+        codeblocks = [chunk for chunk in chunks if chunk.type == "codeblock"]
+        return codeblocks
+

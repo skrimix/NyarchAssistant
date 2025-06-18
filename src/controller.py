@@ -1,9 +1,7 @@
-from dataclasses import dataclass
 from typing import Any
-from gi.repository import GLib, Gio
+from gi.repository import GLib, Gio, Adw
 import os
 import base64
-from gi.repository.GObject import new
 
 from .utility.media import get_image_base64, get_image_path
 
@@ -16,7 +14,6 @@ from .handlers.memory import MemoryHandler
 from .handlers.embeddings import EmbeddingHandler
 from .handlers.websearch import WebSearchHandler
 
-import time
 from .utility.system import is_flatpak
 from .utility.pip import install_module
 from .utility.profile_settings import get_settings_dict_by_groups
@@ -29,6 +26,7 @@ from .extensions import ExtensionLoader
 from .utility import override_prompts
 from enum import Enum 
 from .handlers import Handler
+from .ui_controller import UIController
 
 # Nyarch Specific 
 
@@ -41,7 +39,6 @@ if is_flatpak():
 else:
     BASE_PATH = "/usr/share/nyarchassistant/data"
 """
-Not yet used in the code.
 Manage Newelle Application, create handlers, check integrity, manage settings...
 """
 
@@ -58,9 +55,8 @@ class ReloadType(Enum):
         RAG: Reload RAG 
         MEMORIES: Reload MEMORIES 
         EMBEDDINGS: Reload EMBEDDINGS 
-        EXTENSIONS: Reload EXTENSIONS 
-        SECONDARY_LLM: Reload SECONDARY_LLM
-        RELOAD_CHAT: Reload RELOAD_CHAT
+EXTENSIONS: Reload EXTENSIONS 
+        SECONDARY_LLM: Reload SECONDARY_LLM RELOAD_CHAT: Reload RELOAD_CHAT
     """
     NONE = 0
     LLM = 1
@@ -103,6 +99,7 @@ class NewelleController:
     def __init__(self, python_path) -> None:
         self.settings = Gio.Settings.new(SCHEMA_ID)
         self.python_path = python_path
+        self.ui_controller : UIController | None = None
 
     def ui_init(self):
         """Init necessary variables for the UI and load models and handlers"""
@@ -134,9 +131,14 @@ class NewelleController:
         self.models_dir = os.path.join(self.config_dir, "models")
         self.extension_path = os.path.join(self.config_dir, "extensions")
         self.extensions_cache = os.path.join(self.cache_dir, "extensions_cache")
-        self.newelle_dir = os.path.join(self.config_dir, DIR_NAME)     
-        print(self.pip_path, self.models_dir)
+        self.newelle_dir = os.path.join(self.config_dir, DIR_NAME)
 
+    def set_ui_controller(self, ui_controller):
+        """Set add tab function"""
+        if ui_controller is not None:
+            self.ui_controller = ui_controller
+            self.extensionloader.set_ui_controller(ui_controller)
+            self.integrationsloader.set_ui_controller(ui_controller)
 
     def remove_cache_audio(self):
         """Remove audio cache"""
@@ -210,7 +212,9 @@ class NewelleController:
             self.extensionloader.load_extensions()
             self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS, AVAILABLE_WEBSEARCH,AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
             self.newelle_settings.load_prompts()
+            self.handlers.extensionloader = self.extensionloader
             self.handlers.select_handlers(self.newelle_settings)
+            self.extensionloader.set_ui_controller(self.ui_controller)
             print("Extensions reload")
         elif reload_type == ReloadType.LLM:
             self.handlers.select_handlers(self.newelle_settings)
@@ -224,7 +228,8 @@ class NewelleController:
             self.handlers.select_handlers(self.newelle_settings)
         elif reload_type == ReloadType.RAG:
             self.handlers.select_handlers(self.newelle_settings)
-            threading.Thread(target=self.handlers.rag.load).start()
+            if self.newelle_settings.rag_on_documents:
+                threading.Thread(target=self.handlers.rag.load).start()
         elif reload_type == ReloadType.EMBEDDINGS:
             self.handlers.select_handlers(self.newelle_settings)
             threading.Thread(target=self.handlers.embedding.load_model).start()
@@ -257,12 +262,14 @@ class NewelleController:
         self.extensionloader.load_extensions()
         self.extensionloader.add_handlers(AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_MEMORIES, AVAILABLE_EMBEDDINGS, AVAILABLE_RAGS, AVAILABLE_WEBSEARCH,AVAILABLE_AVATARS, AVAILABLE_TRANSLATORS, AVAILABLE_SMART_PROMPTS)
         self.extensionloader.add_prompts(PROMPTS, AVAILABLE_PROMPTS)
+        self.set_ui_controller(self.ui_controller)
 
     def load_integrations(self):
         """Load integrations"""
         self.integrationsloader = ExtensionLoader(self.extension_path, pip_path=self.pip_path, settings=self.settings)
         self.integrationsloader.load_integrations(AVAILABLE_INTEGRATIONS)
-        
+        self.set_ui_controller(self.ui_controller)
+
     def create_profile(self, profile_name, picture=None, settings={}, settings_groups=[]):
         """Create a profile
 
@@ -400,7 +407,12 @@ class NewelleSettings:
         self.websearch_on = self.settings.get_boolean("websearch-on")
         self.websearch_model = self.settings.get_string("websearch-model")
         self.websearch_settings = self.settings.get_string("websearch-settings")
-
+        
+        self.external_browser = settings.get_boolean("external-browser")
+        self.initial_browser_page = settings.get_string("initial-browser-page")
+        self.browser_search_string = settings.get_string("browser-search-string")
+        self.browser_session_persist = settings.get_boolean("browser-session-persist")
+        self.editor_color_scheme = settings.get_string("editor-color-scheme")
         self.load_prompts()
         # Nyarch Settings
         self.avatar_enabled = settings.get_boolean("avatar-on")
@@ -461,7 +473,7 @@ class NewelleSettings:
         if self.rag_on != new_settings.rag_on or self.rag_model != new_settings.rag_model or self.rag_settings != new_settings.rag_settings:
             reloads.append(ReloadType.RAG)
         if self.extensions_settings != new_settings.extensions_settings:
-            reloads.append(ReloadType.EXTENSIONS)
+            reloads += [ReloadType.EXTENSIONS, ReloadType.LLM, ReloadType.SECONDARY_LLM, ReloadType.EMBEDDINGS, ReloadType.EMBEDDINGS, ReloadType.MEMORIES, ReloadType.RAG, ReloadType.WEBSEARCH]
         if self.username != new_settings.username:
             reloads.append(ReloadType.RELOAD_CHAT)
         if self.reverse_order != new_settings.reverse_order:
@@ -540,6 +552,9 @@ class HandlersManager:
             newelle_settings.translator = list(AVAILABLE_TRANSLATORS.keys())[0]
         if newelle_settings.smart_prompt not in AVAILABLE_SMART_PROMPTS:
             newelle_settings.smart_prompt = list(AVAILABLE_SMART_PROMPTS.keys())[0]
+    
+    def set_ui_controller(self, ui_controller):
+        self.ui_controller = ui_controller
     
     def select_handlers(self, newelle_settings: NewelleSettings):
         """Assign the selected handlers

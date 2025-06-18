@@ -37,6 +37,7 @@ nyarchassistant_sources = [
   'window.py',
   'extensions.py',
   'controller.py',
+  'ui_controller.py',
   'dataset.py',
 ]
 
@@ -56,6 +57,7 @@ ui_sources = [
   'ui/screenrecorder.py',
   'ui/shortcuts.py',
   'ui/mini_window.py',
+  'ui/explorer.py',
 ]
 
 widgets_sources = [
@@ -74,6 +76,8 @@ widgets_sources = [
   'ui/widgets/thinking.py',
   'ui/widgets/documents_reader.py',
   'ui/widgets/tipscarousel.py',
+  'ui/widgets/browser.py',
+  'ui/widgets/code_editor.py',
 ]
 
 handler_sources = [
@@ -173,6 +177,7 @@ utility_sources = [
   'utility/profile_settings.py',
   'utility/audio_recorder.py',
   'utility/message_chunk.py',
+  'utility/website_scraper.py',
   'utility/force_sync.py',
 ]
 
