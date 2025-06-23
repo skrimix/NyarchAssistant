@@ -248,6 +248,8 @@ class Live2DHandler(AvatarHandler):
                     r.append(motion["name"])
                 else:
                     f = motion["file"]
+                    if f is None:
+                        continue
                     r.append(f.split("/")[-1].split(".")[0])
         if allow_webview:
             self.set_setting(self.get_model() + " motions", r)
