@@ -1,4 +1,5 @@
-from .handlers.llm import ClaudeHandler, DeepseekHandler, GPT4AllHandler, GroqHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler, NewelleAPIHandler
+from copy import deepcopy
+from .handlers.llm import ClaudeHandler, DeepseekHandler, GPT4AllHandler, GroqHandler, OllamaHandler, OpenAIHandler, CustomLLMHandler, GPT3AnyHandler, GeminiHandler, MistralHandler, OpenRouterHandler, NewelleAPIHandler, G4FHandler
 from .handlers.tts import ElevenLabs, gTTSHandler, EspeakHandler, CustomTTSHandler, KokoroTTSHandler, CustomOpenAITTSHandler, OpenAITTSHandler, GroqTTSHandler
 from .handlers.stt import GroqSRHandler, OpenAISRHandler, SphinxHandler, GoogleSRHandler, WhisperCPPHandler, WitAIHandler, VoskHandler, CustomSRHandler
 from .handlers.embeddings import WordLlamaHandler, OpenAIEmbeddingHandler, GeminiEmbeddingHanlder, OllamaEmbeddingHandler
@@ -28,12 +29,13 @@ AVAILABLE_LLMS = {
         "description": "Nyarch demo API just to try out Nyarch Assistant, limited to 10 requests",
         "class": NyarchApiHandler,
     },
-    "GPT3Any": {
-        "key": "GPT3Any",
-        "title": _("Any free Provider"),
-        "description": "Automatically chooses a free provider using a GPT3.5-Turbo or better model",
-        "class": GPT3AnyHandler,
-        "secondary": True
+    "g4f": {
+        "key": "g4f",
+        "title": _("GPT4Free"),
+        "description": "Python library that automatically searches for available free endpoints to use",
+        "website": "https://github.com/gpt4free/g4f.dev/blob/main/docs%2Fproviders-and-models.md",
+        "class": G4FHandler,
+        "secondary": True,
     },
    "local": {
         "key": "local",
@@ -596,6 +598,46 @@ AVAILABLE_PROMPTS = [
         "default": False
     }, 
 ]
+
+# Available handlers without extensions
+DEFAULT_AVAILABLE_LLM = AVAILABLE_LLMS.copy()
+DEFAULT_AVAILABLE_TTS = AVAILABLE_TTS.copy()
+DEFAULT_AVAILABLE_STT = AVAILABLE_STT.copy()
+DEFAULT_AVAILABLE_EMBEDDING = AVAILABLE_EMBEDDINGS.copy()
+DEFAULT_AVAILABLE_MEMORIES = AVAILABLE_MEMORIES.copy()
+DEFAULT_AVAILABLE_RAG = AVAILABLE_RAGS.copy()
+DEFAULT_AVAILABLE_WEBSEARCH = AVAILABLE_WEBSEARCH.copy()
+DEFAULT_AVAILABLE_PROMPTS = AVAILABLE_PROMPTS.copy()
+DEFAULT_AVAILABLE_AVATARS = AVAILABLE_AVATARS.copy()
+DEFAULT_AVAILABLE_TRANSLATORS = AVAILABLE_TRANSLATORS.copy()
+DEFAULT_AVAILABLE_SMART_PROMPTS = AVAILABLE_SMART_PROMPTS.copy()
+
+def restore_handlers():
+    global AVAILABLE_LLMS, AVAILABLE_TTS, AVAILABLE_STT, AVAILABLE_EMBEDDINGS, AVAILABLE_MEMORIES, AVAILABLE_RAGS, AVAILABLE_WEBSEARCH, AVAILABLE_PROMPTS
+    AVAILABLE_PROMPTS.clear()
+    AVAILABLE_LLMS.clear()
+    AVAILABLE_TTS.clear()
+    AVAILABLE_STT.clear()
+    AVAILABLE_EMBEDDINGS.clear()
+    AVAILABLE_MEMORIES.clear()
+    AVAILABLE_RAGS.clear()
+    AVAILABLE_WEBSEARCH.clear()
+    AVAILABLE_PROMPTS += deepcopy(DEFAULT_AVAILABLE_PROMPTS)
+    AVAILABLE_LLMS.update(deepcopy(DEFAULT_AVAILABLE_LLM))
+    AVAILABLE_TTS.update(deepcopy(DEFAULT_AVAILABLE_TTS))
+    AVAILABLE_STT.update(deepcopy(DEFAULT_AVAILABLE_STT))
+    AVAILABLE_EMBEDDINGS.update(deepcopy(DEFAULT_AVAILABLE_EMBEDDING))
+    AVAILABLE_MEMORIES.update(deepcopy(DEFAULT_AVAILABLE_MEMORIES))
+    AVAILABLE_RAGS.update(deepcopy(DEFAULT_AVAILABLE_RAG))
+    AVAILABLE_WEBSEARCH.update(deepcopy(DEFAULT_AVAILABLE_WEBSEARCH))
+
+    AVAILABLE_AVATARS.clear()
+    AVAILABLE_TRANSLATORS.clear()
+    AVAILABLE_SMART_PROMPTS.clear()
+    AVAILABLE_AVATARS.update(deepcopy(DEFAULT_AVAILABLE_AVATARS))
+    AVAILABLE_TRANSLATORS.update(deepcopy(DEFAULT_AVAILABLE_TRANSLATORS))
+    AVAILABLE_SMART_PROMPTS.update(deepcopy(DEFAULT_AVAILABLE_SMART_PROMPTS))
+
 
 SETTINGS_GROUPS = {
         "LLM": {
