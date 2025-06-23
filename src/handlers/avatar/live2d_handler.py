@@ -170,16 +170,19 @@ class Live2DHandler(AvatarHandler):
         self._wait_js.set()
 
     def get_expressions_raw(self, allow_webview=True): 
-        if len(self._expressions_raw) > 0:
-            return self._expressions_raw
-        if self.webview is None or not allow_webview:
-            m = self.get_setting(self.get_model() + " expressions", False)
-            return m if m is not None else []
-        self._expressions_raw = []
-        script = "get_expressions_json()"
-        self.webview.evaluate_javascript(script, len(script), callback=self.wait_emotions)
-        self._wait_js.wait(3)   
-        self.set_setting(self.get_model() + " expressions", self._expressions_raw)
+        try:
+            if len(self._expressions_raw) > 0:
+                return self._expressions_raw
+            if self.webview is None or not allow_webview:
+                m = self.get_setting(self.get_model() + " expressions", False)
+                return m if m is not None else []
+            self._expressions_raw = []
+            script = "get_expressions_json()"
+            self.webview.evaluate_javascript(script, len(script), callback=self.wait_emotions)
+            self._wait_js.wait(3)   
+            self.set_setting(self.get_model() + " expressions", self._expressions_raw)
+        except Exception as e:
+            return []
         return self._expressions_raw 
 
     def convert_motion(self, motion: str):
