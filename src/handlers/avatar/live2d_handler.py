@@ -208,6 +208,8 @@ class Live2DHandler(AvatarHandler):
     def get_expressions(self):
         r = []
         for expression in self.get_expressions_raw():
+            if expression is None:
+                return
             name = self.get_setting("Expression " + expression, False)
             if name is not None:
                 r.append(name)
