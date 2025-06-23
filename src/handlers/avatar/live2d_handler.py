@@ -205,11 +205,11 @@ class Live2DHandler(AvatarHandler):
                     return expression
         return None
 
-    def get_expressions(self):
+    def get_expressions(self) -> list[str]:
         r = []
         for expression in self.get_expressions_raw():
             if expression is None:
-                return
+                continue
             name = self.get_setting("Expression " + expression, False)
             if name is not None:
                 r.append(name)
@@ -224,7 +224,8 @@ class Live2DHandler(AvatarHandler):
             if name is not None:
                 r.append(name)
             else:
-                r.append(motion)
+                if motion is str:
+                    r.append(motion)
         return r
 
     def get_motions_groups(self):
