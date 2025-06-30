@@ -29,6 +29,8 @@ from .ui.widgets import File, CopyBox, BarChartBox, MarkupTextView, DocumentRead
 from .ui import apply_css_to_widget, load_image_with_callback
 from .ui.explorer import ExplorerPanel
 from .ui.widgets import MultilineEntry, ProfileRow, DisplayLatex, InlineLatex, ThinkingWidget
+from .ui.stdout_monitor import StdoutMonitorDialog
+from .utility.stdout_capture import StdoutMonitor
 from .constants import AVAILABLE_LLMS, SCHEMA_ID, SETTINGS_GROUPS
 
 from .utility.system import get_spawn_command, open_website
@@ -43,7 +45,7 @@ from .utility.strings import (
     simple_markdown_to_pango,
     remove_emoji,
 )
-from .utility.replacehelper import replace_variables, ReplaceHelper
+from .utility.replacehelper import PromptFormatter, replace_variables, ReplaceHelper, replace_variables_dict
 from .utility.profile_settings import get_settings_dict, get_settings_dict_by_groups, restore_settings_from_dict, restore_settings_from_dict_by_groups
 from .utility.audio_recorder import AudioRecorder
 from .utility.media import extract_supported_files
@@ -83,6 +85,9 @@ class MainWindow(Adw.ApplicationWindow):
         self.check_streams = {"folder": False, "chat": False}
         # if it is recording
         self.recording = False
+        # Stdout monitoring - Initialize and start from program start
+        self.stdout_monitor_dialog = None
+        self._init_stdout_monitoring()
         # Init controller
         self.controller = NewelleController(sys.path)
         self.controller.ui_init()
@@ -458,6 +463,15 @@ class MainWindow(Adw.ApplicationWindow):
         GLib.timeout_add(10, build_model_popup)
         self.first_load = False
         GLib.idle_add(self.load_avatar)
+        
+        # Connect cleanup on window destroy
+        self.connect("destroy", self._cleanup_on_destroy)
+
+    def _cleanup_on_destroy(self, window):
+        """Clean up resources when window is destroyed"""
+        # Stop stdout monitoring
+        if self.stdout_monitor_dialog:
+            self.stdout_monitor_dialog.stop_monitoring_external()
 
     def build_canvas(self):
 
@@ -615,11 +629,12 @@ class MainWindow(Adw.ApplicationWindow):
             {"title": _("Check out our Extensions!"), "subtitle": _("We have a lot of extensions for different things. Check it out!"), "on_click": lambda: self.app.extension_action()},
             {"title": _("Chat with documents!"), "subtitle": _("Add your documents to your documents folder and chat using the information contained in them!"), "on_click": lambda : self.app.settings_action_paged("Memory")},
             {"title": _("Surf the web!"), "subtitle": _("Enable web search to allow the LLM to surf the web and provide up to date answers"), "on_click": lambda : self.app.settings_action_paged("Memory")},
-            {"title": _("Mini Window"), "subtitle": _("Ask questions on the fly using the mini window mode"), "on_click": lambda : open_website("https://github.com/NyarchLinux/NyarchAssistant/?tab=readme-ov-file#mini-window-mode")},
-            {"title": _("Text to Speech"), "subtitle": _("Nyarch Assistant supports text-to-speech! Enable it in the settings"), "on_click": lambda : self.app.settings_action_paged("avatar")},
-            {"title": _("Keyboard Shortcuts"), "subtitle": _("Control Nyarch Assistant using Keyboard Shortcuts"), "on_click": lambda : self.app.on_shortcuts_action()},
-            {"title": _("Prompt Control"), "subtitle": _("Nyarch Assistant gives you 100% prompt control. Tune your prompts for your use."), "on_click": lambda : self.app.settings_action_paged("Prompts")},
-            {"title": _("Thread Editing"), "subtitle": _("Check the programs and processes you run from Nyarch Assistant"), "on_click": lambda : self.app.thread_editing_action()},
+            {"title": _("Mini Window"), "subtitle": _("Ask questions on the fly using the mini window mode"), "on_click": lambda : open_website("https://github.com/qwersyk/Newelle/?tab=readme-ov-file#mini-window-mode")},
+            {"title": _("Text to Speech"), "subtitle": _("Newelle supports text-to-speech! Enable it in the settings"), "on_click": lambda : self.app.settings_action_paged("General")},
+            {"title": _("Keyboard Shortcuts"), "subtitle": _("Control Newelle using Keyboard Shortcuts"), "on_click": lambda : self.app.on_shortcuts_action()},
+            {"title": _("Prompt Control"), "subtitle": _("Newelle gives you 100% prompt control. Tune your prompts for your use."), "on_click": lambda : self.app.settings_action_paged("Prompts")},
+            {"title": _("Thread Editing"), "subtitle": _("Check the programs and processes you run from Newelle"), "on_click": lambda : self.app.thread_editing_action()},
+            {"title": _("Programmable Prompts"), "subtitle": _("You can add dynamic prompts to Newelle, with conditions and probabilities"), "on_click": lambda : open_website("https://github.com/qwersyk/Newelle/wiki/Prompt-variables")},
             {"title": _("Use any avatar model"), "subtitle": _("Use any Live2D or LivePNG model"), "on_click": lambda : self.app.settings_action_paged("avatar")},
         ]
         self.empty_chat_placeholder = Gtk.Box(hexpand=True, vexpand=True, orientation=Gtk.Orientation.VERTICAL)
@@ -1779,7 +1794,7 @@ class MainWindow(Adw.ApplicationWindow):
             self.send_button_start_spinner()
         elif self.last_error_box is not None:
             self.remove_error(True)
-            self.show_chat()
+            #self.show_chat()
             threading.Thread(target=self.send_message).start()
             self.send_button_start_spinner()
         else:
@@ -1798,7 +1813,10 @@ class MainWindow(Adw.ApplicationWindow):
         if not idle:
             GLib.idle_add(self.remove_error, True)
         if self.last_error_box is not None:
-            self.chat_list_block.remove(self.last_error_box)
+            error_row = self.chat_list_block.get_last_child()
+            if error_row is None:
+                return
+            self.chat_list_block.remove(error_row)
             self.last_error_box = None
 
     def update_history(self):
@@ -2165,7 +2183,7 @@ class MainWindow(Adw.ApplicationWindow):
         GLib.idle_add(self.scrolled_chat)
 
     def get_history(
-        self, chat=None, include_last_message=False
+        self, chat=None, include_last_message=False, copy_chat=True
     ) -> list[dict[str, str]]:
         """Format the history excluding none messages and picking the right context size
 
@@ -2177,6 +2195,8 @@ class MainWindow(Adw.ApplicationWindow):
         """
         if chat is None:
             chat = self.chat
+        if copy_chat:
+            chat = copy.deepcopy(chat)
         history = []
         count = self.controller.newelle_settings.memory
         msgs = chat[:-1] if not include_last_message else chat
@@ -2238,6 +2258,37 @@ class MainWindow(Adw.ApplicationWindow):
                 args=(bot_response, self.chat),
             ).start()
 
+    def get_variable(self, name:str):
+        if name == "tts_on":
+            return self.tts_enabled
+        elif name == "virtualization_on":
+            return self.virtualization
+        elif name == "auto_run":
+            return self.controller.newelle_settings.auto_run
+        elif name == "websearch_on":
+            return self.controller.newelle_settings.websearch_on
+        elif name == "rag_on":
+            return self.rag_on_documents
+        elif name == "local_folder":
+            return self.rag_on
+        elif name == "automatic_stt":
+            return self.controller.newelle_settings.automatic_stt
+        elif name == "profile_name":
+            return self.controller.newelle_settings.current_profile
+        elif name == "external_browser":
+            return self.controller.newelle_settings.external_browser
+        elif name == "history":
+            return "\n".join([f"{msg['User']}: {msg['Message']}" for msg in self.get_history()])
+        elif name == "message":
+            return self.chat[-1]["Message"]
+        else:
+            rep = replace_variables_dict()
+            var = "{" + name.upper() + "}"
+            if var in rep:
+                return rep[var]
+            else:
+                return None
+
     def send_message(self, manual=True):
         """Send a message in the chat and get bot answer, handle TTS etc"""
         GLib.idle_add(self.hide_placeholder)
@@ -2250,8 +2301,9 @@ class MainWindow(Adw.ApplicationWindow):
 
         # Append extensions prompts
         prompts = []
+        formatter = PromptFormatter(replace_variables_dict(), self.get_variable)
         for prompt in self.controller.newelle_settings.bot_prompts:
-            prompts.append(replace_variables(prompt))
+            prompts.append(formatter.format(prompt))
 
         # Start creating the message
         if self.model.stream_enabled():
@@ -2507,7 +2559,7 @@ class MainWindow(Adw.ApplicationWindow):
             try:
                 if not animate:
                     self.chat_stack.set_transition_duration(0)
-                self.old_chat_list_block = self.chat_list_block
+                old_chat_list_block = self.chat_list_block
                 self.chat_list_block = Gtk.ListBox(
                     css_classes=["separators", "background", "view"]
                 )
@@ -2515,7 +2567,7 @@ class MainWindow(Adw.ApplicationWindow):
 
                 self.chat_stack.add_child(self.chat_list_block)
                 self.chat_stack.set_visible_child(self.chat_list_block)
-                GLib.idle_add(self.chat_stack.remove,self.old_chat_list_block)
+                GLib.idle_add(self.chat_stack.remove,old_chat_list_block)
                 GLib.idle_add(self.chat_stack.set_transition_duration, 300)
             except Exception as e:
                 self.notification_block.add_toast(Adw.Toast(title=str(e)))
@@ -3169,6 +3221,9 @@ class MainWindow(Adw.ApplicationWindow):
             wrap_mode=Pango.WrapMode.WORD,
             selectable=True,
             halign=Gtk.Align.START,
+            hexpand=True,
+            vexpand=True,
+            width_request=400
         )
         scroll = Gtk.ScrolledWindow(propagate_natural_width=True, height_request=600)
         scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -3734,15 +3789,60 @@ class MainWindow(Adw.ApplicationWindow):
             name = self.secondary_model.generate_chat_name(
                 self.prompts["generate_name_prompt"]
             )
-            name = remove_thinking_blocks(name)
             if name is None:
+                button.set_icon_name("warning-outline-symbolic")
+                button.can_target = True
+                button.remove_css_class("suggested-action")
+                button.add_css_class("error")
+                GLib.timeout_add(2000, self.update_history)
+            else:
+                name = remove_thinking_blocks(name)
+                if name is None:
+                    self.update_history()
+                    return
+                name = remove_markdown(name)
+                if name != "Chat has been stopped":
+                    self.chats[int(button.get_name())]["name"] = name
                 self.update_history()
-                return
-            name = remove_markdown(name)
-            if name != "Chat has been stopped":
-                self.chats[int(button.get_name())]["name"] = name
-            self.update_history()
         else:
             threading.Thread(
                 target=self.generate_chat_name, args=[button, True]
             ).start()
+
+    def _init_stdout_monitoring(self):
+        """Initialize stdout monitoring from program start""" 
+        # Create the dialog but don't show it yet
+        self.stdout_monitor_dialog = StdoutMonitorDialog(self) 
+        # Start monitoring immediately with capturing enabled by default
+        # We need to initialize the monitor without showing the dialog
+        self.stdout_monitor_dialog.stdout_monitor = StdoutMonitor(self.stdout_monitor_dialog._on_stdout_received)
+        self.stdout_monitor_dialog.stdout_monitor.start_monitoring()
+        
+    def show_stdout_monitor_dialog(self, parent=None):
+        """Create and show a dialog to monitor stdout in real-time with terminal interface"""
+        if parent is None:
+            parent = self
+        if self.stdout_monitor_dialog is None:
+            self._init_stdout_monitoring()
+        self.stdout_monitor_dialog.parent_window = parent
+        # Show the dialog and populate it with existing captured data
+        self.stdout_monitor_dialog.show_window()
+        
+        # If monitoring was already active, update the dialog's UI state
+        if (self.stdout_monitor_dialog.stdout_monitor and 
+            self.stdout_monitor_dialog.stdout_monitor.is_active()):
+            # Set the toggle button to active state
+            if self.stdout_monitor_dialog.stdout_toggle_button:
+                self.stdout_monitor_dialog.stdout_toggle_button.set_active(True)
+                # Update status labels
+                if self.stdout_monitor_dialog.stdout_status_label:
+                    self.stdout_monitor_dialog.stdout_status_label.set_label(_("Monitoring: Active"))
+                # Update button appearance
+                self.stdout_monitor_dialog.stdout_toggle_button.set_icon_name("media-playback-stop-symbolic")
+                self.stdout_monitor_dialog.stdout_toggle_button.remove_css_class("suggested-action")
+                self.stdout_monitor_dialog.stdout_toggle_button.add_css_class("destructive-action")
+                
+            # Start the display update timer for the dialog
+            GLib.timeout_add(100, self.stdout_monitor_dialog._update_stdout_display)
+
+

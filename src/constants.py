@@ -109,19 +109,19 @@ AVAILABLE_LLMS = {
 }
 
 AVAILABLE_STT = {
-    "sphinx": {
-        "key": "sphinx",
-        "title": _("CMU Sphinx"),
-        "description": _("Works offline. Only English supported"),
-        "website": "https://cmusphinx.github.io/wiki/",
-        "class": SphinxHandler,
-    },
     "whispercpp": {
         "key": "whispercpp",
         "title": _("Whisper C++"),
         "description": _("Works offline. Optimized Whisper impelementation written in C++"),
         "website": "https://github.com/ggerganov/whisper.cpp",
         "class": WhisperCPPHandler,
+    },
+    "Sphinx": {
+        "key": "sphinx",
+        "title": _("CMU Sphinx"),
+        "description": _("Works offline. Only English supported"),
+        "website": "https://cmusphinx.github.io/wiki/",
+        "class": SphinxHandler,
     },
     "google_sr": {
         "key": "google_sr",
@@ -441,7 +441,7 @@ Example output:
 
 Chat History:
 """,
-    "websearch": "- Use the following format to perform a web search:\n```search\nyour query here\n```\nReplace `your query here` with the actual search terms you want to use. Do not say anything else before or after issuing the search. Simply execute the search silently. If the last search did not provide the needed answer, change your search query.",
+    "websearch": "{COND:\n[websearch_on] - Use the following format to perform a web search:\n```search\nyour query here\n```\nReplace `your query here` with the actual search terms you want to use. Do not say anything else before or after issuing the search. Simply execute the search silently. If the last search did not provide the needed answer, change your search query.}",
     "custom_prompt": "",
     "expression_prompt": """You can show expressions by writing (expression) in parenthesis.
 You can ONLY show the following expressions: 
@@ -540,7 +540,7 @@ AVAILABLE_PROMPTS = [
         "setting_name": "websearch",
         "editable": True,
         "show_in_settings": True,
-        "default": False
+        "default": True
     },
     {
         "key": "basic_functionality",
