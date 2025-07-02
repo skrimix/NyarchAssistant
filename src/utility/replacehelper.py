@@ -127,7 +127,9 @@ def replace_variables_dict() -> dict:
         "{DE}": ReplaceHelper.get_desktop_environment(),
         "{DATE}": str(time.strftime("%H:%M %Y-%m-%d")),
         "{USER}": ReplaceHelper.get_user(),
-        "{DISPLAY}": ReplaceHelper.gisplay_server()
+        "{DISPLAY}": ReplaceHelper.gisplay_server(),
+        "{EXPRESSIONS}": ReplaceHelper.get_expressions(),
+        "{MOTIONS}": ReplaceHelper.get_motions()
     }
 
 class PromptFormatter:

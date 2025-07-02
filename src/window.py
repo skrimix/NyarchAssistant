@@ -2281,6 +2281,10 @@ class MainWindow(Adw.ApplicationWindow):
             return "\n".join([f"{msg['User']}: {msg['Message']}" for msg in self.get_history()])
         elif name == "message":
             return self.chat[-1]["Message"]
+        elif name == "avatar_on":
+            return self.controller.newelle_settings.avatar_enabled
+        elif name == "translator_on":
+            return self.controller.newelle_settings.translation_enabled
         else:
             rep = replace_variables_dict()
             var = "{" + name.upper() + "}"
