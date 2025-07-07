@@ -1793,8 +1793,8 @@ class MainWindow(Adw.ApplicationWindow):
             threading.Thread(target=self.send_message).start()
             self.send_button_start_spinner()
         elif self.last_error_box is not None:
-            self.remove_error(True)
-            #self.show_chat()
+            #self.remove_error(True)
+            self.show_chat()
             threading.Thread(target=self.send_message).start()
             self.send_button_start_spinner()
         else:
@@ -2378,6 +2378,7 @@ class MainWindow(Adw.ApplicationWindow):
             GLib.timeout_add(250, remove_streaming_box)
             return
         if self.stream_number_variable == stream_number_variable:
+            old_history = copy.deepcopy(self.chat)
             history, message_label = self.controller.integrationsloader.postprocess_history(self.chat, message_label)
             history, message_label = self.extensionloader.postprocess_history(
                 self.chat, message_label
