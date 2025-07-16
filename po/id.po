@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-02 02:15+0800\n"
+"POT-Creation-Date: 2025-07-08 18:07+0800\n"
 "PO-Revision-Date: 2025-07-03 09:00+0200\n"
 "Last-Translator: Yehor Hliebov <qsk@gmx.at>\n"
 "Language-Team: Indonesian <qsk@gmx.at>\n"
@@ -13,13 +13,13 @@ msgstr ""
 
 #: src/handlers/embeddings/ollama_handler.py:32
 #: src/handlers/embeddings/openai_handler.py:38
-#: src/handlers/llm/openai_handler.py:75 src/handlers/llm/ollama_handler.py:150
+#: src/handlers/llm/ollama_handler.py:150 src/handlers/llm/openai_handler.py:75
 #: src/handlers/stt/openaisr_handler.py:10
 msgid "API Endpoint"
 msgstr "Titik Akhir API"
 
 #: src/handlers/embeddings/ollama_handler.py:32
-#: src/handlers/llm/openai_handler.py:75 src/handlers/llm/ollama_handler.py:150
+#: src/handlers/llm/ollama_handler.py:150 src/handlers/llm/openai_handler.py:75
 msgid "API base url, change this to use interference APIs"
 msgstr "URL dasar API, ubah ini untuk menggunakan API inferensi"
 
@@ -44,8 +44,8 @@ msgstr "Model Kustom"
 
 #: src/handlers/embeddings/ollama_handler.py:34
 #: src/handlers/embeddings/openai_handler.py:41
-#: src/handlers/llm/claude_handler.py:85 src/handlers/llm/openai_handler.py:78
-#: src/handlers/llm/ollama_handler.py:153
+#: src/handlers/llm/claude_handler.py:85 src/handlers/llm/ollama_handler.py:153
+#: src/handlers/llm/openai_handler.py:78
 msgid "Use a custom model"
 msgstr "Gunakan model kustom"
 
@@ -91,8 +91,8 @@ msgstr "Gunakan Model Kustom"
 
 #: src/handlers/embeddings/openai_handler.py:44
 #: src/handlers/llm/claude_handler.py:89 src/handlers/llm/claude_handler.py:93
-#: src/handlers/llm/gemini_handler.py:97 src/handlers/llm/openai_handler.py:84
-#: src/handlers/llm/g4f_handler.py:44 src/handlers/stt/whisper_handler.py:15
+#: src/handlers/llm/g4f_handler.py:44 src/handlers/llm/gemini_handler.py:97
+#: src/handlers/llm/openai_handler.py:84 src/handlers/stt/whisper_handler.py:15
 #: src/handlers/stt/whispercpp_handler.py:40
 #: src/handlers/tts/custom_openai_tts.py:20
 #: src/handlers/tts/elevenlabs_handler.py:24
@@ -132,15 +132,17 @@ msgstr "Maks Token"
 msgid "The maximum number of tokens to generate"
 msgstr "Jumlah maksimum token yang akan dihasilkan"
 
-#: src/handlers/llm/custom_handler.py:20 src/handlers/llm/gemini_handler.py:119
+#: src/handlers/llm/custom_handler.py:20
 #: src/handlers/llm/gpt4all_handler.py:153
-#: src/handlers/llm/newelle_handler.py:27 src/utility/util.py:136
+#: src/handlers/llm/newelle_handler.py:27
+#: src/handlers/llm/gemini_handler.py:119 src/utility/util.py:136
 msgid "Message Streaming"
 msgstr "Streaming Pesan"
 
-#: src/handlers/llm/custom_handler.py:20 src/handlers/llm/gemini_handler.py:120
+#: src/handlers/llm/custom_handler.py:20
 #: src/handlers/llm/gpt4all_handler.py:153
-#: src/handlers/llm/newelle_handler.py:28 src/utility/util.py:137
+#: src/handlers/llm/newelle_handler.py:28
+#: src/handlers/llm/gemini_handler.py:120 src/utility/util.py:137
 msgid "Gradually stream message output"
 msgstr "Alirkan keluaran pesan secara bertahap"
 
@@ -173,6 +175,118 @@ msgstr ""
 "diganti dengan file JSON yang berisi obrolan, {1} dengan prompt tambahan, "
 "{2} dengan jumlah saran yang akan dihasilkan. Harus mengembalikan array JSON "
 "yang berisi saran sebagai string"
+
+#: src/handlers/llm/gpt4all_handler.py:67
+msgid "RAM Required: "
+msgstr "RAM Dibutuhkan: "
+
+#: src/handlers/llm/gpt4all_handler.py:68
+msgid "Parameters: "
+msgstr "Parameter: "
+
+#: src/handlers/llm/gpt4all_handler.py:69
+msgid "Size: "
+msgstr "Ukuran: "
+
+#: src/handlers/llm/gpt4all_handler.py:154 src/handlers/llm/g4f_handler.py:44
+msgid "Model to use"
+msgstr "Model yang akan digunakan"
+
+#: src/handlers/llm/gpt4all_handler.py:154
+#: src/handlers/tts/elevenlabs_handler.py:25
+msgid "Name of the model to use"
+msgstr "Nama model yang akan digunakan"
+
+#: src/handlers/llm/gpt4all_handler.py:155
+#: src/handlers/llm/ollama_handler.py:172
+msgid "Model Manager"
+msgstr "Manajer Model"
+
+#: src/handlers/llm/gpt4all_handler.py:155
+#: src/handlers/llm/ollama_handler.py:172
+msgid "List of models available"
+msgstr "Daftar model yang tersedia"
+
+#: src/handlers/llm/g4f_handler.py:45
+msgid "Update G4F"
+msgstr "Perbarui G4F"
+
+#: src/handlers/llm/newelle_handler.py:18
+#: src/handlers/llm/gemini_handler.py:131
+#: src/handlers/llm/openai_handler.py:111
+msgid "Privacy Policy"
+msgstr "Kebijakan Privasi"
+
+#: src/handlers/llm/newelle_handler.py:19
+#: src/handlers/llm/gemini_handler.py:132
+#: src/handlers/llm/openai_handler.py:111
+msgid "Open privacy policy website"
+msgstr "Buka situs web kebijakan privasi"
+
+#: src/handlers/llm/ollama_handler.py:152
+#: src/handlers/llm/gemini_handler.py:110
+msgid "Enable Thinking"
+msgstr "Aktifkan Berpikir"
+
+#: src/handlers/llm/ollama_handler.py:152
+msgid "Allow thinking in the model, only some models are supported"
+msgstr "Izinkan pemikiran dalam model, hanya beberapa model yang didukung"
+
+#: src/handlers/llm/ollama_handler.py:176
+msgid "Add custom model"
+msgstr "Tambahkan model kustom"
+
+#: src/handlers/llm/ollama_handler.py:177
+msgid ""
+"Add any model to this list by putting name:size\n"
+"Or any gguf from hf with hf.co/username/model"
+msgstr ""
+"Tambahkan model apa pun ke daftar ini dengan menulis nama:ukuran\n"
+"Atau gguf apa pun dari hf dengan hf.co/username/model"
+
+#: src/handlers/llm/ollama_handler.py:187
+msgid "Update Ollama"
+msgstr "Perbarui Ollama"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Provider Sorting"
+msgstr "Penyortiran Penyedia"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Choose providers based on pricing/throughput or latency"
+msgstr "Pilih penyedia berdasarkan harga/throughput atau latensi"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Price"
+msgstr "Harga"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Throughput"
+msgstr "Throughput"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Latency"
+msgstr "Latensi"
+
+#: src/handlers/llm/openrouter_handler.py:15
+msgid "Providers Order"
+msgstr "Urutan Penyedia"
+
+#: src/handlers/llm/openrouter_handler.py:15
+msgid ""
+"Add order of providers to use, names separated by a comma.\n"
+"Empty to not specify"
+msgstr ""
+"Tambahkan urutan penyedia yang akan digunakan, nama dipisahkan oleh koma.\n"
+"Kosongkan untuk tidak menentukan"
+
+#: src/handlers/llm/openrouter_handler.py:16
+msgid "Allow Fallbacks"
+msgstr "Izinkan Fallback"
+
+#: src/handlers/llm/openrouter_handler.py:16
+msgid "Allow fallbacks to other providers"
+msgstr "Izinkan fallback ke penyedia lain"
 
 #: src/handlers/llm/gemini_handler.py:94
 msgid "API Key (required)"
@@ -219,11 +333,6 @@ msgid "Settings about thinking models"
 msgstr "Pengaturan tentang model berpikir"
 
 #: src/handlers/llm/gemini_handler.py:110
-#: src/handlers/llm/ollama_handler.py:152
-msgid "Enable Thinking"
-msgstr "Aktifkan Berpikir"
-
-#: src/handlers/llm/gemini_handler.py:110
 msgid "Show thinking, disable it if your model does not support it"
 msgstr "Tampilkan pemikiran, nonaktifkan jika model Anda tidak mendukungnya"
 
@@ -257,19 +366,9 @@ msgstr "Aktifkan pengaturan keamanan"
 
 #: src/handlers/llm/gemini_handler.py:126
 msgid "Enable google safety settings to avoid generating harmful content"
-msgstr "Aktifkan pengaturan keamanan Google untuk menghindari pembuatan konten berbahaya"
-
-#: src/handlers/llm/gemini_handler.py:131
-#: src/handlers/llm/openai_handler.py:112
-#: src/handlers/llm/newelle_handler.py:18
-msgid "Privacy Policy"
-msgstr "Kebijakan Privasi"
-
-#: src/handlers/llm/gemini_handler.py:132
-#: src/handlers/llm/openai_handler.py:112
-#: src/handlers/llm/newelle_handler.py:19
-msgid "Open privacy policy website"
-msgstr "Buka situs web kebijakan privasi"
+msgstr ""
+"Aktifkan pengaturan keamanan Google untuk menghindari pembuatan konten "
+"berbahaya"
 
 #: src/handlers/llm/gemini_handler.py:135 src/handlers/llm/openai_handler.py:81
 msgid "Advanced Parameters"
@@ -279,39 +378,9 @@ msgstr "Parameter Lanjutan"
 msgid "Enable advanced parameters"
 msgstr "Aktifkan parameter lanjutan"
 
-#: src/handlers/llm/gpt4all_handler.py:67
-msgid "RAM Required: "
-msgstr "RAM Dibutuhkan: "
-
-#: src/handlers/llm/gpt4all_handler.py:68
-msgid "Parameters: "
-msgstr "Parameter: "
-
-#: src/handlers/llm/gpt4all_handler.py:69
-msgid "Size: "
-msgstr "Ukuran: "
-
-#: src/handlers/llm/gpt4all_handler.py:154 src/handlers/llm/g4f_handler.py:44
-msgid "Model to use"
-msgstr "Model yang akan digunakan"
-
-#: src/handlers/llm/gpt4all_handler.py:154
-#: src/handlers/tts/elevenlabs_handler.py:25
-msgid "Name of the model to use"
-msgstr "Nama model yang akan digunakan"
-
-#: src/handlers/llm/gpt4all_handler.py:155
-#: src/handlers/llm/ollama_handler.py:172
-msgid "Model Manager"
-msgstr "Manajer Model"
-
-#: src/handlers/llm/gpt4all_handler.py:155
-#: src/handlers/llm/ollama_handler.py:172
-msgid "List of models available"
-msgstr "Daftar model yang tersedia"
-
 #: src/handlers/llm/openai_handler.py:81
-msgid "Include parameters like Max Tokens, Top-P, Temperature, etc."
+#, fuzzy
+msgid "Include parameters like Top-P, Temperature, etc."
 msgstr "Sertakan parameter seperti Maks Token, Top-P, Suhu, dll."
 
 #: src/handlers/llm/openai_handler.py:84
@@ -319,39 +388,31 @@ msgid "Name of the LLM Model to use"
 msgstr "Nama Model LLM yang akan digunakan"
 
 #: src/handlers/llm/openai_handler.py:103
-msgid "max Tokens"
-msgstr "Maks Token"
-
-#: src/handlers/llm/openai_handler.py:103
-msgid "Max tokens of the generated text"
-msgstr "Maks token dari teks yang dihasilkan"
-
-#: src/handlers/llm/openai_handler.py:104
 msgid "Top-P"
 msgstr "Top-P"
 
-#: src/handlers/llm/openai_handler.py:104
+#: src/handlers/llm/openai_handler.py:103
 msgid "An alternative to sampling with temperature, called nucleus sampling"
 msgstr "Alternatif untuk sampling dengan suhu, disebut nucleus sampling"
 
-#: src/handlers/llm/openai_handler.py:105
+#: src/handlers/llm/openai_handler.py:104
 #: src/handlers/stt/whispercpp_handler.py:50
 msgid "Temperature"
 msgstr "Suhu"
 
-#: src/handlers/llm/openai_handler.py:105
+#: src/handlers/llm/openai_handler.py:104
 msgid ""
 "What sampling temperature to use. Higher values will make the output more "
 "random"
 msgstr ""
-"Suhu sampling apa yang akan digunakan. Nilai yang lebih tinggi akan "
-"membuat keluaran lebih acak"
+"Suhu sampling apa yang akan digunakan. Nilai yang lebih tinggi akan membuat "
+"keluaran lebih acak"
 
-#: src/handlers/llm/openai_handler.py:106
+#: src/handlers/llm/openai_handler.py:105
 msgid "Frequency Penalty"
 msgstr "Penalti Frekuensi"
 
-#: src/handlers/llm/openai_handler.py:106
+#: src/handlers/llm/openai_handler.py:105
 msgid ""
 "Number between -2.0 and 2.0. Positive values decrease the model's likelihood "
 "to repeat the same line verbatim"
@@ -359,81 +420,17 @@ msgstr ""
 "Angka antara -2.0 dan 2.0. Nilai positif mengurangi kemungkinan model untuk "
 "mengulang baris yang sama persis"
 
-#: src/handlers/llm/openai_handler.py:107
+#: src/handlers/llm/openai_handler.py:106
 msgid "Presence Penalty"
 msgstr "Penalti Kehadiran"
 
-#: src/handlers/llm/openai_handler.py:107
+#: src/handlers/llm/openai_handler.py:106
 msgid ""
 "Number between -2.0 and 2.0. Positive values decrease the model's likelihood "
 "to talk about new topics"
 msgstr ""
 "Angka antara -2.0 dan 2.0. Nilai positif mengurangi kemungkinan model untuk "
 "membahas topik baru"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Provider Sorting"
-msgstr "Penyortiran Penyedia"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Choose providers based on pricing/throughput or latency"
-msgstr "Pilih penyedia berdasarkan harga/throughput atau latensi"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Price"
-msgstr "Harga"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Throughput"
-msgstr "Throughput"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Latency"
-msgstr "Latensi"
-
-#: src/handlers/llm/openrouter_handler.py:15
-msgid "Providers Order"
-msgstr "Urutan Penyedia"
-
-#: src/handlers/llm/openrouter_handler.py:15
-msgid ""
-"Add order of providers to use, names separated by a comma.\n"
-"Empty to not specify"
-msgstr ""
-"Tambahkan urutan penyedia yang akan digunakan, nama dipisahkan oleh koma.\n"
-"Kosongkan untuk tidak menentukan"
-
-#: src/handlers/llm/openrouter_handler.py:16
-msgid "Allow Fallbacks"
-msgstr "Izinkan Fallback"
-
-#: src/handlers/llm/openrouter_handler.py:16
-msgid "Allow fallbacks to other providers"
-msgstr "Izinkan fallback ke penyedia lain"
-
-#: src/handlers/llm/g4f_handler.py:45
-msgid "Update G4F"
-msgstr "Perbarui G4F"
-
-#: src/handlers/llm/ollama_handler.py:152
-msgid "Allow thinking in the model, only some models are supported"
-msgstr "Izinkan pemikiran dalam model, hanya beberapa model yang didukung"
-
-#: src/handlers/llm/ollama_handler.py:176
-msgid "Add custom model"
-msgstr "Tambahkan model kustom"
-
-#: src/handlers/llm/ollama_handler.py:177
-msgid ""
-"Add any model to this list by putting name:size\n"
-"Or any gguf from hf with hf.co/username/model"
-msgstr ""
-"Tambahkan model apa pun ke daftar ini dengan menulis nama:ukuran\n"
-"Atau gguf apa pun dari hf dengan hf.co/username/model"
-
-#: src/handlers/llm/ollama_handler.py:187
-msgid "Update Ollama"
-msgstr "Perbarui Ollama"
 
 #: src/handlers/rag/rag_handler.py:104
 msgid "Index your documents"
@@ -460,7 +457,8 @@ msgstr "{0} akan diganti dengan jalur lengkap model"
 
 #: src/handlers/stt/googlesr_handler.py:14
 msgid "API Key for Google SR, write 'default' to use the default one"
-msgstr "Kunci API untuk Google SR, tulis 'default' untuk menggunakan yang default"
+msgstr ""
+"Kunci API untuk Google SR, tulis 'default' untuk menggunakan yang default"
 
 #: src/handlers/stt/googlesr_handler.py:21
 #: src/handlers/stt/groqsr_handler.py:29
@@ -475,7 +473,8 @@ msgstr "Bahasa teks yang akan dikenali dalam IETF"
 
 #: src/handlers/stt/groqsr_handler.py:14
 msgid "API Key for Groq SR, write 'default' to use the default one"
-msgstr "Kunci API untuk Groq SR, tulis 'default' untuk menggunakan yang default"
+msgstr ""
+"Kunci API untuk Groq SR, tulis 'default' untuk menggunakan yang default"
 
 #: src/handlers/stt/groqsr_handler.py:21
 msgid "Groq Model"
@@ -539,7 +538,8 @@ msgid "Could not understand the audio"
 msgstr "Tidak dapat memahami audio"
 
 #: src/handlers/stt/whispercpp_handler.py:47
-msgid "Language of the recognition."
+#, fuzzy
+msgid "Language of the recognition. For example en, it..."
 msgstr "Bahasa pengenalan."
 
 #: src/handlers/stt/whispercpp_handler.py:48
@@ -626,7 +626,8 @@ msgstr "Peningkatan kemiripan"
 
 #: src/handlers/tts/elevenlabs_handler.py:43
 msgid "Boosts overall voice clarity and speaker similarity"
-msgstr "Meningkatkan kejernihan suara secara keseluruhan dan kemiripan pembicara"
+msgstr ""
+"Meningkatkan kejernihan suara secara keseluruhan dan kemiripan pembicara"
 
 #: src/handlers/tts/elevenlabs_handler.py:52
 msgid "Style exaggeration"
@@ -635,8 +636,7 @@ msgstr "Gaya berlebihan"
 #: src/handlers/tts/elevenlabs_handler.py:53
 msgid ""
 "High values are reccomended if the style of the speech must be exaggerated"
-msgstr ""
-"Nilai tinggi direkomendasikan jika gaya bicara harus dilebih-lebihkan"
+msgstr "Nilai tinggi direkomendasikan jika gaya bicara harus dilebih-lebihkan"
 
 #: src/handlers/tts/custom_handler.py:17
 #, python-brace-format
@@ -677,9 +677,10 @@ msgid ""
 "API Credit, while an advanced search costs 2 API Credits."
 msgstr ""
 "Kedalaman pencarian. Pencarian lanjutan disesuaikan untuk mengambil sumber "
-"dan cuplikan konten yang paling relevan untuk kueri Anda, sedangkan pencarian "
-"dasar menyediakan cuplikan konten generik dari setiap sumber. Pencarian dasar "
-"membutuhkan 1 Kredit API, sedangkan pencarian lanjutan membutuhkan 2 Kredit API."
+"dan cuplikan konten yang paling relevan untuk kueri Anda, sedangkan "
+"pencarian dasar menyediakan cuplikan konten generik dari setiap sumber. "
+"Pencarian dasar membutuhkan 1 Kredit API, sedangkan pencarian lanjutan "
+"membutuhkan 2 Kredit API."
 
 #: src/handlers/websearch/tavily.py:23
 msgid "The category of the search"
@@ -693,9 +694,9 @@ msgid ""
 "searches that may include a wide range of sources."
 msgstr ""
 "Kategori pencarian. Berita berguna untuk mengambil pembaruan real-time, "
-"terutama tentang politik, olahraga, dan peristiwa terkini utama yang "
-"diliput oleh sumber media mainstream. Umum adalah untuk pencarian yang lebih "
-"luas dan bertujuan umum yang mungkin mencakup berbagai sumber."
+"terutama tentang politik, olahraga, dan peristiwa terkini utama yang diliput "
+"oleh sumber media mainstream. Umum adalah untuk pencarian yang lebih luas "
+"dan bertujuan umum yang mungkin mencakup berbagai sumber."
 
 #: src/handlers/websearch/tavily.py:24
 msgid "Chunks per source"
@@ -738,7 +739,9 @@ msgstr "Sertakan konten mentah"
 
 #: src/handlers/websearch/tavily.py:27
 msgid "Include the cleaned and parsed HTML content of each search result."
-msgstr "Sertakan konten HTML yang dibersihkan dan diuraikan dari setiap hasil pencarian."
+msgstr ""
+"Sertakan konten HTML yang dibersihkan dan diuraikan dari setiap hasil "
+"pencarian."
 
 #: src/handlers/websearch/tavily.py:28
 msgid "Include images"
@@ -765,7 +768,8 @@ msgstr "Sertakan domain"
 
 #: src/handlers/websearch/tavily.py:30
 msgid "A list of domains to specifically include in the search results."
-msgstr "Daftar domain yang secara khusus akan disertakan dalam hasil pencarian."
+msgstr ""
+"Daftar domain yang secara khusus akan disertakan dalam hasil pencarian."
 
 #: src/handlers/websearch/tavily.py:31
 msgid "Exclude domains"
@@ -773,7 +777,8 @@ msgstr "Kecualikan domain"
 
 #: src/handlers/websearch/tavily.py:31
 msgid "A list of domains to specifically exclude from the search results."
-msgstr "Daftar domain yang secara khusus akan dikecualikan dari hasil pencarian."
+msgstr ""
+"Daftar domain yang secara khusus akan dikecualikan dari hasil pencarian."
 
 #: src/handlers/websearch/duckduckgo_handler.py:15
 msgid "Region"
@@ -883,23 +888,23 @@ msgstr "Hapus Profil"
 msgid "Newelle Tips"
 msgstr "Tips Newelle"
 
-#: src/ui/widgets/thinking.py:27
+#: src/ui/widgets/thinking.py:26
 msgid "Thoughts"
 msgstr "Pikiran"
 
-#: src/ui/widgets/thinking.py:28 src/ui/widgets/thinking.py:135
+#: src/ui/widgets/thinking.py:27 src/ui/widgets/thinking.py:134
 msgid "Expand to see details"
 msgstr "Perluas untuk melihat detail"
 
-#: src/ui/widgets/thinking.py:123
+#: src/ui/widgets/thinking.py:122
 msgid "Thinking..."
 msgstr "Berpikir..."
 
-#: src/ui/widgets/thinking.py:124
+#: src/ui/widgets/thinking.py:123
 msgid "The LLM is thinking... Expand to see thought process"
 msgstr "LLM sedang berpikir... Perluas untuk melihat proses berpikir"
 
-#: src/ui/widgets/thinking.py:137
+#: src/ui/widgets/thinking.py:136
 msgid "No thought process recorded"
 msgstr "Tidak ada proses berpikir yang direkam"
 
@@ -907,7 +912,7 @@ msgstr "Tidak ada proses berpikir yang direkam"
 msgid "Folder is Empty"
 msgstr "Folder Kosong"
 
-#: src/ui/explorer.py:340 src/window.py:1574
+#: src/ui/explorer.py:340 src/window.py:1576
 msgid "File not found"
 msgstr "Berkas tidak ditemukan"
 
@@ -1081,6 +1086,27 @@ msgstr "Perbesar"
 msgid "Zoom out"
 msgstr "Perkecil"
 
+#: src/ui/extension.py:17 src/ui/presentation.py:131 src/constants.py:513
+#: src/window.py:118
+msgid "Extensions"
+msgstr "Ekstensi"
+
+#: src/ui/extension.py:50
+msgid "Installed Extensions"
+msgstr "Ekstensi Terpasang"
+
+#: src/ui/extension.py:85
+msgid "User guide to Extensions"
+msgstr "Panduan Pengguna untuk Ekstensi"
+
+#: src/ui/extension.py:88
+msgid "Download new Extensions"
+msgstr "Unduh Ekstensi baru"
+
+#: src/ui/extension.py:91
+msgid "Install extension from file..."
+msgstr "Pasang ekstensi dari berkas..."
+
 #: src/ui/mini_window.py:9 data/io.github.qwersyk.Newelle.appdata.xml.in:7
 #: data/io.github.qwersyk.Newelle.desktop.in:2
 msgid "Newelle"
@@ -1132,7 +1158,7 @@ msgstr ""
 "obrolan atau dari berkas Anda sendiri! Informasi yang relevan dengan kueri "
 "Anda akan dikirim ke LLM."
 
-#: src/ui/presentation.py:124 src/ui/settings.py:236 src/window.py:647
+#: src/ui/presentation.py:124 src/ui/settings.py:236 src/window.py:649
 msgid "Command virtualization"
 msgstr "Virtualisasi perintah"
 
@@ -1145,15 +1171,10 @@ msgid ""
 "b>, but pay attention!"
 msgstr ""
 "Newelle dapat digunakan untuk menjalankan perintah di sistem Anda, tetapi "
-"perhatikan apa yang Anda jalankan! <b>LLM tidak berada di bawah kendali kami, "
-"jadi mungkin menghasilkan kode berbahaya!</b>\n"
+"perhatikan apa yang Anda jalankan! <b>LLM tidak berada di bawah kendali "
+"kami, jadi mungkin menghasilkan kode berbahaya!</b>\n"
 "Secara default, perintah Anda akan <b>divirtualisasikan dalam lingkungan "
 "Flatpak</b>, tetapi perhatikan!"
-
-#: src/ui/presentation.py:131 src/ui/extension.py:17 src/constants.py:513
-#: src/window.py:118
-msgid "Extensions"
-msgstr "Ekstensi"
 
 #: src/ui/presentation.py:132
 msgid "You can extend Newelle's functionalities using extensions!"
@@ -1170,7 +1191,9 @@ msgstr "Kesalahan Izin"
 #: src/ui/presentation.py:147
 msgid ""
 "Newelle does not have enough permissions to run commands on your system."
-msgstr "Newelle tidak memiliki izin yang cukup untuk menjalankan perintah di sistem Anda."
+msgstr ""
+"Newelle tidak memiliki izin yang cukup untuk menjalankan perintah di sistem "
+"Anda."
 
 #: src/ui/presentation.py:158
 msgid "Begin using the app"
@@ -1179,22 +1202,6 @@ msgstr "Mulai menggunakan aplikasi"
 #: src/ui/presentation.py:163
 msgid "Start chatting"
 msgstr "Mulai mengobrol"
-
-#: src/ui/extension.py:50
-msgid "Installed Extensions"
-msgstr "Ekstensi Terpasang"
-
-#: src/ui/extension.py:85
-msgid "User guide to Extensions"
-msgstr "Panduan Pengguna untuk Ekstensi"
-
-#: src/ui/extension.py:88
-msgid "Download new Extensions"
-msgstr "Unduh Ekstensi baru"
-
-#: src/ui/extension.py:91
-msgid "Install extension from file..."
-msgstr "Pasang ekstensi dari berkas..."
 
 #: src/ui/settings.py:46 src/constants.py:523
 msgid "General"
@@ -1248,11 +1255,11 @@ msgid ""
 "Embedding is used to trasform text into vectors. Used by Long Term Memory "
 "and RAG. Changing it might require you to re-index documents or reset memory."
 msgstr ""
-"Embedding digunakan untuk mengubah teks menjadi vektor. Digunakan oleh Memori "
-"Jangka Panjang dan RAG. Mengubahnya mungkin mengharuskan Anda untuk mengindeks "
-"ulang dokumen atau mengatur ulang memori."
+"Embedding digunakan untuk mengubah teks menjadi vektor. Digunakan oleh "
+"Memori Jangka Panjang dan RAG. Mengubahnya mungkin mengharuskan Anda untuk "
+"mengindeks ulang dokumen atau mengatur ulang memori."
 
-#: src/ui/settings.py:104 src/window.py:645
+#: src/ui/settings.py:104 src/window.py:647
 msgid "Long Term Memory"
 msgstr "Memori Jangka Panjang"
 
@@ -1364,7 +1371,9 @@ msgstr "Balik Urutan Obrolan"
 
 #: src/ui/settings.py:204
 msgid "Show most recent chats on top in chat list (change chat to apply)"
-msgstr "Tampilkan obrolan terbaru di atas dalam daftar obrolan (ubah obrolan untuk menerapkan)"
+msgstr ""
+"Tampilkan obrolan terbaru di atas dalam daftar obrolan (ubah obrolan untuk "
+"menerapkan)"
 
 #: src/ui/settings.py:210
 msgid "Automatically Generate Chat Names"
@@ -1484,7 +1493,8 @@ msgstr "Gunakan peramban eksternal"
 
 #: src/ui/settings.py:333
 msgid "Use an external browser to open links instead of integrated one"
-msgstr "Gunakan peramban eksternal untuk membuka tautan alih-alih yang terintegrasi"
+msgstr ""
+"Gunakan peramban eksternal untuk membuka tautan alih-alih yang terintegrasi"
 
 #: src/ui/settings.py:340
 msgid "Persist browser session"
@@ -1606,7 +1616,8 @@ msgstr "Waktu keheningan"
 
 #: src/ui/settings.py:465
 msgid "Silence time in seconds before recording stops automatically"
-msgstr "Waktu keheningan dalam detik sebelum perekaman berhenti secara otomatis"
+msgstr ""
+"Waktu keheningan dalam detik sebelum perekaman berhenti secara otomatis"
 
 #: src/ui/settings.py:1044
 msgid "Not enough permissions"
@@ -1645,7 +1656,7 @@ msgid "Start/Stop monitoring"
 msgstr "Mulai/Hentikan pemantauan"
 
 #: src/ui/stdout_monitor.py:109 src/ui/stdout_monitor.py:182
-#: src/ui/stdout_monitor.py:191 src/window.py:3683
+#: src/ui/stdout_monitor.py:191 src/window.py:3686
 msgid "Monitoring: Active"
 msgstr "Pemantauan: Aktif"
 
@@ -1703,7 +1714,8 @@ msgstr "API OpenAI"
 
 #: src/constants.py:61
 msgid "OpenAI API. Custom endpoints supported. Use this for custom providers"
-msgstr "API OpenAI. Titik akhir kustom didukung. Gunakan ini untuk penyedia kustom"
+msgstr ""
+"API OpenAI. Titik akhir kustom didukung. Gunakan ini untuk penyedia kustom"
 
 #: src/constants.py:66
 msgid "Anthropic Claude"
@@ -1755,7 +1767,8 @@ msgstr "Whisper C++"
 
 #: src/constants.py:105
 msgid "Works offline. Optimized Whisper impelementation written in C++"
-msgstr "Berfungsi offline. Implementasi Whisper yang dioptimalkan ditulis dalam C++"
+msgstr ""
+"Berfungsi offline. Implementasi Whisper yang dioptimalkan ditulis dalam C++"
 
 #: src/constants.py:111
 msgid "CMU Sphinx"
@@ -1873,8 +1886,8 @@ msgid ""
 "Light local embedding model based on llama. Works offline, very low "
 "resources usage"
 msgstr ""
-"Model embedding lokal ringan berdasarkan llama. Berfungsi offline, penggunaan "
-"sumber daya sangat rendah"
+"Model embedding lokal ringan berdasarkan llama. Berfungsi offline, "
+"penggunaan sumber daya sangat rendah"
 
 #: src/constants.py:218
 msgid "Ollama Embedding"
@@ -1883,7 +1896,9 @@ msgstr "Ollama Embedding"
 #: src/constants.py:219
 msgid ""
 "Use Ollama models for Embedding. Works offline, very low resources usage"
-msgstr "Gunakan model Ollama untuk Embedding. Berfungsi offline, penggunaan sumber daya sangat rendah"
+msgstr ""
+"Gunakan model Ollama untuk Embedding. Berfungsi offline, penggunaan sumber "
+"daya sangat rendah"
 
 #: src/constants.py:231
 msgid "Use Google Gemini API to get embeddings"
@@ -1961,7 +1976,9 @@ msgstr "Asisten yang membantu"
 
 #: src/constants.py:376
 msgid "General purpose prompt to enhance the LLM answers and give more context"
-msgstr "Prompt tujuan umum untuk meningkatkan jawaban LLM dan memberikan lebih banyak konteks"
+msgstr ""
+"Prompt tujuan umum untuk meningkatkan jawaban LLM dan memberikan lebih "
+"banyak konteks"
 
 #: src/constants.py:384
 msgid "Console access"
@@ -2019,7 +2036,7 @@ msgstr "Tambahkan prompt kustom Anda sendiri"
 msgid "LLM and Secondary LLM settings"
 msgstr "Pengaturan LLM dan LLM Sekunder"
 
-#: src/constants.py:483 src/window.py:646
+#: src/constants.py:483 src/window.py:648
 msgid "TTS"
 msgstr "TTS"
 
@@ -2091,10 +2108,6 @@ msgstr ""
 msgid "Prompts settings, custom extra prompt, custom prompts..."
 msgstr "Pengaturan prompt, prompt tambahan kustom, prompt kustom..."
 
-#: src/controller.py:135 src/window.py:1846
-msgid "Chat "
-msgstr "Obrolan "
-
 #: src/main.py:205
 msgid "Terminal threads are still running in the background"
 msgstr "Thread terminal masih berjalan di latar belakang"
@@ -2118,6 +2131,10 @@ msgstr "Folder di-reboot"
 #: src/main.py:254
 msgid "Chat is created"
 msgstr "Obrolan dibuat"
+
+#: src/controller.py:135 src/window.py:1848
+msgid "Chat "
+msgstr "Obrolan "
 
 #: src/window.py:120
 msgid "Keyboard shorcuts"
@@ -2175,27 +2192,29 @@ msgstr "Tab Terminal"
 msgid "Browser Tab"
 msgstr "Tab Peramban"
 
-#: src/window.py:587
+#: src/window.py:589
 msgid "Ask about a website"
 msgstr "Tanyakan tentang sebuah situs web"
 
-#: src/window.py:587
+#: src/window.py:589
 msgid "Write #https://website.com in chat to ask information about a website"
-msgstr "Tulis #https://website.com di obrolan untuk menanyakan informasi tentang situs web"
+msgstr ""
+"Tulis #https://website.com di obrolan untuk menanyakan informasi tentang "
+"situs web"
 
-#: src/window.py:588
+#: src/window.py:590
 msgid "Check out our Extensions!"
 msgstr "Lihat Ekstensi kami!"
 
-#: src/window.py:588
+#: src/window.py:590
 msgid "We have a lot of extensions for different things. Check it out!"
 msgstr "Kami memiliki banyak ekstensi untuk berbagai hal. Lihatlah!"
 
-#: src/window.py:589
+#: src/window.py:591
 msgid "Chat with documents!"
 msgstr "Mengobrol dengan dokumen!"
 
-#: src/window.py:589
+#: src/window.py:591
 msgid ""
 "Add your documents to your documents folder and chat using the information "
 "contained in them!"
@@ -2203,11 +2222,11 @@ msgstr ""
 "Tambahkan dokumen Anda ke folder dokumen Anda dan mengobrol menggunakan "
 "informasi yang terkandung di dalamnya!"
 
-#: src/window.py:590
+#: src/window.py:592
 msgid "Surf the web!"
 msgstr "Jelajahi web!"
 
-#: src/window.py:590
+#: src/window.py:592
 msgid ""
 "Enable web search to allow the LLM to surf the web and provide up to date "
 "answers"
@@ -2215,152 +2234,156 @@ msgstr ""
 "Aktifkan pencarian web untuk memungkinkan LLM menjelajahi web dan memberikan "
 "jawaban terkini"
 
-#: src/window.py:591
+#: src/window.py:593
 msgid "Mini Window"
 msgstr "Jendela Mini"
 
-#: src/window.py:591
+#: src/window.py:593
 msgid "Ask questions on the fly using the mini window mode"
 msgstr "Ajukan pertanyaan dengan cepat menggunakan mode jendela mini"
 
-#: src/window.py:592
+#: src/window.py:594
 msgid "Text to Speech"
 msgstr "Teks ke Suara"
 
-#: src/window.py:592
+#: src/window.py:594
 msgid "Newelle supports text-to-speech! Enable it in the settings"
 msgstr "Newelle mendukung text-to-speech! Aktifkan di pengaturan"
 
-#: src/window.py:593
+#: src/window.py:595
 msgid "Keyboard Shortcuts"
 msgstr "Pintasan Keyboard"
 
-#: src/window.py:593
+#: src/window.py:595
 msgid "Control Newelle using Keyboard Shortcuts"
 msgstr "Kontrol Newelle menggunakan Pintasan Keyboard"
 
-#: src/window.py:594
+#: src/window.py:596
 msgid "Prompt Control"
 msgstr "Kontrol Prompt"
 
-#: src/window.py:594
+#: src/window.py:596
 msgid "Newelle gives you 100% prompt control. Tune your prompts for your use."
-msgstr "Newelle memberi Anda kontrol prompt 100%. Sesuaikan prompt Anda untuk penggunaan Anda."
+msgstr ""
+"Newelle memberi Anda kontrol prompt 100%. Sesuaikan prompt Anda untuk "
+"penggunaan Anda."
 
-#: src/window.py:595
+#: src/window.py:597
 msgid "Thread Editing"
 msgstr "Pengeditan Thread"
 
-#: src/window.py:595
+#: src/window.py:597
 msgid "Check the programs and processes you run from Newelle"
 msgstr "Periksa program dan proses yang Anda jalankan dari Newelle"
 
-#: src/window.py:596
+#: src/window.py:598
 msgid "Programmable Prompts"
 msgstr "Prompt yang Dapat Diprogram"
 
-#: src/window.py:596
+#: src/window.py:598
 msgid ""
 "You can add dynamic prompts to Newelle, with conditions and probabilities"
-msgstr "Anda dapat menambahkan prompt dinamis ke Newelle, dengan kondisi dan probabilitas"
+msgstr ""
+"Anda dapat menambahkan prompt dinamis ke Newelle, dengan kondisi dan "
+"probabilitas"
 
-#: src/window.py:603
+#: src/window.py:605
 msgid "New Chat"
 msgstr "Obrolan Baru"
 
-#: src/window.py:621
+#: src/window.py:623
 msgid "Provider Errror"
 msgstr "Kesalahan Penyedia"
 
-#: src/window.py:644
+#: src/window.py:646
 msgid "Local Documents"
 msgstr "Dokumen Lokal"
 
-#: src/window.py:648
+#: src/window.py:650
 msgid "Web search"
 msgstr "Pencarian Web"
 
-#: src/window.py:890
+#: src/window.py:892
 msgid "This provider does not have a model list"
 msgstr "Penyedia ini tidak memiliki daftar model"
 
-#: src/window.py:895
+#: src/window.py:897
 msgid " Models"
 msgstr " Model"
 
-#: src/window.py:898
+#: src/window.py:900
 msgid "Search Models..."
 msgstr "Cari Model..."
 
-#: src/window.py:1126
+#: src/window.py:1128
 msgid "Create new profile"
 msgstr "Buat profil baru"
 
-#: src/window.py:1260
+#: src/window.py:1262
 msgid "Could not recognize your voice"
 msgstr "Tidak dapat mengenali suara Anda"
 
-#: src/window.py:1297
+#: src/window.py:1299
 msgid "Images"
 msgstr "Gambar"
 
-#: src/window.py:1301
+#: src/window.py:1303
 msgid "LLM Supported Files"
 msgstr "Berkas yang Didukung LLM"
 
-#: src/window.py:1309
+#: src/window.py:1311
 msgid "RAG Supported files"
 msgstr "Berkas yang Didukung RAG"
 
-#: src/window.py:1327
+#: src/window.py:1329
 msgid "Supported Files"
 msgstr "Berkas yang Didukung"
 
-#: src/window.py:1331
+#: src/window.py:1333
 msgid "All Files"
 msgstr "Semua Berkas"
 
-#: src/window.py:1337
+#: src/window.py:1339
 msgid "Attach file"
 msgstr "Lampirkan berkas"
 
-#: src/window.py:1592
+#: src/window.py:1594
 msgid "The file cannot be sent until the program is finished"
 msgstr "Berkas tidak dapat dikirim sampai program selesai"
 
-#: src/window.py:1614
+#: src/window.py:1616
 msgid "The file is not recognized"
 msgstr "Berkas tidak dikenali"
 
-#: src/window.py:1633
+#: src/window.py:1635
 msgid "You can no longer continue the message."
 msgstr "Anda tidak dapat lagi melanjutkan pesan."
 
-#: src/window.py:1658
+#: src/window.py:1660
 msgid "You can no longer regenerate the message."
 msgstr "Anda tidak dapat lagi menghasilkan ulang pesan."
 
-#: src/window.py:1890
+#: src/window.py:1892
 msgid "Chat is cleared"
 msgstr "Obrolan dibersihkan"
 
-#: src/window.py:1915
+#: src/window.py:1917
 msgid "The message was canceled and deleted from history"
 msgstr "Pesan dibatalkan dan dihapus dari riwayat"
 
-#: src/window.py:1959
+#: src/window.py:1961
 msgid "The message cannot be sent until the program is finished"
 msgstr "Pesan tidak dapat dikirim sampai program selesai"
 
-#: src/window.py:2936
+#: src/window.py:2939
 msgid "You can't edit a message while the program is running."
 msgstr "Anda tidak dapat mengedit pesan saat program sedang berjalan."
 
-#: src/window.py:3061
+#: src/window.py:3064
 msgid "Prompt content"
 msgstr "Konten prompt"
 
-#: src/window.py:3320
+#: src/window.py:3323
 msgid ""
 "The neural network has access to your computer and any data in this chat and "
 "can run commands, be careful, we are not responsible for the neural network. "
@@ -2368,31 +2391,32 @@ msgid ""
 msgstr ""
 "Jaringan saraf memiliki akses ke komputer Anda dan data apa pun dalam "
 "obrolan ini serta dapat menjalankan perintah, berhati-hatilah, kami tidak "
-"bertanggung jawab atas jaringan saraf. Jangan bagikan informasi sensitif apa pun."
+"bertanggung jawab atas jaringan saraf. Jangan bagikan informasi sensitif apa "
+"pun."
 
-#: src/window.py:3349
+#: src/window.py:3352
 msgid ""
 "The neural network has access to any data in this chat, be careful, we are "
 "not responsible for the neural network. Do not share any sensitive "
 "information."
 msgstr ""
-"Jaringan saraf memiliki akses ke data apa pun dalam obrolan ini, "
-"berhati-hatilah, kami tidak bertanggung jawab atas jaringan saraf. Jangan "
-"bagikan informasi sensitif apa pun."
+"Jaringan saraf memiliki akses ke data apa pun dalam obrolan ini, berhati-"
+"hatilah, kami tidak bertanggung jawab atas jaringan saraf. Jangan bagikan "
+"informasi sensitif apa pun."
 
-#: src/window.py:3398
+#: src/window.py:3401
 msgid "Wrong folder path"
 msgstr "Jalur folder salah"
 
-#: src/window.py:3431
+#: src/window.py:3434
 msgid "Thread has not been completed, thread number: "
 msgstr "Thread belum selesai, nomor thread: "
 
-#: src/window.py:3443
+#: src/window.py:3446
 msgid "Failed to open the folder"
 msgstr "Gagal membuka folder"
 
-#: src/window.py:3622
+#: src/window.py:3625
 msgid "Chat is empty"
 msgstr "Obrolan kosong"
 
@@ -2401,8 +2425,8 @@ msgid ""
 "Train Newelle to do more with custom extensions and new AI modules, giving "
 "your chatbot endless possibilities."
 msgstr ""
-"Latih Newelle untuk melakukan lebih banyak dengan ekstensi kustom dan "
-"modul AI baru, memberikan chatbot Anda kemungkinan tanpa batas."
+"Latih Newelle untuk melakukan lebih banyak dengan ekstensi kustom dan modul "
+"AI baru, memberikan chatbot Anda kemungkinan tanpa batas."
 
 #: data/io.github.qwersyk.Newelle.appdata.xml.in:11
 msgid "AI chatbot"
@@ -2472,7 +2496,8 @@ msgstr "Menambahkan fitur baru"
 
 #: data/io.github.qwersyk.Newelle.appdata.xml.in:68
 msgid "Website reading and web search with SearXNG, DuckDuckGo, and Tavily"
-msgstr "Pembacaan situs web dan pencarian web dengan SearXNG, DuckDuckGo, dan Tavily"
+msgstr ""
+"Pembacaan situs web dan pencarian web dengan SearXNG, DuckDuckGo, dan Tavily"
 
 #: data/io.github.qwersyk.Newelle.appdata.xml.in:69
 msgid "Improved LaTeX rendering and document management"
@@ -2558,3 +2583,9 @@ msgstr "Newelle: Chat bot canggih Anda"
 #: data/io.github.qwersyk.Newelle.desktop.in:10
 msgid "ai;assistant;chat;chatgpt;gpt;llm;ollama;"
 msgstr "ai;asisten;chat;chatgpt;gpt;llm;ollama;"
+
+#~ msgid "max Tokens"
+#~ msgstr "Maks Token"
+
+#~ msgid "Max tokens of the generated text"
+#~ msgstr "Maks token dari teks yang dihasilkan"

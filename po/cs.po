@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-02 02:15+0800\n"
+"POT-Creation-Date: 2025-07-08 18:07+0800\n"
 "PO-Revision-Date: 2025-07-03 09:00+0200\n"
 "Last-Translator: Yehor Hliebov <qsk@gmx.at>\n"
 "Language-Team: Czech <qsk@gmx.at>\n"
@@ -13,13 +13,13 @@ msgstr ""
 
 #: src/handlers/embeddings/ollama_handler.py:32
 #: src/handlers/embeddings/openai_handler.py:38
-#: src/handlers/llm/openai_handler.py:75 src/handlers/llm/ollama_handler.py:150
+#: src/handlers/llm/ollama_handler.py:150 src/handlers/llm/openai_handler.py:75
 #: src/handlers/stt/openaisr_handler.py:10
 msgid "API Endpoint"
 msgstr "Koncový bod API"
 
 #: src/handlers/embeddings/ollama_handler.py:32
-#: src/handlers/llm/openai_handler.py:75 src/handlers/llm/ollama_handler.py:150
+#: src/handlers/llm/ollama_handler.py:150 src/handlers/llm/openai_handler.py:75
 msgid "API base url, change this to use interference APIs"
 msgstr "Základní URL API, změňte pro použití API pro inference"
 
@@ -44,8 +44,8 @@ msgstr "Vlastní model"
 
 #: src/handlers/embeddings/ollama_handler.py:34
 #: src/handlers/embeddings/openai_handler.py:41
-#: src/handlers/llm/claude_handler.py:85 src/handlers/llm/openai_handler.py:78
-#: src/handlers/llm/ollama_handler.py:153
+#: src/handlers/llm/claude_handler.py:85 src/handlers/llm/ollama_handler.py:153
+#: src/handlers/llm/openai_handler.py:78
 msgid "Use a custom model"
 msgstr "Použít vlastní model"
 
@@ -91,8 +91,8 @@ msgstr "Použít vlastní model"
 
 #: src/handlers/embeddings/openai_handler.py:44
 #: src/handlers/llm/claude_handler.py:89 src/handlers/llm/claude_handler.py:93
-#: src/handlers/llm/gemini_handler.py:97 src/handlers/llm/openai_handler.py:84
-#: src/handlers/llm/g4f_handler.py:44 src/handlers/stt/whisper_handler.py:15
+#: src/handlers/llm/g4f_handler.py:44 src/handlers/llm/gemini_handler.py:97
+#: src/handlers/llm/openai_handler.py:84 src/handlers/stt/whisper_handler.py:15
 #: src/handlers/stt/whispercpp_handler.py:40
 #: src/handlers/tts/custom_openai_tts.py:20
 #: src/handlers/tts/elevenlabs_handler.py:24
@@ -132,15 +132,17 @@ msgstr "Maximální počet tokenů"
 msgid "The maximum number of tokens to generate"
 msgstr "Maximální počet tokenů k vygenerování"
 
-#: src/handlers/llm/custom_handler.py:20 src/handlers/llm/gemini_handler.py:119
+#: src/handlers/llm/custom_handler.py:20
 #: src/handlers/llm/gpt4all_handler.py:153
-#: src/handlers/llm/newelle_handler.py:27 src/utility/util.py:136
+#: src/handlers/llm/newelle_handler.py:27
+#: src/handlers/llm/gemini_handler.py:119 src/utility/util.py:136
 msgid "Message Streaming"
 msgstr "Streamování zpráv"
 
-#: src/handlers/llm/custom_handler.py:20 src/handlers/llm/gemini_handler.py:120
+#: src/handlers/llm/custom_handler.py:20
 #: src/handlers/llm/gpt4all_handler.py:153
-#: src/handlers/llm/newelle_handler.py:28 src/utility/util.py:137
+#: src/handlers/llm/newelle_handler.py:28
+#: src/handlers/llm/gemini_handler.py:120 src/utility/util.py:137
 msgid "Gradually stream message output"
 msgstr "Postupné streamování výstupu zpráv"
 
@@ -154,8 +156,8 @@ msgid ""
 "Command to execute to get bot response, {0} will be replaced with a JSON "
 "file containing the chat, {1} with the system prompt"
 msgstr ""
-"Příkaz ke spuštění pro získání odpovědi bota, {0} bude nahrazeno JSON souborem "
-"obsahujícím chat, {1} systémovou výzvou"
+"Příkaz ke spuštění pro získání odpovědi bota, {0} bude nahrazeno JSON "
+"souborem obsahujícím chat, {1} systémovou výzvou"
 
 #: src/handlers/llm/custom_handler.py:22
 msgid "Command to execute to get bot's suggestions"
@@ -169,9 +171,121 @@ msgid ""
 "suggestions to generate. Must return a JSON array containing the suggestions "
 "as strings"
 msgstr ""
-"Příkaz ke spuštění pro získání návrhů chatu, {0} bude nahrazeno JSON souborem "
-"obsahujícím chat, {1} dalšími výzvami, {2} počtem návrhů k vygenerování. Musí "
-"vrátit JSON pole obsahující návrhy jako řetězce"
+"Příkaz ke spuštění pro získání návrhů chatu, {0} bude nahrazeno JSON "
+"souborem obsahujícím chat, {1} dalšími výzvami, {2} počtem návrhů k "
+"vygenerování. Musí vrátit JSON pole obsahující návrhy jako řetězce"
+
+#: src/handlers/llm/gpt4all_handler.py:67
+msgid "RAM Required: "
+msgstr "Požadovaná RAM: "
+
+#: src/handlers/llm/gpt4all_handler.py:68
+msgid "Parameters: "
+msgstr "Parametry: "
+
+#: src/handlers/llm/gpt4all_handler.py:69
+msgid "Size: "
+msgstr "Velikost: "
+
+#: src/handlers/llm/gpt4all_handler.py:154 src/handlers/llm/g4f_handler.py:44
+msgid "Model to use"
+msgstr "Model k použití"
+
+#: src/handlers/llm/gpt4all_handler.py:154
+#: src/handlers/tts/elevenlabs_handler.py:25
+msgid "Name of the model to use"
+msgstr "Název modelu k použití"
+
+#: src/handlers/llm/gpt4all_handler.py:155
+#: src/handlers/llm/ollama_handler.py:172
+msgid "Model Manager"
+msgstr "Správce modelů"
+
+#: src/handlers/llm/gpt4all_handler.py:155
+#: src/handlers/llm/ollama_handler.py:172
+msgid "List of models available"
+msgstr "Seznam dostupných modelů"
+
+#: src/handlers/llm/g4f_handler.py:45
+msgid "Update G4F"
+msgstr "Aktualizovat G4F"
+
+#: src/handlers/llm/newelle_handler.py:18
+#: src/handlers/llm/gemini_handler.py:131
+#: src/handlers/llm/openai_handler.py:111
+msgid "Privacy Policy"
+msgstr "Zásady ochrany osobních údajů"
+
+#: src/handlers/llm/newelle_handler.py:19
+#: src/handlers/llm/gemini_handler.py:132
+#: src/handlers/llm/openai_handler.py:111
+msgid "Open privacy policy website"
+msgstr "Otevřít webové stránky se zásadami ochrany osobních údajů"
+
+#: src/handlers/llm/ollama_handler.py:152
+#: src/handlers/llm/gemini_handler.py:110
+msgid "Enable Thinking"
+msgstr "Povolit myšlení"
+
+#: src/handlers/llm/ollama_handler.py:152
+msgid "Allow thinking in the model, only some models are supported"
+msgstr "Povolit myšlení v modelu, podporovány jsou pouze některé modely"
+
+#: src/handlers/llm/ollama_handler.py:176
+msgid "Add custom model"
+msgstr "Přidat vlastní model"
+
+#: src/handlers/llm/ollama_handler.py:177
+msgid ""
+"Add any model to this list by putting name:size\n"
+"Or any gguf from hf with hf.co/username/model"
+msgstr ""
+"Přidejte jakýkoli model do tohoto seznamu zadáním název:velikost\n"
+"Nebo jakýkoli gguf z hf s hf.co/uživatelské_jméno/model"
+
+#: src/handlers/llm/ollama_handler.py:187
+msgid "Update Ollama"
+msgstr "Aktualizovat Ollamu"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Provider Sorting"
+msgstr "Řazení poskytovatelů"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Choose providers based on pricing/throughput or latency"
+msgstr "Vyberte poskytovatele na základě ceny/propustnosti nebo latence"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Price"
+msgstr "Cena"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Throughput"
+msgstr "Propustnost"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Latency"
+msgstr "Latence"
+
+#: src/handlers/llm/openrouter_handler.py:15
+msgid "Providers Order"
+msgstr "Pořadí poskytovatelů"
+
+#: src/handlers/llm/openrouter_handler.py:15
+msgid ""
+"Add order of providers to use, names separated by a comma.\n"
+"Empty to not specify"
+msgstr ""
+"Přidejte pořadí poskytovatelů k použití, jména oddělená čárkou.\n"
+"Prázdné, pokud nechcete specifikovat"
+
+#: src/handlers/llm/openrouter_handler.py:16
+msgid "Allow Fallbacks"
+msgstr "Povolit zálohy"
+
+#: src/handlers/llm/openrouter_handler.py:16
+msgid "Allow fallbacks to other providers"
+msgstr "Povolit záložní řešení pro jiné poskytovatele"
 
 #: src/handlers/llm/gemini_handler.py:94
 msgid "API Key (required)"
@@ -217,11 +331,6 @@ msgid "Settings about thinking models"
 msgstr "Nastavení týkající se modelů myšlení"
 
 #: src/handlers/llm/gemini_handler.py:110
-#: src/handlers/llm/ollama_handler.py:152
-msgid "Enable Thinking"
-msgstr "Povolit myšlení"
-
-#: src/handlers/llm/gemini_handler.py:110
 msgid "Show thinking, disable it if your model does not support it"
 msgstr "Zobrazit myšlení, vypněte, pokud váš model tuto funkci nepodporuje"
 
@@ -255,19 +364,9 @@ msgstr "Povolit nastavení bezpečnosti"
 
 #: src/handlers/llm/gemini_handler.py:126
 msgid "Enable google safety settings to avoid generating harmful content"
-msgstr "Povolit bezpečnostní nastavení Google, aby se zabránilo generování škodlivého obsahu"
-
-#: src/handlers/llm/gemini_handler.py:131
-#: src/handlers/llm/openai_handler.py:112
-#: src/handlers/llm/newelle_handler.py:18
-msgid "Privacy Policy"
-msgstr "Zásady ochrany osobních údajů"
-
-#: src/handlers/llm/gemini_handler.py:132
-#: src/handlers/llm/openai_handler.py:112
-#: src/handlers/llm/newelle_handler.py:19
-msgid "Open privacy policy website"
-msgstr "Otevřít webové stránky se zásadami ochrany osobních údajů"
+msgstr ""
+"Povolit bezpečnostní nastavení Google, aby se zabránilo generování "
+"škodlivého obsahu"
 
 #: src/handlers/llm/gemini_handler.py:135 src/handlers/llm/openai_handler.py:81
 msgid "Advanced Parameters"
@@ -277,39 +376,9 @@ msgstr "Pokročilé parametry"
 msgid "Enable advanced parameters"
 msgstr "Povolit pokročilé parametry"
 
-#: src/handlers/llm/gpt4all_handler.py:67
-msgid "RAM Required: "
-msgstr "Požadovaná RAM: "
-
-#: src/handlers/llm/gpt4all_handler.py:68
-msgid "Parameters: "
-msgstr "Parametry: "
-
-#: src/handlers/llm/gpt4all_handler.py:69
-msgid "Size: "
-msgstr "Velikost: "
-
-#: src/handlers/llm/gpt4all_handler.py:154 src/handlers/llm/g4f_handler.py:44
-msgid "Model to use"
-msgstr "Model k použití"
-
-#: src/handlers/llm/gpt4all_handler.py:154
-#: src/handlers/tts/elevenlabs_handler.py:25
-msgid "Name of the model to use"
-msgstr "Název modelu k použití"
-
-#: src/handlers/llm/gpt4all_handler.py:155
-#: src/handlers/llm/ollama_handler.py:172
-msgid "Model Manager"
-msgstr "Správce modelů"
-
-#: src/handlers/llm/gpt4all_handler.py:155
-#: src/handlers/llm/ollama_handler.py:172
-msgid "List of models available"
-msgstr "Seznam dostupných modelů"
-
 #: src/handlers/llm/openai_handler.py:81
-msgid "Include parameters like Max Tokens, Top-P, Temperature, etc."
+#, fuzzy
+msgid "Include parameters like Top-P, Temperature, etc."
 msgstr "Zahrnout parametry jako Max Tokens, Top-P, Teplota atd."
 
 #: src/handlers/llm/openai_handler.py:84
@@ -317,119 +386,47 @@ msgid "Name of the LLM Model to use"
 msgstr "Název LLM modelu k použití"
 
 #: src/handlers/llm/openai_handler.py:103
-msgid "max Tokens"
-msgstr "Max tokenů"
-
-#: src/handlers/llm/openai_handler.py:103
-msgid "Max tokens of the generated text"
-msgstr "Maximální počet tokenů generovaného textu"
-
-#: src/handlers/llm/openai_handler.py:104
 msgid "Top-P"
 msgstr "Top-P"
 
-#: src/handlers/llm/openai_handler.py:104
+#: src/handlers/llm/openai_handler.py:103
 msgid "An alternative to sampling with temperature, called nucleus sampling"
 msgstr "Alternativa k vzorkování s teplotou, nazývaná jaderné vzorkování"
 
-#: src/handlers/llm/openai_handler.py:105
+#: src/handlers/llm/openai_handler.py:104
 #: src/handlers/stt/whispercpp_handler.py:50
 msgid "Temperature"
 msgstr "Teplota"
 
-#: src/handlers/llm/openai_handler.py:105
+#: src/handlers/llm/openai_handler.py:104
 msgid ""
 "What sampling temperature to use. Higher values will make the output more "
 "random"
 msgstr "Jakou teplotu vzorkování použít. Vyšší hodnoty učiní výstup náhodnější"
 
-#: src/handlers/llm/openai_handler.py:106
+#: src/handlers/llm/openai_handler.py:105
 msgid "Frequency Penalty"
 msgstr "Penalizace frekvence"
 
-#: src/handlers/llm/openai_handler.py:106
+#: src/handlers/llm/openai_handler.py:105
 msgid ""
 "Number between -2.0 and 2.0. Positive values decrease the model's likelihood "
 "to repeat the same line verbatim"
 msgstr ""
-"Číslo mezi -2,0 a 2,0. Kladné hodnoty snižují pravděpodobnost, že model "
-"bude doslova opakovat stejný řádek"
+"Číslo mezi -2,0 a 2,0. Kladné hodnoty snižují pravděpodobnost, že model bude "
+"doslova opakovat stejný řádek"
 
-#: src/handlers/llm/openai_handler.py:107
+#: src/handlers/llm/openai_handler.py:106
 msgid "Presence Penalty"
 msgstr "Penalizace přítomnosti"
 
-#: src/handlers/llm/openai_handler.py:107
+#: src/handlers/llm/openai_handler.py:106
 msgid ""
 "Number between -2.0 and 2.0. Positive values decrease the model's likelihood "
 "to talk about new topics"
 msgstr ""
-"Číslo mezi -2,0 a 2,0. Kladné hodnoty snižují pravděpodobnost, že model "
-"bude mluvit o nových tématech"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Provider Sorting"
-msgstr "Řazení poskytovatelů"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Choose providers based on pricing/throughput or latency"
-msgstr "Vyberte poskytovatele na základě ceny/propustnosti nebo latence"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Price"
-msgstr "Cena"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Throughput"
-msgstr "Propustnost"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Latency"
-msgstr "Latence"
-
-#: src/handlers/llm/openrouter_handler.py:15
-msgid "Providers Order"
-msgstr "Pořadí poskytovatelů"
-
-#: src/handlers/llm/openrouter_handler.py:15
-msgid ""
-"Add order of providers to use, names separated by a comma.\n"
-"Empty to not specify"
-msgstr ""
-"Přidejte pořadí poskytovatelů k použití, jména oddělená čárkou.\n"
-"Prázdné, pokud nechcete specifikovat"
-
-#: src/handlers/llm/openrouter_handler.py:16
-msgid "Allow Fallbacks"
-msgstr "Povolit zálohy"
-
-#: src/handlers/llm/openrouter_handler.py:16
-msgid "Allow fallbacks to other providers"
-msgstr "Povolit záložní řešení pro jiné poskytovatele"
-
-#: src/handlers/llm/g4f_handler.py:45
-msgid "Update G4F"
-msgstr "Aktualizovat G4F"
-
-#: src/handlers/llm/ollama_handler.py:152
-msgid "Allow thinking in the model, only some models are supported"
-msgstr "Povolit myšlení v modelu, podporovány jsou pouze některé modely"
-
-#: src/handlers/llm/ollama_handler.py:176
-msgid "Add custom model"
-msgstr "Přidat vlastní model"
-
-#: src/handlers/llm/ollama_handler.py:177
-msgid ""
-"Add any model to this list by putting name:size\n"
-"Or any gguf from hf with hf.co/username/model"
-msgstr ""
-"Přidejte jakýkoli model do tohoto seznamu zadáním název:velikost\n"
-"Nebo jakýkoli gguf z hf s hf.co/uživatelské_jméno/model"
-
-#: src/handlers/llm/ollama_handler.py:187
-msgid "Update Ollama"
-msgstr "Aktualizovat Ollamu"
+"Číslo mezi -2,0 a 2,0. Kladné hodnoty snižují pravděpodobnost, že model bude "
+"mluvit o nových tématech"
 
 #: src/handlers/rag/rag_handler.py:104
 msgid "Index your documents"
@@ -442,8 +439,8 @@ msgid ""
 "change embedding model"
 msgstr ""
 "Indexujte všechny dokumenty ve vaší složce dokumentů. Tuto operaci musíte "
-"spustit pokaždé, když upravíte/vytvoříte dokument, změníte analyzátor dokumentů "
-"nebo změníte model vkládání"
+"spustit pokaždé, když upravíte/vytvoříte dokument, změníte analyzátor "
+"dokumentů nebo změníte model vkládání"
 
 #: src/handlers/stt/custom_handler.py:13 src/handlers/tts/custom_handler.py:17
 msgid "Command to execute"
@@ -486,8 +483,8 @@ msgid ""
 "Specify the language for transcription. Use ISO 639-1 language codes (e.g. "
 "\"en\" for English, \"fr\" for French, etc.). "
 msgstr ""
-"Zadejte jazyk pro transkripci. Použijte kódy jazyků ISO 639-1 (např. "
-"„en“ pro angličtinu, „fr“ pro francouzštinu atd.). "
+"Zadejte jazyk pro transkripci. Použijte kódy jazyků ISO 639-1 (např. „en“ "
+"pro angličtinu, „fr“ pro francouzštinu atd.). "
 
 #: src/handlers/stt/openaisr_handler.py:11
 msgid "Endpoint for OpenAI requests"
@@ -510,8 +507,8 @@ msgid ""
 "Optional: Specify the language for transcription. Use ISO 639-1 language "
 "codes (e.g. \"en\" for English, \"fr\" for French, etc.). "
 msgstr ""
-"Volitelné: Zadejte jazyk pro transkripci. Použijte kódy jazyků ISO 639-1 (např. "
-"„en“ pro angličtinu, „fr“ pro francouzštinu atd.). "
+"Volitelné: Zadejte jazyk pro transkripci. Použijte kódy jazyků ISO 639-1 "
+"(např. „en“ pro angličtinu, „fr“ pro francouzštinu atd.). "
 
 #: src/handlers/stt/vosk_handler.py:17
 msgid "Model Path"
@@ -535,7 +532,8 @@ msgid "Could not understand the audio"
 msgstr "Nepodařilo se porozumět zvuku"
 
 #: src/handlers/stt/whispercpp_handler.py:47
-msgid "Language of the recognition."
+#, fuzzy
+msgid "Language of the recognition. For example en, it..."
 msgstr "Jazyk rozpoznání."
 
 #: src/handlers/stt/whispercpp_handler.py:48
@@ -631,8 +629,7 @@ msgstr "Přehánění stylu"
 #: src/handlers/tts/elevenlabs_handler.py:53
 msgid ""
 "High values are reccomended if the style of the speech must be exaggerated"
-msgstr ""
-"Vysoké hodnoty se doporučují, pokud styl řeči musí být přehnaný"
+msgstr "Vysoké hodnoty se doporučují, pokud styl řeči musí být přehnaný"
 
 #: src/handlers/tts/custom_handler.py:17
 #, python-brace-format
@@ -689,10 +686,10 @@ msgid ""
 "mainstream media sources. General is for broader, more general-purpose "
 "searches that may include a wide range of sources."
 msgstr ""
-"Kategorie hledání. Zprávy jsou užitečné pro získávání aktuálních "
-"informací, zejména o politice, sportu a hlavních aktuálních událostech "
-"pokrývaných hlavními mediálními zdroji. Obecné je pro širší, obecnější "
-"hledání, které může zahrnovat širokou škálu zdrojů."
+"Kategorie hledání. Zprávy jsou užitečné pro získávání aktuálních informací, "
+"zejména o politice, sportu a hlavních aktuálních událostech pokrývaných "
+"hlavními mediálními zdroji. Obecné je pro širší, obecnější hledání, které "
+"může zahrnovat širokou škálu zdrojů."
 
 #: src/handlers/websearch/tavily.py:24
 msgid "Chunks per source"
@@ -750,7 +747,9 @@ msgstr "Zahrnout popisy obrázků"
 #: src/handlers/websearch/tavily.py:29
 msgid ""
 "When Include images is enabled, also add a descriptive text for each image."
-msgstr "Pokud je povoleno Zahrnout obrázky, přidejte také popisný text pro každý obrázek."
+msgstr ""
+"Pokud je povoleno Zahrnout obrázky, přidejte také popisný text pro každý "
+"obrázek."
 
 #: src/handlers/websearch/tavily.py:30
 msgid "Include domains"
@@ -876,23 +875,23 @@ msgstr "Smazat profil"
 msgid "Newelle Tips"
 msgstr "Tipy Newelle"
 
-#: src/ui/widgets/thinking.py:27
+#: src/ui/widgets/thinking.py:26
 msgid "Thoughts"
 msgstr "Myšlenky"
 
-#: src/ui/widgets/thinking.py:28 src/ui/widgets/thinking.py:135
+#: src/ui/widgets/thinking.py:27 src/ui/widgets/thinking.py:134
 msgid "Expand to see details"
 msgstr "Rozbalte pro zobrazení podrobností"
 
-#: src/ui/widgets/thinking.py:123
+#: src/ui/widgets/thinking.py:122
 msgid "Thinking..."
 msgstr "Přemýšlím..."
 
-#: src/ui/widgets/thinking.py:124
+#: src/ui/widgets/thinking.py:123
 msgid "The LLM is thinking... Expand to see thought process"
 msgstr "LLM přemýšlí... Rozbalte pro zobrazení průběhu myšlení"
 
-#: src/ui/widgets/thinking.py:137
+#: src/ui/widgets/thinking.py:136
 msgid "No thought process recorded"
 msgstr "Žádný zaznamenaný myšlenkový proces"
 
@@ -900,7 +899,7 @@ msgstr "Žádný zaznamenaný myšlenkový proces"
 msgid "Folder is Empty"
 msgstr "Složka je prázdná"
 
-#: src/ui/explorer.py:340 src/window.py:1574
+#: src/ui/explorer.py:340 src/window.py:1576
 msgid "File not found"
 msgstr "Soubor nenalezen"
 
@@ -1074,6 +1073,27 @@ msgstr "Přiblížit"
 msgid "Zoom out"
 msgstr "Oddálit"
 
+#: src/ui/extension.py:17 src/ui/presentation.py:131 src/constants.py:513
+#: src/window.py:118
+msgid "Extensions"
+msgstr "Rozšíření"
+
+#: src/ui/extension.py:50
+msgid "Installed Extensions"
+msgstr "Nainstalovaná rozšíření"
+
+#: src/ui/extension.py:85
+msgid "User guide to Extensions"
+msgstr "Uživatelská příručka k rozšířením"
+
+#: src/ui/extension.py:88
+msgid "Download new Extensions"
+msgstr "Stáhnout nová rozšíření"
+
+#: src/ui/extension.py:91
+msgid "Install extension from file..."
+msgstr "Nainstalovat rozšíření ze souboru..."
+
 #: src/ui/mini_window.py:9 data/io.github.qwersyk.Newelle.appdata.xml.in:7
 #: data/io.github.qwersyk.Newelle.desktop.in:2
 msgid "Newelle"
@@ -1125,7 +1145,7 @@ msgstr ""
 "chatu, nebo z vašich vlastních souborů! Informace relevantní k vašemu dotazu "
 "budou odeslány do LLM."
 
-#: src/ui/presentation.py:124 src/ui/settings.py:236 src/window.py:647
+#: src/ui/presentation.py:124 src/ui/settings.py:236 src/window.py:649
 msgid "Command virtualization"
 msgstr "Virtualizace příkazů"
 
@@ -1137,16 +1157,11 @@ msgid ""
 "By default, your commands will be <b>virtualized in the Flatpak environment</"
 "b>, but pay attention!"
 msgstr ""
-"Newelle lze použít ke spouštění příkazů ve vašem systému, ale dávejte "
-"pozor na to, co spouštíte! <b>LLM není pod naší kontrolou, takže může "
-"generovat škodlivý kód!</b>\n"
+"Newelle lze použít ke spouštění příkazů ve vašem systému, ale dávejte pozor "
+"na to, co spouštíte! <b>LLM není pod naší kontrolou, takže může generovat "
+"škodlivý kód!</b>\n"
 "Ve výchozím nastavení budou vaše příkazy <b>virtualizovány v prostředí "
 "Flatpak</b>, ale buďte opatrní!"
-
-#: src/ui/presentation.py:131 src/ui/extension.py:17 src/constants.py:513
-#: src/window.py:118
-msgid "Extensions"
-msgstr "Rozšíření"
 
 #: src/ui/presentation.py:132
 msgid "You can extend Newelle's functionalities using extensions!"
@@ -1163,7 +1178,8 @@ msgstr "Chyba oprávnění"
 #: src/ui/presentation.py:147
 msgid ""
 "Newelle does not have enough permissions to run commands on your system."
-msgstr "Newelle nemá dostatečná oprávnění ke spouštění příkazů ve vašem systému."
+msgstr ""
+"Newelle nemá dostatečná oprávnění ke spouštění příkazů ve vašem systému."
 
 #: src/ui/presentation.py:158
 msgid "Begin using the app"
@@ -1172,22 +1188,6 @@ msgstr "Začněte používat aplikaci"
 #: src/ui/presentation.py:163
 msgid "Start chatting"
 msgstr "Začít chatovat"
-
-#: src/ui/extension.py:50
-msgid "Installed Extensions"
-msgstr "Nainstalovaná rozšíření"
-
-#: src/ui/extension.py:85
-msgid "User guide to Extensions"
-msgstr "Uživatelská příručka k rozšířením"
-
-#: src/ui/extension.py:88
-msgid "Download new Extensions"
-msgstr "Stáhnout nová rozšíření"
-
-#: src/ui/extension.py:91
-msgid "Install extension from file..."
-msgstr "Nainstalovat rozšíření ze souboru..."
 
 #: src/ui/settings.py:46 src/constants.py:523
 msgid "General"
@@ -1241,11 +1241,11 @@ msgid ""
 "Embedding is used to trasform text into vectors. Used by Long Term Memory "
 "and RAG. Changing it might require you to re-index documents or reset memory."
 msgstr ""
-"Vkládání se používá k transformaci textu na vektory. Používá se pro Dlouhodobou "
-"paměť a RAG. Změna může vyžadovat opětovnou indexaci dokumentů nebo resetování "
-"paměti."
+"Vkládání se používá k transformaci textu na vektory. Používá se pro "
+"Dlouhodobou paměť a RAG. Změna může vyžadovat opětovnou indexaci dokumentů "
+"nebo resetování paměti."
 
-#: src/ui/settings.py:104 src/window.py:645
+#: src/ui/settings.py:104 src/window.py:647
 msgid "Long Term Memory"
 msgstr "Dlouhodobá paměť"
 
@@ -1357,7 +1357,8 @@ msgstr "Obrátit pořadí chatu"
 
 #: src/ui/settings.py:204
 msgid "Show most recent chats on top in chat list (change chat to apply)"
-msgstr "Zobrazit nejnovější chaty nahoře v seznamu chatů (pro použití změnit chat)"
+msgstr ""
+"Zobrazit nejnovější chaty nahoře v seznamu chatů (pro použití změnit chat)"
 
 #: src/ui/settings.py:210
 msgid "Automatically Generate Chat Names"
@@ -1588,8 +1589,7 @@ msgid ""
 "Silence threshold in seconds, percentage of the volume to be considered "
 "silence"
 msgstr ""
-"Prah ticha v sekundách, procento hlasitosti, které má být považováno za "
-"ticho"
+"Prah ticha v sekundách, procento hlasitosti, které má být považováno za ticho"
 
 #: src/ui/settings.py:465
 msgid "Silence time"
@@ -1636,7 +1636,7 @@ msgid "Start/Stop monitoring"
 msgstr "Spustit/Zastavit monitorování"
 
 #: src/ui/stdout_monitor.py:109 src/ui/stdout_monitor.py:182
-#: src/ui/stdout_monitor.py:191 src/window.py:3683
+#: src/ui/stdout_monitor.py:191 src/window.py:3686
 msgid "Monitoring: Active"
 msgstr "Monitorování: Aktivní"
 
@@ -1669,8 +1669,8 @@ msgid ""
 "NO GPU SUPPORT, USE OLLAMA INSTEAD. Run a LLM model locally, more privacy "
 "but slower"
 msgstr ""
-"BEZ PODPORY GPU, POUŽIJTE MÍSTO TOHO OLLAMA. Spusťte model LLM lokálně, "
-"více soukromí, ale pomalejší"
+"BEZ PODPORY GPU, POUŽIJTE MÍSTO TOHO OLLAMA. Spusťte model LLM lokálně, více "
+"soukromí, ale pomalejší"
 
 #: src/constants.py:40
 msgid "Ollama Instance"
@@ -1694,7 +1694,9 @@ msgstr "API OpenAI"
 
 #: src/constants.py:61
 msgid "OpenAI API. Custom endpoints supported. Use this for custom providers"
-msgstr "OpenAI API. Podporovány vlastní koncové body. Použijte pro vlastní poskytovatele"
+msgstr ""
+"OpenAI API. Podporovány vlastní koncové body. Použijte pro vlastní "
+"poskytovatele"
 
 #: src/constants.py:66
 msgid "Anthropic Claude"
@@ -1815,8 +1817,7 @@ msgstr "Kokoro TTS"
 #: src/constants.py:168
 msgid ""
 "Lightweight and fast open source TTS engine. ~3GB dependencies, 400MB model"
-msgstr ""
-"Lehký a rychlý open source TTS engine. ~3GB závislostí, 400MB model"
+msgstr "Lehký a rychlý open source TTS engine. ~3GB závislostí, 400MB model"
 
 #: src/constants.py:173
 msgid "ElevenLabs TTS"
@@ -1875,8 +1876,8 @@ msgstr "Ollama Vkládání"
 msgid ""
 "Use Ollama models for Embedding. Works offline, very low resources usage"
 msgstr ""
-"Použijte modely Ollama pro vkládání (Embedding). Funguje offline, velmi nízká "
-"spotřeba zdrojů"
+"Použijte modely Ollama pro vkládání (Embedding). Funguje offline, velmi "
+"nízká spotřeba zdrojů"
 
 #: src/constants.py:231
 msgid "Use Google Gemini API to get embeddings"
@@ -2012,7 +2013,7 @@ msgstr "Přidejte si vlastní výzvu"
 msgid "LLM and Secondary LLM settings"
 msgstr "Nastavení LLM a sekundárního LLM"
 
-#: src/constants.py:483 src/window.py:646
+#: src/constants.py:483 src/window.py:648
 msgid "TTS"
 msgstr "TTS"
 
@@ -2077,16 +2078,12 @@ msgid ""
 "General settings, virtualization, offers, memory length, automatically "
 "generate chat name, current folder..."
 msgstr ""
-"Obecná nastavení, virtualizace, nabídky, délka paměti, automatické generování "
-"názvu chatu, aktuální složka..."
+"Obecná nastavení, virtualizace, nabídky, délka paměti, automatické "
+"generování názvu chatu, aktuální složka..."
 
 #: src/constants.py:530
 msgid "Prompts settings, custom extra prompt, custom prompts..."
 msgstr "Nastavení výzev, vlastní extra výzva, vlastní výzvy..."
-
-#: src/controller.py:135 src/window.py:1846
-msgid "Chat "
-msgstr "Chat "
 
 #: src/main.py:205
 msgid "Terminal threads are still running in the background"
@@ -2111,6 +2108,10 @@ msgstr "Složka byla restartována"
 #: src/main.py:254
 msgid "Chat is created"
 msgstr "Chat je vytvořen"
+
+#: src/controller.py:135 src/window.py:1848
+msgid "Chat "
+msgstr "Chat "
 
 #: src/window.py:120
 msgid "Keyboard shorcuts"
@@ -2168,27 +2169,28 @@ msgstr "Záložka Terminál"
 msgid "Browser Tab"
 msgstr "Záložka Prohlížeč"
 
-#: src/window.py:587
+#: src/window.py:589
 msgid "Ask about a website"
 msgstr "Zeptejte se na webovou stránku"
 
-#: src/window.py:587
+#: src/window.py:589
 msgid "Write #https://website.com in chat to ask information about a website"
-msgstr "Napište #https://website.com do chatu pro získání informací o webové stránce"
+msgstr ""
+"Napište #https://website.com do chatu pro získání informací o webové stránce"
 
-#: src/window.py:588
+#: src/window.py:590
 msgid "Check out our Extensions!"
 msgstr "Podívejte se na naše rozšíření!"
 
-#: src/window.py:588
+#: src/window.py:590
 msgid "We have a lot of extensions for different things. Check it out!"
 msgstr "Máme spoustu rozšíření pro různé věci. Zkontrolujte je!"
 
-#: src/window.py:589
+#: src/window.py:591
 msgid "Chat with documents!"
 msgstr "Chatujte s dokumenty!"
 
-#: src/window.py:589
+#: src/window.py:591
 msgid ""
 "Add your documents to your documents folder and chat using the information "
 "contained in them!"
@@ -2196,11 +2198,11 @@ msgstr ""
 "Přidejte své dokumenty do složky dokumentů a chatujte s využitím informací "
 "obsažených v nich!"
 
-#: src/window.py:590
+#: src/window.py:592
 msgid "Surf the web!"
 msgstr "Surfujte po webu!"
 
-#: src/window.py:590
+#: src/window.py:592
 msgid ""
 "Enable web search to allow the LLM to surf the web and provide up to date "
 "answers"
@@ -2208,153 +2210,155 @@ msgstr ""
 "Povolte webové vyhledávání, aby LLM mohla surfovat po webu a poskytovat "
 "aktuální odpovědi"
 
-#: src/window.py:591
+#: src/window.py:593
 msgid "Mini Window"
 msgstr "Mini okno"
 
-#: src/window.py:591
+#: src/window.py:593
 msgid "Ask questions on the fly using the mini window mode"
 msgstr "Klást otázky za pochodu pomocí režimu mini okna"
 
-#: src/window.py:592
+#: src/window.py:594
 msgid "Text to Speech"
 msgstr "Převod textu na řeč"
 
-#: src/window.py:592
+#: src/window.py:594
 msgid "Newelle supports text-to-speech! Enable it in the settings"
 msgstr "Newelle podporuje převod textu na řeč! Povolte jej v nastavení"
 
-#: src/window.py:593
+#: src/window.py:595
 msgid "Keyboard Shortcuts"
 msgstr "Klávesové zkratky"
 
-#: src/window.py:593
+#: src/window.py:595
 msgid "Control Newelle using Keyboard Shortcuts"
 msgstr "Ovládejte Newelle pomocí klávesových zkratek"
 
-#: src/window.py:594
+#: src/window.py:596
 msgid "Prompt Control"
 msgstr "Ovládání výzev"
 
-#: src/window.py:594
+#: src/window.py:596
 msgid "Newelle gives you 100% prompt control. Tune your prompts for your use."
-msgstr "Newelle vám poskytuje 100% kontrolu nad výzvami. Upravte si výzvy pro vaše použití."
+msgstr ""
+"Newelle vám poskytuje 100% kontrolu nad výzvami. Upravte si výzvy pro vaše "
+"použití."
 
-#: src/window.py:595
+#: src/window.py:597
 msgid "Thread Editing"
 msgstr "Úprava vlákna"
 
-#: src/window.py:595
+#: src/window.py:597
 msgid "Check the programs and processes you run from Newelle"
 msgstr "Zkontrolujte programy a procesy, které spouštíte z Newelle"
 
-#: src/window.py:596
+#: src/window.py:598
 msgid "Programmable Prompts"
 msgstr "Programovatelné výzvy"
 
-#: src/window.py:596
+#: src/window.py:598
 msgid ""
 "You can add dynamic prompts to Newelle, with conditions and probabilities"
 msgstr ""
 "Do Newelle můžete přidávat dynamické výzvy s podmínkami a pravděpodobnostmi"
 
-#: src/window.py:603
+#: src/window.py:605
 msgid "New Chat"
 msgstr "Nový chat"
 
-#: src/window.py:621
+#: src/window.py:623
 msgid "Provider Errror"
 msgstr "Chyba poskytovatele"
 
-#: src/window.py:644
+#: src/window.py:646
 msgid "Local Documents"
 msgstr "Místní dokumenty"
 
-#: src/window.py:648
+#: src/window.py:650
 msgid "Web search"
 msgstr "Webové hledání"
 
-#: src/window.py:890
+#: src/window.py:892
 msgid "This provider does not have a model list"
 msgstr "Tento poskytovatel nemá seznam modelů"
 
-#: src/window.py:895
+#: src/window.py:897
 msgid " Models"
 msgstr " Modely"
 
-#: src/window.py:898
+#: src/window.py:900
 msgid "Search Models..."
 msgstr "Hledat modely..."
 
-#: src/window.py:1126
+#: src/window.py:1128
 msgid "Create new profile"
 msgstr "Vytvořit nový profil"
 
-#: src/window.py:1260
+#: src/window.py:1262
 msgid "Could not recognize your voice"
 msgstr "Nepodařilo se rozpoznat váš hlas"
 
-#: src/window.py:1297
+#: src/window.py:1299
 msgid "Images"
 msgstr "Obrázky"
 
-#: src/window.py:1301
+#: src/window.py:1303
 msgid "LLM Supported Files"
 msgstr "Soubory podporované LLM"
 
-#: src/window.py:1309
+#: src/window.py:1311
 msgid "RAG Supported files"
 msgstr "Soubory podporované RAG"
 
-#: src/window.py:1327
+#: src/window.py:1329
 msgid "Supported Files"
 msgstr "Podporované soubory"
 
-#: src/window.py:1331
+#: src/window.py:1333
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: src/window.py:1337
+#: src/window.py:1339
 msgid "Attach file"
 msgstr "Připojit soubor"
 
-#: src/window.py:1592
+#: src/window.py:1594
 msgid "The file cannot be sent until the program is finished"
 msgstr "Soubor nelze odeslat, dokud program neskončí"
 
-#: src/window.py:1614
+#: src/window.py:1616
 msgid "The file is not recognized"
 msgstr "Soubor není rozpoznán"
 
-#: src/window.py:1633
+#: src/window.py:1635
 msgid "You can no longer continue the message."
 msgstr "Zprávu již nelze pokračovat."
 
-#: src/window.py:1658
+#: src/window.py:1660
 msgid "You can no longer regenerate the message."
 msgstr "Zprávu již nelze znovu vygenerovat."
 
-#: src/window.py:1890
+#: src/window.py:1892
 msgid "Chat is cleared"
 msgstr "Chat je vymazán"
 
-#: src/window.py:1915
+#: src/window.py:1917
 msgid "The message was canceled and deleted from history"
 msgstr "Zpráva byla zrušena a smazána z historie"
 
-#: src/window.py:1959
+#: src/window.py:1961
 msgid "The message cannot be sent until the program is finished"
 msgstr "Zprávu nelze odeslat, dokud program neskončí"
 
-#: src/window.py:2936
+#: src/window.py:2939
 msgid "You can't edit a message while the program is running."
 msgstr "Nemůžete upravovat zprávu, když program běží."
 
-#: src/window.py:3061
+#: src/window.py:3064
 msgid "Prompt content"
 msgstr "Obsah výzvy"
 
-#: src/window.py:3320
+#: src/window.py:3323
 msgid ""
 "The neural network has access to your computer and any data in this chat and "
 "can run commands, be careful, we are not responsible for the neural network. "
@@ -2364,7 +2368,7 @@ msgstr ""
 "může spouštět příkazy, buďte opatrní, neneseme odpovědnost za neuronovou "
 "síť. Nesdílejte žádné citlivé informace."
 
-#: src/window.py:3349
+#: src/window.py:3352
 msgid ""
 "The neural network has access to any data in this chat, be careful, we are "
 "not responsible for the neural network. Do not share any sensitive "
@@ -2373,19 +2377,19 @@ msgstr ""
 "Neuronová síť má přístup ke všem datům v tomto chatu, buďte opatrní, "
 "neneseme odpovědnost za neuronovou síť. Nesdílejte žádné citlivé informace."
 
-#: src/window.py:3398
+#: src/window.py:3401
 msgid "Wrong folder path"
 msgstr "Špatná cesta ke složce"
 
-#: src/window.py:3431
+#: src/window.py:3434
 msgid "Thread has not been completed, thread number: "
 msgstr "Vlákno nebylo dokončeno, číslo vlákna: "
 
-#: src/window.py:3443
+#: src/window.py:3446
 msgid "Failed to open the folder"
 msgstr "Nepodařilo se otevřít složku"
 
-#: src/window.py:3622
+#: src/window.py:3625
 msgid "Chat is empty"
 msgstr "Chat je prázdný"
 
@@ -2394,8 +2398,8 @@ msgid ""
 "Train Newelle to do more with custom extensions and new AI modules, giving "
 "your chatbot endless possibilities."
 msgstr ""
-"Trénujte Newelle, aby dělala více s vlastními rozšířeními a novými AI moduly, "
-"čímž získá váš chatbot nekonečné možnosti."
+"Trénujte Newelle, aby dělala více s vlastními rozšířeními a novými AI "
+"moduly, čímž získá váš chatbot nekonečné možnosti."
 
 #: data/io.github.qwersyk.Newelle.appdata.xml.in:11
 msgid "AI chatbot"
@@ -2465,7 +2469,8 @@ msgstr "Přidány nové funkce"
 
 #: data/io.github.qwersyk.Newelle.appdata.xml.in:68
 msgid "Website reading and web search with SearXNG, DuckDuckGo, and Tavily"
-msgstr "Čtení webových stránek a vyhledávání na webu s SearXNG, DuckDuckGo a Tavily"
+msgstr ""
+"Čtení webových stránek a vyhledávání na webu s SearXNG, DuckDuckGo a Tavily"
 
 #: data/io.github.qwersyk.Newelle.appdata.xml.in:69
 msgid "Improved LaTeX rendering and document management"
@@ -2551,3 +2556,9 @@ msgstr "Newelle: Váš pokročilý chat bot"
 #: data/io.github.qwersyk.Newelle.desktop.in:10
 msgid "ai;assistant;chat;chatgpt;gpt;llm;ollama;"
 msgstr "ai;asistent;chat;chatgpt;gpt;llm;ollama;"
+
+#~ msgid "max Tokens"
+#~ msgstr "Max tokenů"
+
+#~ msgid "Max tokens of the generated text"
+#~ msgstr "Maximální počet tokenů generovaného textu"

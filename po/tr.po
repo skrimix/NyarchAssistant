@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-02 02:15+0800\n"
+"POT-Creation-Date: 2025-07-08 18:07+0800\n"
 "PO-Revision-Date: 2025-07-03 09:00+0200\n"
 "Last-Translator: Yehor Hliebov <qsk@gmx.at>\n"
 "Language-Team: Turkish <qsk@gmx.at>\n"
@@ -13,13 +13,13 @@ msgstr ""
 
 #: src/handlers/embeddings/ollama_handler.py:32
 #: src/handlers/embeddings/openai_handler.py:38
-#: src/handlers/llm/openai_handler.py:75 src/handlers/llm/ollama_handler.py:150
+#: src/handlers/llm/ollama_handler.py:150 src/handlers/llm/openai_handler.py:75
 #: src/handlers/stt/openaisr_handler.py:10
 msgid "API Endpoint"
 msgstr "API Uç Noktası"
 
 #: src/handlers/embeddings/ollama_handler.py:32
-#: src/handlers/llm/openai_handler.py:75 src/handlers/llm/ollama_handler.py:150
+#: src/handlers/llm/ollama_handler.py:150 src/handlers/llm/openai_handler.py:75
 msgid "API base url, change this to use interference APIs"
 msgstr "API temel URL'si, bunu diğer API'ları kullanmak için değiştirin"
 
@@ -44,8 +44,8 @@ msgstr "Özel Model"
 
 #: src/handlers/embeddings/ollama_handler.py:34
 #: src/handlers/embeddings/openai_handler.py:41
-#: src/handlers/llm/claude_handler.py:85 src/handlers/llm/openai_handler.py:78
-#: src/handlers/llm/ollama_handler.py:153
+#: src/handlers/llm/claude_handler.py:85 src/handlers/llm/ollama_handler.py:153
+#: src/handlers/llm/openai_handler.py:78
 msgid "Use a custom model"
 msgstr "Özel bir model kullan"
 
@@ -91,8 +91,8 @@ msgstr "Özel Model Kullan"
 
 #: src/handlers/embeddings/openai_handler.py:44
 #: src/handlers/llm/claude_handler.py:89 src/handlers/llm/claude_handler.py:93
-#: src/handlers/llm/gemini_handler.py:97 src/handlers/llm/openai_handler.py:84
-#: src/handlers/llm/g4f_handler.py:44 src/handlers/stt/whisper_handler.py:15
+#: src/handlers/llm/g4f_handler.py:44 src/handlers/llm/gemini_handler.py:97
+#: src/handlers/llm/openai_handler.py:84 src/handlers/stt/whisper_handler.py:15
 #: src/handlers/stt/whispercpp_handler.py:40
 #: src/handlers/tts/custom_openai_tts.py:20
 #: src/handlers/tts/elevenlabs_handler.py:24
@@ -132,15 +132,17 @@ msgstr "Maksimum Token"
 msgid "The maximum number of tokens to generate"
 msgstr "Oluşturulacak maksimum token sayısı"
 
-#: src/handlers/llm/custom_handler.py:20 src/handlers/llm/gemini_handler.py:119
+#: src/handlers/llm/custom_handler.py:20
 #: src/handlers/llm/gpt4all_handler.py:153
-#: src/handlers/llm/newelle_handler.py:27 src/utility/util.py:136
+#: src/handlers/llm/newelle_handler.py:27
+#: src/handlers/llm/gemini_handler.py:119 src/utility/util.py:136
 msgid "Message Streaming"
 msgstr "Mesaj Akışı"
 
-#: src/handlers/llm/custom_handler.py:20 src/handlers/llm/gemini_handler.py:120
+#: src/handlers/llm/custom_handler.py:20
 #: src/handlers/llm/gpt4all_handler.py:153
-#: src/handlers/llm/newelle_handler.py:28 src/utility/util.py:137
+#: src/handlers/llm/newelle_handler.py:28
+#: src/handlers/llm/gemini_handler.py:120 src/utility/util.py:137
 msgid "Gradually stream message output"
 msgstr "Mesaj çıktısını aşamalı olarak akışa alın"
 
@@ -173,6 +175,118 @@ msgstr ""
 "JSON dosyasıyla, {1} ek istemlerle, {2} ise oluşturulacak öneri sayısıyla "
 "değiştirilecektir. Önerileri dizeler olarak içeren bir JSON dizisi "
 "döndürmelidir"
+
+#: src/handlers/llm/gpt4all_handler.py:67
+msgid "RAM Required: "
+msgstr "Gerekli RAM: "
+
+#: src/handlers/llm/gpt4all_handler.py:68
+msgid "Parameters: "
+msgstr "Parametreler: "
+
+#: src/handlers/llm/gpt4all_handler.py:69
+msgid "Size: "
+msgstr "Boyut: "
+
+#: src/handlers/llm/gpt4all_handler.py:154 src/handlers/llm/g4f_handler.py:44
+msgid "Model to use"
+msgstr "Kullanılacak model"
+
+#: src/handlers/llm/gpt4all_handler.py:154
+#: src/handlers/tts/elevenlabs_handler.py:25
+msgid "Name of the model to use"
+msgstr "Kullanılacak modelin adı"
+
+#: src/handlers/llm/gpt4all_handler.py:155
+#: src/handlers/llm/ollama_handler.py:172
+msgid "Model Manager"
+msgstr "Model Yöneticisi"
+
+#: src/handlers/llm/gpt4all_handler.py:155
+#: src/handlers/llm/ollama_handler.py:172
+msgid "List of models available"
+msgstr "Mevcut modellerin listesi"
+
+#: src/handlers/llm/g4f_handler.py:45
+msgid "Update G4F"
+msgstr "G4F'yi Güncelle"
+
+#: src/handlers/llm/newelle_handler.py:18
+#: src/handlers/llm/gemini_handler.py:131
+#: src/handlers/llm/openai_handler.py:111
+msgid "Privacy Policy"
+msgstr "Gizlilik Politikası"
+
+#: src/handlers/llm/newelle_handler.py:19
+#: src/handlers/llm/gemini_handler.py:132
+#: src/handlers/llm/openai_handler.py:111
+msgid "Open privacy policy website"
+msgstr "Gizlilik politikası web sitesini aç"
+
+#: src/handlers/llm/ollama_handler.py:152
+#: src/handlers/llm/gemini_handler.py:110
+msgid "Enable Thinking"
+msgstr "Düşünmeyi Etkinleştir"
+
+#: src/handlers/llm/ollama_handler.py:152
+msgid "Allow thinking in the model, only some models are supported"
+msgstr "Modelde düşünmeye izin ver, yalnızca bazı modeller desteklenir"
+
+#: src/handlers/llm/ollama_handler.py:176
+msgid "Add custom model"
+msgstr "Özel model ekle"
+
+#: src/handlers/llm/ollama_handler.py:177
+msgid ""
+"Add any model to this list by putting name:size\n"
+"Or any gguf from hf with hf.co/username/model"
+msgstr ""
+"Bu listeye herhangi bir model eklemek için ad:boyut yazın\n"
+"Ya da hf'den herhangi bir gguf'u hf.co/kullanıcıadı/model ile ekleyin"
+
+#: src/handlers/llm/ollama_handler.py:187
+msgid "Update Ollama"
+msgstr "Ollama'yı Güncelle"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Provider Sorting"
+msgstr "Sağlayıcı Sıralaması"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Choose providers based on pricing/throughput or latency"
+msgstr "Fiyatlandırma/verim veya gecikmeye göre sağlayıcıları seçin"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Price"
+msgstr "Fiyat"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Throughput"
+msgstr "Verim"
+
+#: src/handlers/llm/openrouter_handler.py:14
+msgid "Latency"
+msgstr "Gecikme"
+
+#: src/handlers/llm/openrouter_handler.py:15
+msgid "Providers Order"
+msgstr "Sağlayıcılar Sırası"
+
+#: src/handlers/llm/openrouter_handler.py:15
+msgid ""
+"Add order of providers to use, names separated by a comma.\n"
+"Empty to not specify"
+msgstr ""
+"Kullanılacak sağlayıcıların sırasını ekleyin, adlar virgülle ayrılmıştır.\n"
+"Belirtmemek için boş bırakın"
+
+#: src/handlers/llm/openrouter_handler.py:16
+msgid "Allow Fallbacks"
+msgstr "Yedeklere İzin Ver"
+
+#: src/handlers/llm/openrouter_handler.py:16
+msgid "Allow fallbacks to other providers"
+msgstr "Diğer sağlayıcılara yedeklemelere izin ver"
 
 #: src/handlers/llm/gemini_handler.py:94
 msgid "API Key (required)"
@@ -219,14 +333,8 @@ msgid "Settings about thinking models"
 msgstr "Düşünme modelleriyle ilgili ayarlar"
 
 #: src/handlers/llm/gemini_handler.py:110
-#: src/handlers/llm/ollama_handler.py:152
-msgid "Enable Thinking"
-msgstr "Düşünmeyi Etkinleştir"
-
-#: src/handlers/llm/gemini_handler.py:110
 msgid "Show thinking, disable it if your model does not support it"
-msgstr ""
-"Düşünmeyi göster, modeliniz desteklemiyorsa bunu devre dışı bırakın"
+msgstr "Düşünmeyi göster, modeliniz desteklemiyorsa bunu devre dışı bırakın"
 
 #: src/handlers/llm/gemini_handler.py:111
 msgid "Enable Thinking Budget"
@@ -250,7 +358,9 @@ msgstr "Görsel Çıktısı"
 
 #: src/handlers/llm/gemini_handler.py:116
 msgid "Enable image output, only supported by gemini-2.0-flash-exp"
-msgstr "Görsel çıktısını etkinleştir, yalnızca gemini-2.0-flash-exp tarafından desteklenir"
+msgstr ""
+"Görsel çıktısını etkinleştir, yalnızca gemini-2.0-flash-exp tarafından "
+"desteklenir"
 
 #: src/handlers/llm/gemini_handler.py:125
 msgid "Enable safety settings"
@@ -258,19 +368,9 @@ msgstr "Güvenlik ayarlarını etkinleştir"
 
 #: src/handlers/llm/gemini_handler.py:126
 msgid "Enable google safety settings to avoid generating harmful content"
-msgstr "Zararlı içerik oluşturmayı önlemek için Google güvenlik ayarlarını etkinleştirin"
-
-#: src/handlers/llm/gemini_handler.py:131
-#: src/handlers/llm/openai_handler.py:112
-#: src/handlers/llm/newelle_handler.py:18
-msgid "Privacy Policy"
-msgstr "Gizlilik Politikası"
-
-#: src/handlers/llm/gemini_handler.py:132
-#: src/handlers/llm/openai_handler.py:112
-#: src/handlers/llm/newelle_handler.py:19
-msgid "Open privacy policy website"
-msgstr "Gizlilik politikası web sitesini aç"
+msgstr ""
+"Zararlı içerik oluşturmayı önlemek için Google güvenlik ayarlarını "
+"etkinleştirin"
 
 #: src/handlers/llm/gemini_handler.py:135 src/handlers/llm/openai_handler.py:81
 msgid "Advanced Parameters"
@@ -280,39 +380,9 @@ msgstr "Gelişmiş Parametreler"
 msgid "Enable advanced parameters"
 msgstr "Gelişmiş parametreleri etkinleştir"
 
-#: src/handlers/llm/gpt4all_handler.py:67
-msgid "RAM Required: "
-msgstr "Gerekli RAM: "
-
-#: src/handlers/llm/gpt4all_handler.py:68
-msgid "Parameters: "
-msgstr "Parametreler: "
-
-#: src/handlers/llm/gpt4all_handler.py:69
-msgid "Size: "
-msgstr "Boyut: "
-
-#: src/handlers/llm/gpt4all_handler.py:154 src/handlers/llm/g4f_handler.py:44
-msgid "Model to use"
-msgstr "Kullanılacak model"
-
-#: src/handlers/llm/gpt4all_handler.py:154
-#: src/handlers/tts/elevenlabs_handler.py:25
-msgid "Name of the model to use"
-msgstr "Kullanılacak modelin adı"
-
-#: src/handlers/llm/gpt4all_handler.py:155
-#: src/handlers/llm/ollama_handler.py:172
-msgid "Model Manager"
-msgstr "Model Yöneticisi"
-
-#: src/handlers/llm/gpt4all_handler.py:155
-#: src/handlers/llm/ollama_handler.py:172
-msgid "List of models available"
-msgstr "Mevcut modellerin listesi"
-
 #: src/handlers/llm/openai_handler.py:81
-msgid "Include parameters like Max Tokens, Top-P, Temperature, etc."
+#, fuzzy
+msgid "Include parameters like Top-P, Temperature, etc."
 msgstr "Maksimum Token, Top-P, Sıcaklık vb. parametreleri dahil et"
 
 #: src/handlers/llm/openai_handler.py:84
@@ -320,27 +390,19 @@ msgid "Name of the LLM Model to use"
 msgstr "Kullanılacak LLM Modelinin Adı"
 
 #: src/handlers/llm/openai_handler.py:103
-msgid "max Tokens"
-msgstr "maksimum Token"
-
-#: src/handlers/llm/openai_handler.py:103
-msgid "Max tokens of the generated text"
-msgstr "Oluşturulan metnin maksimum token sayısı"
-
-#: src/handlers/llm/openai_handler.py:104
 msgid "Top-P"
 msgstr "Top-P"
 
-#: src/handlers/llm/openai_handler.py:104
+#: src/handlers/llm/openai_handler.py:103
 msgid "An alternative to sampling with temperature, called nucleus sampling"
 msgstr "Sıcaklıkla örneklemeye bir alternatif, çekirdek örnekleme denir"
 
-#: src/handlers/llm/openai_handler.py:105
+#: src/handlers/llm/openai_handler.py:104
 #: src/handlers/stt/whispercpp_handler.py:50
 msgid "Temperature"
 msgstr "Sıcaklık"
 
-#: src/handlers/llm/openai_handler.py:105
+#: src/handlers/llm/openai_handler.py:104
 msgid ""
 "What sampling temperature to use. Higher values will make the output more "
 "random"
@@ -348,11 +410,11 @@ msgstr ""
 "Hangi örnekleme sıcaklığını kullanmalı. Daha yüksek değerler çıktıyı daha "
 "rastgele hale getirecektir"
 
-#: src/handlers/llm/openai_handler.py:106
+#: src/handlers/llm/openai_handler.py:105
 msgid "Frequency Penalty"
 msgstr "Frekans Cezası"
 
-#: src/handlers/llm/openai_handler.py:106
+#: src/handlers/llm/openai_handler.py:105
 msgid ""
 "Number between -2.0 and 2.0. Positive values decrease the model's likelihood "
 "to repeat the same line verbatim"
@@ -360,81 +422,17 @@ msgstr ""
 "-2.0 ile 2.0 arasında bir sayı. Pozitif değerler, modelin aynı satırı kelime "
 "kelime tekrarlama olasılığını azaltır"
 
-#: src/handlers/llm/openai_handler.py:107
+#: src/handlers/llm/openai_handler.py:106
 msgid "Presence Penalty"
 msgstr "Varoluş Cezası"
 
-#: src/handlers/llm/openai_handler.py:107
+#: src/handlers/llm/openai_handler.py:106
 msgid ""
 "Number between -2.0 and 2.0. Positive values decrease the model's likelihood "
 "to talk about new topics"
 msgstr ""
 "-2.0 ile 2.0 arasında bir sayı. Pozitif değerler, modelin yeni konular "
 "hakkında konuşma olasılığını azaltır"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Provider Sorting"
-msgstr "Sağlayıcı Sıralaması"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Choose providers based on pricing/throughput or latency"
-msgstr "Fiyatlandırma/verim veya gecikmeye göre sağlayıcıları seçin"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Price"
-msgstr "Fiyat"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Throughput"
-msgstr "Verim"
-
-#: src/handlers/llm/openrouter_handler.py:14
-msgid "Latency"
-msgstr "Gecikme"
-
-#: src/handlers/llm/openrouter_handler.py:15
-msgid "Providers Order"
-msgstr "Sağlayıcılar Sırası"
-
-#: src/handlers/llm/openrouter_handler.py:15
-msgid ""
-"Add order of providers to use, names separated by a comma.\n"
-"Empty to not specify"
-msgstr ""
-"Kullanılacak sağlayıcıların sırasını ekleyin, adlar virgülle ayrılmıştır.\n"
-"Belirtmemek için boş bırakın"
-
-#: src/handlers/llm/openrouter_handler.py:16
-msgid "Allow Fallbacks"
-msgstr "Yedeklere İzin Ver"
-
-#: src/handlers/llm/openrouter_handler.py:16
-msgid "Allow fallbacks to other providers"
-msgstr "Diğer sağlayıcılara yedeklemelere izin ver"
-
-#: src/handlers/llm/g4f_handler.py:45
-msgid "Update G4F"
-msgstr "G4F'yi Güncelle"
-
-#: src/handlers/llm/ollama_handler.py:152
-msgid "Allow thinking in the model, only some models are supported"
-msgstr "Modelde düşünmeye izin ver, yalnızca bazı modeller desteklenir"
-
-#: src/handlers/llm/ollama_handler.py:176
-msgid "Add custom model"
-msgstr "Özel model ekle"
-
-#: src/handlers/llm/ollama_handler.py:177
-msgid ""
-"Add any model to this list by putting name:size\n"
-"Or any gguf from hf with hf.co/username/model"
-msgstr ""
-"Bu listeye herhangi bir model eklemek için ad:boyut yazın\n"
-"Ya da hf'den herhangi bir gguf'u hf.co/kullanıcıadı/model ile ekleyin"
-
-#: src/handlers/llm/ollama_handler.py:187
-msgid "Update Ollama"
-msgstr "Ollama'yı Güncelle"
 
 #: src/handlers/rag/rag_handler.py:104
 msgid "Index your documents"
@@ -446,9 +444,9 @@ msgid ""
 "operation every time you edit/create a document, change document analyzer or "
 "change embedding model"
 msgstr ""
-"Belge klasörünüzdeki tüm belgeleri dizine ekleyin. Bu işlemi, bir belgeyi her "
-"düzenlediğinizde/oluşturduğunuzda, belge analizcisini değiştirdiğinizde veya "
-"gömme modelini değiştirdiğinizde çalıştırmanız gerekir"
+"Belge klasörünüzdeki tüm belgeleri dizine ekleyin. Bu işlemi, bir belgeyi "
+"her düzenlediğinizde/oluşturduğunuzda, belge analizcisini değiştirdiğinizde "
+"veya gömme modelini değiştirdiğinizde çalıştırmanız gerekir"
 
 #: src/handlers/stt/custom_handler.py:13 src/handlers/tts/custom_handler.py:17
 msgid "Command to execute"
@@ -461,7 +459,8 @@ msgstr "{0} modelin tam yolu ile değiştirilecektir"
 
 #: src/handlers/stt/googlesr_handler.py:14
 msgid "API Key for Google SR, write 'default' to use the default one"
-msgstr "Google SR için API Anahtarı, varsayılanı kullanmak için 'default' yazın"
+msgstr ""
+"Google SR için API Anahtarı, varsayılanı kullanmak için 'default' yazın"
 
 #: src/handlers/stt/googlesr_handler.py:21
 #: src/handlers/stt/groqsr_handler.py:29
@@ -540,7 +539,8 @@ msgid "Could not understand the audio"
 msgstr "Sesi anlayamadı"
 
 #: src/handlers/stt/whispercpp_handler.py:47
-msgid "Language of the recognition."
+#, fuzzy
+msgid "Language of the recognition. For example en, it..."
 msgstr "Tanımanın dili."
 
 #: src/handlers/stt/whispercpp_handler.py:48
@@ -635,8 +635,7 @@ msgstr "Stil abartısı"
 #: src/handlers/tts/elevenlabs_handler.py:53
 msgid ""
 "High values are reccomended if the style of the speech must be exaggerated"
-msgstr ""
-"Konuşma tarzının abartılması gerekiyorsa yüksek değerler önerilir"
+msgstr "Konuşma tarzının abartılması gerekiyorsa yüksek değerler önerilir"
 
 #: src/handlers/tts/custom_handler.py:17
 #, python-brace-format
@@ -678,8 +677,8 @@ msgid ""
 msgstr ""
 "Arama derinliği. Gelişmiş arama, sorgunuz için en alakalı kaynakları ve "
 "içerik parçacıklarını almak üzere tasarlanırken, temel arama her kaynaktan "
-"genel içerik parçacıkları sağlar. Temel bir arama 1 API Kredisine mal olurken, "
-"gelişmiş bir arama 2 API Kredisine mal olur."
+"genel içerik parçacıkları sağlar. Temel bir arama 1 API Kredisine mal "
+"olurken, gelişmiş bir arama 2 API Kredisine mal olur."
 
 #: src/handlers/websearch/tavily.py:23
 msgid "The category of the search"
@@ -693,9 +692,9 @@ msgid ""
 "searches that may include a wide range of sources."
 msgstr ""
 "Arama kategorisi. Haberler, gerçek zamanlı güncellemeleri almak için "
-"kullanışlıdır, özellikle siyaset, spor ve ana akım medya kaynakları tarafından "
-"kapsanan büyük güncel olaylar hakkında. Genel, daha geniş, daha genel amaçlı "
-"aramalar için olup, çok çeşitli kaynakları içerebilir."
+"kullanışlıdır, özellikle siyaset, spor ve ana akım medya kaynakları "
+"tarafından kapsanan büyük güncel olaylar hakkında. Genel, daha geniş, daha "
+"genel amaçlı aramalar için olup, çok çeşitli kaynakları içerebilir."
 
 #: src/handlers/websearch/tavily.py:24
 msgid "Chunks per source"
@@ -728,8 +727,9 @@ msgid ""
 "Include an LLM-generated answer to the provided query. Basic search returns "
 "a quick answer. Advanced returns a more detailed answer."
 msgstr ""
-"Sağlanan sorguya LLM tarafından oluşturulmuş bir yanıt dahil edin. Temel arama "
-"hızlı bir yanıt döndürür. Gelişmiş arama daha ayrıntılı bir yanıt döndürür."
+"Sağlanan sorguya LLM tarafından oluşturulmuş bir yanıt dahil edin. Temel "
+"arama hızlı bir yanıt döndürür. Gelişmiş arama daha ayrıntılı bir yanıt "
+"döndürür."
 
 #: src/handlers/websearch/tavily.py:27
 msgid "Include raw content"
@@ -737,7 +737,8 @@ msgstr "Ham içeriği dahil et"
 
 #: src/handlers/websearch/tavily.py:27
 msgid "Include the cleaned and parsed HTML content of each search result."
-msgstr "Her arama sonucunun temizlenmiş ve ayrıştırılmış HTML içeriğini dahil edin."
+msgstr ""
+"Her arama sonucunun temizlenmiş ve ayrıştırılmış HTML içeriğini dahil edin."
 
 #: src/handlers/websearch/tavily.py:28
 msgid "Include images"
@@ -755,8 +756,8 @@ msgstr "Görsel açıklamalarını dahil et"
 msgid ""
 "When Include images is enabled, also add a descriptive text for each image."
 msgstr ""
-"Görselleri Dahil Et etkinleştirildiğinde, her görsel için açıklayıcı bir metin "
-"de ekleyin."
+"Görselleri Dahil Et etkinleştirildiğinde, her görsel için açıklayıcı bir "
+"metin de ekleyin."
 
 #: src/handlers/websearch/tavily.py:30
 msgid "Include domains"
@@ -882,23 +883,23 @@ msgstr "Profili Sil"
 msgid "Newelle Tips"
 msgstr "Newelle İpuçları"
 
-#: src/ui/widgets/thinking.py:27
+#: src/ui/widgets/thinking.py:26
 msgid "Thoughts"
 msgstr "Düşünceler"
 
-#: src/ui/widgets/thinking.py:28 src/ui/widgets/thinking.py:135
+#: src/ui/widgets/thinking.py:27 src/ui/widgets/thinking.py:134
 msgid "Expand to see details"
 msgstr "Ayrıntıları görmek için genişlet"
 
-#: src/ui/widgets/thinking.py:123
+#: src/ui/widgets/thinking.py:122
 msgid "Thinking..."
 msgstr "Düşünüyor..."
 
-#: src/ui/widgets/thinking.py:124
+#: src/ui/widgets/thinking.py:123
 msgid "The LLM is thinking... Expand to see thought process"
 msgstr "LLM düşünüyor... Düşünme sürecini görmek için genişlet"
 
-#: src/ui/widgets/thinking.py:137
+#: src/ui/widgets/thinking.py:136
 msgid "No thought process recorded"
 msgstr "Düşünce süreci kaydedilmedi"
 
@@ -906,7 +907,7 @@ msgstr "Düşünce süreci kaydedilmedi"
 msgid "Folder is Empty"
 msgstr "Klasör Boş"
 
-#: src/ui/explorer.py:340 src/window.py:1574
+#: src/ui/explorer.py:340 src/window.py:1576
 msgid "File not found"
 msgstr "Dosya bulunamadı"
 
@@ -1080,6 +1081,27 @@ msgstr "Yakınlaştır"
 msgid "Zoom out"
 msgstr "Uzaklaştır"
 
+#: src/ui/extension.py:17 src/ui/presentation.py:131 src/constants.py:513
+#: src/window.py:118
+msgid "Extensions"
+msgstr "Uzantılar"
+
+#: src/ui/extension.py:50
+msgid "Installed Extensions"
+msgstr "Yüklü Uzantılar"
+
+#: src/ui/extension.py:85
+msgid "User guide to Extensions"
+msgstr "Uzantılar için kullanıcı rehberi"
+
+#: src/ui/extension.py:88
+msgid "Download new Extensions"
+msgstr "Yeni Uzantıları İndir"
+
+#: src/ui/extension.py:91
+msgid "Install extension from file..."
+msgstr "Dosyadan uzantı yükle..."
+
 #: src/ui/mini_window.py:9 data/io.github.qwersyk.Newelle.appdata.xml.in:7
 #: data/io.github.qwersyk.Newelle.desktop.in:2
 msgid "Newelle"
@@ -1130,7 +1152,7 @@ msgstr ""
 "Newelle, sohbette gönderdiğiniz belgelerden veya kendi dosyalarınızdan "
 "ilgili bilgileri alabilir! Sorgunuzla ilgili bilgiler LLM'ye gönderilecektir."
 
-#: src/ui/presentation.py:124 src/ui/settings.py:236 src/window.py:647
+#: src/ui/presentation.py:124 src/ui/settings.py:236 src/window.py:649
 msgid "Command virtualization"
 msgstr "Komut sanallaştırma"
 
@@ -1147,11 +1169,6 @@ msgstr ""
 "nedenle kötü amaçlı kod üretebilir!</b>\n"
 "Varsayılan olarak, komutlarınız <b>Flatpak ortamında sanallaştırılacaktır</"
 "b>, ancak dikkatli olun!"
-
-#: src/ui/presentation.py:131 src/ui/extension.py:17 src/constants.py:513
-#: src/window.py:118
-msgid "Extensions"
-msgstr "Uzantılar"
 
 #: src/ui/presentation.py:132
 msgid "You can extend Newelle's functionalities using extensions!"
@@ -1177,22 +1194,6 @@ msgstr "Uygulamayı kullanmaya başla"
 #: src/ui/presentation.py:163
 msgid "Start chatting"
 msgstr "Sohbete başla"
-
-#: src/ui/extension.py:50
-msgid "Installed Extensions"
-msgstr "Yüklü Uzantılar"
-
-#: src/ui/extension.py:85
-msgid "User guide to Extensions"
-msgstr "Uzantılar için kullanıcı rehberi"
-
-#: src/ui/extension.py:88
-msgid "Download new Extensions"
-msgstr "Yeni Uzantıları İndir"
-
-#: src/ui/extension.py:91
-msgid "Install extension from file..."
-msgstr "Dosyadan uzantı yükle..."
 
 #: src/ui/settings.py:46 src/constants.py:523
 msgid "General"
@@ -1250,7 +1251,7 @@ msgstr ""
 "RAG tarafından kullanılır. Değiştirmek, belgeleri yeniden dizine eklemenizi "
 "veya belleği sıfırlamanızı gerektirebilir."
 
-#: src/ui/settings.py:104 src/window.py:645
+#: src/ui/settings.py:104 src/window.py:647
 msgid "Long Term Memory"
 msgstr "Uzun Süreli Bellek"
 
@@ -1332,9 +1333,9 @@ msgid ""
 "CTRL+ENTER. If disabled, messages will be sent with SHIFT+ENTER, and newline "
 "with enter"
 msgstr ""
-"Etkinleştirilirse, mesajlar ENTER ile gönderilecektir; yeni bir satıra geçmek "
-"için CTRL+ENTER kullanın. Devre dışı bırakılırsa, mesajlar SHIFT+ENTER ile "
-"gönderilecek ve yeni satıra enter ile geçilecektir"
+"Etkinleştirilirse, mesajlar ENTER ile gönderilecektir; yeni bir satıra "
+"geçmek için CTRL+ENTER kullanın. Devre dışı bırakılırsa, mesajlar "
+"SHIFT+ENTER ile gönderilecek ve yeni satıra enter ile geçilecektir"
 
 #: src/ui/settings.py:192
 msgid "Remove thinking from history"
@@ -1362,7 +1363,9 @@ msgstr "Sohbet Sırasını Ters Çevir"
 
 #: src/ui/settings.py:204
 msgid "Show most recent chats on top in chat list (change chat to apply)"
-msgstr "Sohbet listesinde en yeni sohbetleri üstte göster (uygulamak için sohbeti değiştir)"
+msgstr ""
+"Sohbet listesinde en yeni sohbetleri üstte göster (uygulamak için sohbeti "
+"değiştir)"
 
 #: src/ui/settings.py:210
 msgid "Automatically Generate Chat Names"
@@ -1601,7 +1604,8 @@ msgstr "Sessizlik süresi"
 
 #: src/ui/settings.py:465
 msgid "Silence time in seconds before recording stops automatically"
-msgstr "Kaydın otomatik olarak durmasından önceki saniye cinsinden sessizlik süresi"
+msgstr ""
+"Kaydın otomatik olarak durmasından önceki saniye cinsinden sessizlik süresi"
 
 #: src/ui/settings.py:1044
 msgid "Not enough permissions"
@@ -1640,7 +1644,7 @@ msgid "Start/Stop monitoring"
 msgstr "İzlemeyi Başlat/Durdur"
 
 #: src/ui/stdout_monitor.py:109 src/ui/stdout_monitor.py:182
-#: src/ui/stdout_monitor.py:191 src/window.py:3683
+#: src/ui/stdout_monitor.py:191 src/window.py:3686
 msgid "Monitoring: Active"
 msgstr "İzleme: Aktif"
 
@@ -1698,7 +1702,9 @@ msgstr "OpenAI API'si"
 
 #: src/constants.py:61
 msgid "OpenAI API. Custom endpoints supported. Use this for custom providers"
-msgstr "OpenAI API'si. Özel uç noktalar desteklenir. Özel sağlayıcılar için bunu kullanın"
+msgstr ""
+"OpenAI API'si. Özel uç noktalar desteklenir. Özel sağlayıcılar için bunu "
+"kullanın"
 
 #: src/constants.py:66
 msgid "Anthropic Claude"
@@ -1750,7 +1756,8 @@ msgstr "Whisper C++"
 
 #: src/constants.py:105
 msgid "Works offline. Optimized Whisper impelementation written in C++"
-msgstr "Çevrimdışı çalışır. C++'da yazılmış optimize edilmiş Whisper uygulaması"
+msgstr ""
+"Çevrimdışı çalışır. C++'da yazılmış optimize edilmiş Whisper uygulaması"
 
 #: src/constants.py:111
 msgid "CMU Sphinx"
@@ -1858,7 +1865,8 @@ msgstr "Çevrimdışı Metinden Konuşmaya"
 #: src/constants.py:204
 #, python-brace-format
 msgid "Use a custom command as TTS, {0} will be replaced with the text"
-msgstr "Metin okuma olarak özel bir komut kullanın, {0} metin ile değiştirilecektir"
+msgstr ""
+"Metin okuma olarak özel bir komut kullanın, {0} metin ile değiştirilecektir"
 
 #: src/constants.py:212
 msgid "WordLlama"
@@ -1869,8 +1877,8 @@ msgid ""
 "Light local embedding model based on llama. Works offline, very low "
 "resources usage"
 msgstr ""
-"Llama tabanlı hafif yerel gömme modeli. Çevrimdışı çalışır, çok düşük "
-"kaynak kullanımı"
+"Llama tabanlı hafif yerel gömme modeli. Çevrimdışı çalışır, çok düşük kaynak "
+"kullanımı"
 
 #: src/constants.py:218
 msgid "Ollama Embedding"
@@ -1905,9 +1913,9 @@ msgid ""
 "retrivial, memory decay, concept extraction and other advanced techniques. "
 "Does 1 llm call per message."
 msgstr ""
-"Önceki konuşmalardan mesajları bağlamsal bellek alma, bellek çürümesi, kavram "
-"çıkarma ve diğer gelişmiş teknikler kullanarak çıkarın. Her mesaj başına 1 "
-"llm çağrısı yapar."
+"Önceki konuşmalardan mesajları bağlamsal bellek alma, bellek çürümesi, "
+"kavram çıkarma ve diğer gelişmiş teknikler kullanarak çıkarın. Her mesaj "
+"başına 1 llm çağrısı yapar."
 
 #: src/constants.py:251
 msgid "User Summary + Memoripy"
@@ -1926,8 +1934,8 @@ msgid ""
 "Classic RAG approach - chunk documents and embed them, then compare them to "
 "the query and return the most relevant documents"
 msgstr ""
-"Klasik RAG yaklaşımı - belgeleri parçalara ayırın ve gömün, ardından sorguyla "
-"karşılaştırın ve en alakalı belgeleri döndürün"
+"Klasik RAG yaklaşımı - belgeleri parçalara ayırın ve gömün, ardından "
+"sorguyla karşılaştırın ve en alakalı belgeleri döndürün"
 
 #: src/constants.py:269
 msgid "SearXNG"
@@ -1959,7 +1967,9 @@ msgstr "Yardımcı asistan"
 
 #: src/constants.py:376
 msgid "General purpose prompt to enhance the LLM answers and give more context"
-msgstr "LLM yanıtlarını geliştirmek ve daha fazla bağlam sağlamak için genel amaçlı istem"
+msgstr ""
+"LLM yanıtlarını geliştirmek ve daha fazla bağlam sağlamak için genel amaçlı "
+"istem"
 
 #: src/constants.py:384
 msgid "Console access"
@@ -2017,7 +2027,7 @@ msgstr "Kendi özel isteminizi ekleyin"
 msgid "LLM and Secondary LLM settings"
 msgstr "LLM ve İkincil LLM ayarları"
 
-#: src/constants.py:483 src/window.py:646
+#: src/constants.py:483 src/window.py:648
 msgid "TTS"
 msgstr "TTS"
 
@@ -2082,16 +2092,12 @@ msgid ""
 "General settings, virtualization, offers, memory length, automatically "
 "generate chat name, current folder..."
 msgstr ""
-"Genel ayarlar, sanallaştırma, teklifler, bellek uzunluğu, otomatik sohbet adı "
-"oluşturma, mevcut klasör..."
+"Genel ayarlar, sanallaştırma, teklifler, bellek uzunluğu, otomatik sohbet "
+"adı oluşturma, mevcut klasör..."
 
 #: src/constants.py:530
 msgid "Prompts settings, custom extra prompt, custom prompts..."
 msgstr "İstem ayarları, özel ek istem, özel istemler..."
-
-#: src/controller.py:135 src/window.py:1846
-msgid "Chat "
-msgstr "Sohbet "
 
 #: src/main.py:205
 msgid "Terminal threads are still running in the background"
@@ -2116,6 +2122,10 @@ msgstr "Klasör yeniden başlatıldı"
 #: src/main.py:254
 msgid "Chat is created"
 msgstr "Sohbet oluşturuldu"
+
+#: src/controller.py:135 src/window.py:1848
+msgid "Chat "
+msgstr "Sohbet "
 
 #: src/window.py:120
 msgid "Keyboard shorcuts"
@@ -2173,27 +2183,28 @@ msgstr "Terminal Sekmesi"
 msgid "Browser Tab"
 msgstr "Tarayıcı Sekmesi"
 
-#: src/window.py:587
+#: src/window.py:589
 msgid "Ask about a website"
 msgstr "Bir web sitesi hakkında soru sor"
 
-#: src/window.py:587
+#: src/window.py:589
 msgid "Write #https://website.com in chat to ask information about a website"
-msgstr "Bir web sitesi hakkında bilgi sormak için sohbete #https://website.com yazın"
+msgstr ""
+"Bir web sitesi hakkında bilgi sormak için sohbete #https://website.com yazın"
 
-#: src/window.py:588
+#: src/window.py:590
 msgid "Check out our Extensions!"
 msgstr "Uzantılarımıza göz atın!"
 
-#: src/window.py:588
+#: src/window.py:590
 msgid "We have a lot of extensions for different things. Check it out!"
 msgstr "Farklı şeyler için birçok uzantımız var. Göz atın!"
 
-#: src/window.py:589
+#: src/window.py:591
 msgid "Chat with documents!"
 msgstr "Belgelerle sohbet edin!"
 
-#: src/window.py:589
+#: src/window.py:591
 msgid ""
 "Add your documents to your documents folder and chat using the information "
 "contained in them!"
@@ -2201,11 +2212,11 @@ msgstr ""
 "Belgelerinizi belge klasörünüze ekleyin ve içerdikleri bilgileri kullanarak "
 "sohbet edin!"
 
-#: src/window.py:590
+#: src/window.py:592
 msgid "Surf the web!"
 msgstr "İnternette gezin!"
 
-#: src/window.py:590
+#: src/window.py:592
 msgid ""
 "Enable web search to allow the LLM to surf the web and provide up to date "
 "answers"
@@ -2213,152 +2224,154 @@ msgstr ""
 "LLM'nin web'de gezinmesine ve güncel yanıtlar sağlamasına izin vermek için "
 "web aramasını etkinleştirin"
 
-#: src/window.py:591
+#: src/window.py:593
 msgid "Mini Window"
 msgstr "Mini Pencere"
 
-#: src/window.py:591
+#: src/window.py:593
 msgid "Ask questions on the fly using the mini window mode"
 msgstr "Mini pencere modunu kullanarak anında sorular sorun"
 
-#: src/window.py:592
+#: src/window.py:594
 msgid "Text to Speech"
 msgstr "Metinden Konuşmaya"
 
-#: src/window.py:592
+#: src/window.py:594
 msgid "Newelle supports text-to-speech! Enable it in the settings"
 msgstr "Newelle metinden konuşmaya destekler! Ayarlarda etkinleştirin"
 
-#: src/window.py:593
+#: src/window.py:595
 msgid "Keyboard Shortcuts"
 msgstr "Klavye Kısayolları"
 
-#: src/window.py:593
+#: src/window.py:595
 msgid "Control Newelle using Keyboard Shortcuts"
 msgstr "Newelle'i Klavye Kısayolları ile kontrol edin"
 
-#: src/window.py:594
+#: src/window.py:596
 msgid "Prompt Control"
 msgstr "İstem Kontrolü"
 
-#: src/window.py:594
+#: src/window.py:596
 msgid "Newelle gives you 100% prompt control. Tune your prompts for your use."
-msgstr "Newelle size %100 istem kontrolü sağlar. İstemlerinizi kullanımınıza göre ayarlayın."
+msgstr ""
+"Newelle size %100 istem kontrolü sağlar. İstemlerinizi kullanımınıza göre "
+"ayarlayın."
 
-#: src/window.py:595
+#: src/window.py:597
 msgid "Thread Editing"
 msgstr "İş Parçacığı Düzenleme"
 
-#: src/window.py:595
+#: src/window.py:597
 msgid "Check the programs and processes you run from Newelle"
 msgstr "Newelle'den çalıştırdığınız programları ve süreçleri kontrol edin"
 
-#: src/window.py:596
+#: src/window.py:598
 msgid "Programmable Prompts"
 msgstr "Programlanabilir İstemler"
 
-#: src/window.py:596
+#: src/window.py:598
 msgid ""
 "You can add dynamic prompts to Newelle, with conditions and probabilities"
 msgstr "Newelle'e koşullar ve olasılıklarla dinamik istemler ekleyebilirsiniz"
 
-#: src/window.py:603
+#: src/window.py:605
 msgid "New Chat"
 msgstr "Yeni Sohbet"
 
-#: src/window.py:621
+#: src/window.py:623
 msgid "Provider Errror"
 msgstr "Sağlayıcı Hatası"
 
-#: src/window.py:644
+#: src/window.py:646
 msgid "Local Documents"
 msgstr "Yerel Belgeler"
 
-#: src/window.py:648
+#: src/window.py:650
 msgid "Web search"
 msgstr "Web araması"
 
-#: src/window.py:890
+#: src/window.py:892
 msgid "This provider does not have a model list"
 msgstr "Bu sağlayıcının bir model listesi yok"
 
-#: src/window.py:895
+#: src/window.py:897
 msgid " Models"
 msgstr " Modeller"
 
-#: src/window.py:898
+#: src/window.py:900
 msgid "Search Models..."
 msgstr "Model Ara..."
 
-#: src/window.py:1126
+#: src/window.py:1128
 msgid "Create new profile"
 msgstr "Yeni profil oluştur"
 
-#: src/window.py:1260
+#: src/window.py:1262
 msgid "Could not recognize your voice"
 msgstr "Sesiniz tanınamadı"
 
-#: src/window.py:1297
+#: src/window.py:1299
 msgid "Images"
 msgstr "Görseller"
 
-#: src/window.py:1301
+#: src/window.py:1303
 msgid "LLM Supported Files"
 msgstr "LLM Desteklenen Dosyalar"
 
-#: src/window.py:1309
+#: src/window.py:1311
 msgid "RAG Supported files"
 msgstr "RAG Desteklenen dosyalar"
 
-#: src/window.py:1327
+#: src/window.py:1329
 msgid "Supported Files"
 msgstr "Desteklenen Dosyalar"
 
-#: src/window.py:1331
+#: src/window.py:1333
 msgid "All Files"
 msgstr "Tüm Dosyalar"
 
-#: src/window.py:1337
+#: src/window.py:1339
 msgid "Attach file"
 msgstr "Dosya ekle"
 
-#: src/window.py:1592
+#: src/window.py:1594
 msgid "The file cannot be sent until the program is finished"
 msgstr "Program bitene kadar dosya gönderilemez"
 
-#: src/window.py:1614
+#: src/window.py:1616
 msgid "The file is not recognized"
 msgstr "Dosya tanınmadı"
 
-#: src/window.py:1633
+#: src/window.py:1635
 msgid "You can no longer continue the message."
 msgstr "Mesajı artık devam ettiremezsiniz."
 
-#: src/window.py:1658
+#: src/window.py:1660
 msgid "You can no longer regenerate the message."
 msgstr "Mesajı artık yeniden oluşturamazsınız."
 
-#: src/window.py:1890
+#: src/window.py:1892
 msgid "Chat is cleared"
 msgstr "Sohbet temizlendi"
 
-#: src/window.py:1915
+#: src/window.py:1917
 msgid "The message was canceled and deleted from history"
 msgstr "Mesaj iptal edildi ve geçmişten silindi"
 
-#: src/window.py:1959
+#: src/window.py:1961
 msgid "The message cannot be sent until the program is finished"
 msgstr "Program bitene kadar mesaj gönderilemez"
 
-#: src/window.py:2936
+#: src/window.py:2939
 msgid "You can't edit a message while the program is running."
 msgstr "Program çalışırken bir mesajı düzenleyemezsiniz."
 
-#: src/window.py:3061
+#: src/window.py:3064
 msgid "Prompt content"
 msgstr "İstem içeriği"
 
-#: src/window.py:3320
+#: src/window.py:3323
 msgid ""
 "The neural network has access to your computer and any data in this chat and "
 "can run commands, be careful, we are not responsible for the neural network. "
@@ -2368,7 +2381,7 @@ msgstr ""
 "çalıştırabilir, dikkatli olun, sinir ağından biz sorumlu değiliz. Hassas "
 "bilgileri paylaşmayın."
 
-#: src/window.py:3349
+#: src/window.py:3352
 msgid ""
 "The neural network has access to any data in this chat, be careful, we are "
 "not responsible for the neural network. Do not share any sensitive "
@@ -2377,19 +2390,19 @@ msgstr ""
 "Sinir ağı bu sohbetteki herhangi bir veriye erişebilir, dikkatli olun, sinir "
 "ağından biz sorumlu değiliz. Hassas bilgileri paylaşmayın."
 
-#: src/window.py:3398
+#: src/window.py:3401
 msgid "Wrong folder path"
 msgstr "Yanlış klasör yolu"
 
-#: src/window.py:3431
+#: src/window.py:3434
 msgid "Thread has not been completed, thread number: "
 msgstr "İş parçacığı tamamlanmadı, iş parçacığı numarası: "
 
-#: src/window.py:3443
+#: src/window.py:3446
 msgid "Failed to open the folder"
 msgstr "Klasör açılamadı"
 
-#: src/window.py:3622
+#: src/window.py:3625
 msgid "Chat is empty"
 msgstr "Sohbet boş"
 
@@ -2555,3 +2568,9 @@ msgstr "Newelle: Gelişmiş sohbet robotunuz"
 #: data/io.github.qwersyk.Newelle.desktop.in:10
 msgid "ai;assistant;chat;chatgpt;gpt;llm;ollama;"
 msgstr "yapay zeka;asistan;sohbet;chatgpt;gpt;llm;ollama;"
+
+#~ msgid "max Tokens"
+#~ msgstr "maksimum Token"
+
+#~ msgid "Max tokens of the generated text"
+#~ msgstr "Oluşturulan metnin maksimum token sayısı"

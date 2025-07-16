@@ -845,6 +845,8 @@ class MainWindow(Adw.ApplicationWindow):
             "stop", lambda: GLib.idle_add(self.mute_tts_button.set_visible, False)
         )
         if ReloadType.LLM in reloads:
+            self.reload_buttons() 
+            self.update_model_popup()
             self.reload_buttons()
         if ReloadType.AVATAR in reloads and not self.first_load:
             self.load_avatar()
@@ -899,7 +901,7 @@ class MainWindow(Adw.ApplicationWindow):
         scroll = Gtk.ScrolledWindow()
         scroll.set_vexpand(True)
         scroll.set_hexpand(True)
-        settings = Settings(self.app, self.controller, headless=True)
+        settings = Settings(self.app, self.controller, headless=True, popup=True)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         stack = Adw.ViewStack()
         self.model_popup_settings = settings
