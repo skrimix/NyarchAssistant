@@ -47,14 +47,57 @@ class GeminiHandler(LLMHandler):
     def get_supported_files(self) -> list[str]:
         return ["*"]
 
+    
+    def get_client(self):
+        from google.genai import Client, types
+        if self.get_setting("base_url", False) is not None:
+            http_options = types.HttpOptions(base_url=self.get_setting("base_url", False))
+        else:
+            http_options = None
+        return Client(api_key=self.get_setting("apikey", False), http_options=http_options)
+    
+    def get_safety_settings(self) -> list | None:
+        from google.genai import types
+
+        if self.get_setting("safety"):
+            return None
+        
+        model_name = self.get_setting("model")
+        category_threshold_map = {
+            types.HarmCategory.HARM_CATEGORY_HARASSMENT: types.HarmBlockThreshold.OFF,
+            types.HarmCategory.HARM_CATEGORY_HATE_SPEECH: types.HarmBlockThreshold.OFF,
+            types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: types.HarmBlockThreshold.OFF,
+            types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: types.HarmBlockThreshold.OFF,
+            types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY: types.HarmBlockThreshold.BLOCK_NONE,
+        }
+
+        if model_name == "gemini-pro" or model_name.startswith("gemini-1."):
+            for category in category_threshold_map:
+                category_threshold_map[category] = types.HarmBlockThreshold.BLOCK_NONE
+
+        if model_name in [
+            "gemini-2.0-flash",
+            "gemini-2.0-flash-001",
+            "gemini-2.0-flash-exp",
+        ]:
+            category_threshold_map[types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY] = (
+                types.HarmBlockThreshold.OFF
+            )
+
+        safety_settings = [
+            types.SafetySetting(category=category, threshold=threshold)
+            for category, threshold in category_threshold_map.items()
+        ]
+        return safety_settings
+
+
+
     def get_models(self, manual=False):
         if self.is_installed():
             try:
-                from google import genai
-                api = self.get_setting("apikey", False)
-                if api is None:
+                if self.get_setting("apikey", False) is None:
                     return
-                client = genai.Client(api_key=api)
+                client = self.get_client()
                 
                 models = client.models.list()
                 result = tuple()
@@ -139,6 +182,7 @@ class GeminiHandler(LLMHandler):
                 ExtraSettings.ScaleSetting("temperature", "Temperature", "Creativity allowed in the responses", 1, 0, 2, 2),
                 ExtraSettings.ScaleSetting("top_p", "Top P", "Probability of the top tokens to keep", 1, 0, 1, 2),
                 ExtraSettings.ScaleSetting("max_tokens", "Max Tokens", "Maximum number of tokens to generate", 8192, 0, 65536, 0),
+                ExtraSettings.EntrySetting("base_url", "Base URL", "Override the base URL for the Gemini API", ""),
             ]
         return r
     def __convert_history(self, history: list):
@@ -172,8 +216,7 @@ class GeminiHandler(LLMHandler):
         return history
     
     def get_gemini_image(self, message: str) -> tuple[object, str]:
-        from google.genai import Client 
-        client = Client(api_key=self.get_setting("apikey"))
+        client = self.get_client()
         img = None
         image, text = extract_image(message)
         if image is None:
@@ -226,20 +269,9 @@ class GeminiHandler(LLMHandler):
         return self.generate_text_stream(prompt, history, system_prompt) 
     
     def generate_text_stream(self, prompt: str, history: list[dict[str, str]] = [], system_prompt: list[str] = [], on_update: Callable[[str], Any] = lambda _: None , extra_args: list = []) -> str:
-        from google import genai
-        from google.genai.types import HarmCategory, HarmBlockThreshold, GenerateContentConfig, Part 
-        from google.genai import types
-        if self.get_setting("safety"):
-            safety = None
-        else:
-            safety = [
-                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_HARASSMENT, threshold=HarmBlockThreshold.BLOCK_NONE),
-                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold=HarmBlockThreshold.BLOCK_NONE),
-                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY, threshold=HarmBlockThreshold.BLOCK_NONE),
-                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold=HarmBlockThreshold.BLOCK_NONE),
-                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold=HarmBlockThreshold.BLOCK_NONE),
-            ] 
-        client = genai.Client(api_key=self.get_setting("apikey"))
+        from google.genai.types import GenerateContentConfig
+        safety = self.get_safety_settings()
+        client = self.get_client()
         instructions = "\n".join(system_prompt)
         append_instructions = None
         if not self.get_setting("system_prompt"): 
